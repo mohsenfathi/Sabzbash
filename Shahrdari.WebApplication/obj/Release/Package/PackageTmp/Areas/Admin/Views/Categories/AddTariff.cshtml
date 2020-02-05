@@ -1,0 +1,63 @@
+﻿
+@{
+    ViewBag.Title = "افزودن تعرفه";
+    Layout = "~/Areas/Admin/Views/Shared/Layouts/_MainAdmin.cshtml";
+}
+
+<div class="ContentSection" mf-slice='1' id="divAllPersonel">
+    <div class="ContentSectionHeader">
+        تعرفه ها<span>افزودن تعرفه جدید</span>
+    </div>
+    <table class="tbForm">
+        <tr>
+            <td>
+                <input type="text" class="txtForm" id="txtTitle" mf-required placeholder="عنوان" maxlength="255" />
+                <div class="altForm">عنوان را وارد کنید</div>
+            </td>
+            <td>
+                <input type="text" class="txtForm txtComma" id="txtPrice" mf-required mf-type="IntNumber" placeholder="قیمت (تومان)" maxlength="13" />
+                <div class="altForm">قیمت (تومان) را وارد کنید</div>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                @{
+                    foreach (Khadamati.Models.M_ServicesCategories li in ViewBag.Categories)
+                    {
+                        <label class="control control--checkbox">
+                            <input type="checkbox" mf-Category mf-value="@li.Id" />
+                            <div class="control__indicator"></div>
+                            <span>@li.Title</span>
+                        </label>
+                    }
+                }
+            </td>
+        </tr>
+    </table>
+    <div class="ContentSectionFooter">
+        <input type="button" value="افزودن" class="btnForm btnFormGreen" onclick="submitForm();" />
+        <input type="button" value="انصراف" class="btnForm btnFormOrange" onclick="window.location = '@Url.Action("Tariffs", "Categories")'" />
+    </div>
+</div>
+
+<script>
+    function submitForm()
+    {
+        if (validateForm() == false)
+            return;
+        var tariff = {};
+        tariff["Title"] = $("#txtTitle").val();
+        tariff["Price"] = $("#txtPrice").val().replace(/,/g, "");
+        var permission = [];
+        $("input[type='checkbox'][mf-Category]").each(function () {
+            if ($(this).is(":checked"))
+                permission.push($(this).attr("mf-value"));
+        });
+        var param = {};
+        param["Tariff"] = tariff;
+        param["CategoryIds"] = permission;
+        CallMethod('@Url.Action("AddTariff", "Categories")', JSON.stringify(param), "divAllPersonel", function (response) {
+            ShowMessage("توجه", "عملیات با موفقیت انجام شد", MessageType.Succes, function () { window.location = '@Url.Action("Tariffs", "Categories")' });
+        });
+    }
+</script>

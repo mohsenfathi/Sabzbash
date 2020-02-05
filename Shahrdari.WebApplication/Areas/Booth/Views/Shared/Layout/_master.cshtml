@@ -1,0 +1,93 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>سبزباش | @ViewBag.Title</title>
+    <link rel="icon" type="image/png" href="~/Areas/User/Images/CapLogo.png" />
+    <link href="~/Areas/User/Styles/Main.css?v=@(new System.IO.FileInfo(Server.MapPath("~/Areas/User/Styles/Main.css")).Length)" rel="stylesheet" />
+    <script src="~/Areas/Admin/Scripts/jquery.min.js"></script>
+    <script src="~/Areas/User/Scripts/Script.js?v=@(new System.IO.FileInfo(Server.MapPath("~/Areas/User/Scripts/Script.js")).Length)"></script>
+    <script src='https://api.cedarmaps.com/cedarmaps.js/v1.8.0/cedarmaps.js'></script>
+    <link href='https://api.cedarmaps.com/cedarmaps.js/v1.8.0/cedarmaps.css' rel='stylesheet' />
+    @*<link rel='manifest' href='~/Areas/User/manifest.json'>*@
+    <link rel="apple-touch-icon" sizes="57x57" href="/Images/ApplicationIcons/apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="/Images/ApplicationIcons/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/Images/ApplicationIcons/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="/Images/ApplicationIcons/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="/Images/ApplicationIcons/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="/Images/ApplicationIcons/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/Images/ApplicationIcons/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/Images/ApplicationIcons/apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/Images/ApplicationIcons/apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/Images/ApplicationIcons/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/Images/ApplicationIcons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="/Images/ApplicationIcons/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/Images/ApplicationIcons/favicon-16x16.png">
+    <meta name="msapplication-TileColor" content="#efecea">
+    <meta name="msapplication-TileImage" content="/Images/ApplicationIcons/ms-icon-144x144.png">
+    <meta name="theme-color" content="#efecea">
+    <script>
+        var isDriver = @ViewBag.MasterIsDriver;
+        L.cedarmaps.accessToken = "7775fb1e47034c4ae978aae1b3ac3f6f0b4ec6b3";
+
+        //if ("serviceWorker" in navigator) {
+        //    if (navigator.serviceWorker.controller) {
+        //        console.log("[PWA Builder] active service worker found, no need to register");
+        //    } else {
+        //        navigator.serviceWorker
+        //            .register("/Areas/User/pwabuilder-sw.js", {
+        //            })
+        //            .then(function (reg) {
+        //                console.log("[PWA Builder] Service worker has been registered for scope: " + reg.scope);
+        //            });
+        //    }
+        //}
+    </script>
+    @RenderSection("head", false)
+</head>
+<body>
+    <div id="AllContent">
+        <div class="AllMain">
+            @RenderBody()
+        </div>
+        <div class="Footer">نسخه آزمایشی</div>
+    </div>
+    @RenderSection("EndOfPage", false)
+
+    <div id="AllProgress">
+        <img src="~/Areas/User/Images/Spinner.svg" width="100" />
+    </div>
+
+    <div id="AllLightBoxAlert">
+        <div class="AllLightBoxContetn" id="LightBoxAlertContent">
+            <div class="AllLightBoxHeader">
+                <span id="spnAlertLightBoxHeader">عنوان اینجا قرار خواهد گرفت</span>
+                <img src="~/Areas/Admin/Images/LightBoxCloseIcon.png" width="30" id="imgAlertLightBoxCancel" />
+            </div>
+            <div class="AllLightBoxContent">
+                <span id="spnAlertLightBoxContent">متن لایت باکس اینجا قرار خواهد گرفت</span>
+            </div>
+            <div class="AllLightBoxFooter">
+                <input type="button" value="تایید" class="btn btnYellow" id="btnAlertLightBoxOk" />
+            </div>
+        </div>
+    </div>
+
+    <div id="AllLightBoxConfirm">
+        <div class="AllLightBoxContetn" id="LightBoxConfirmContent">
+            <div class="AllLightBoxHeader">
+                <span id="spnConfirmLightBoxHeader">عنوان اینجا قرار خواهد گرفت</span>
+                <img src="~/Areas/Admin/Images/LightBoxCloseIcon.png" width="30" id="imgConfirmLightBoxCancel" />
+            </div>
+            <div class="AllLightBoxContent">
+                <span id="spnConfirmLightBoxContent">متن لایت باکس اینجا قرار خواهد گرفت</span>
+            </div>
+            <div class="AllLightBoxFooter">
+                <input type="button" value="تایید" class="btn btnGreen" id="btnConfirmLightBoxOk" />
+                <input type="button" value="انصراف" class="btn btnRed" id="btnConfirmLightBoxNo" />
+            </div>
+        </div>
+    </div>
+</body>
+</html>

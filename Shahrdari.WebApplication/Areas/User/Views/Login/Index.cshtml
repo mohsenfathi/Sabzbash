@@ -1,0 +1,89 @@
+﻿
+@{
+    ViewBag.Title = "ورود به سیستم";
+    Layout = "~/Areas/User/Views/Shared/Layout/_master.cshtml";
+}
+
+<img src="~/Areas/User/Images/Logo.png" class="LogoLogin" />
+<h1>
+    ما طلا جابجا میکنیم!
+</h1>
+<h2>
+    سبزباش سامانه هوشمند بازیافت
+</h2>
+<div class="LoginBottonContainer">
+    <input type="button" onclick="window.location = '/User/Login/LoginPage'" class="btn btnGreen" value="ورود" />
+    <input type="button" onclick="window.location = '/User/Login/SignUp'" class="btn btnYellow" value="ثبت نام" />
+</div>
+
+@section EndOfPage
+{
+    <div id="AllInstraction" style="position:fixed;width:100%;height:100vh;background:#efecea;z-index:9999999;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+        
+        <img src="~/Areas/User/Images/404Logo.png" width="100" />
+        <br />
+        <div class="RegularText">نصب نسخه جدید اپلیکیشن</div>
+        
+        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;" id="iosInstructions">
+            <div style="padding:20px 30px;border-radius:8px;background:#fff;margin-top:20px;box-shadow:0px 2px 5px #CCC">
+                1 - در نوار پایین گوشی روی دکمه &nbsp;&nbsp;<img src="~/Areas/User/Images/ExportIcon.png" width="15" /> &nbsp;&nbsp;
+                کلیک کنید<br /><br />
+                2 - در منوی باز شده دکمه Add To Home Screen را انخاب کنید<br /><br />
+                3 - و در آخر بالای صفحه دکمه Add را کلیک کنید
+            </div>
+            <div id="Curssor"></div>
+        </div>
+
+        <div id="androidInstructions">
+            <div style="padding:20px 30px;border-radius:8px;background:#fff;margin-top:20px;box-shadow:0px 2px 5px #CCC">
+                 1 - روی دکمه منو &nbsp;&nbsp; <img src="~/Images/MenuIcon.png" width="20" /> &nbsp;&nbsp; کلیک کنید<br /><br />
+                 2 - در منوی باز شده دکمه Add To Home Screen را انخاب کنید
+            </div>
+        </div>
+        <div style="padding:10px 30px;border-radius:8px;background:#72bf44;color:#FFF;margin-top:20px;box-shadow:0px 2px 5px #CCC;cursor:pointer;">متوجه شدم</div>
+        </div>
+
+    <style>
+        #Curssor {
+            width: 0px;
+            height: 0px;
+            border: solid 30px #efecea;
+            border-top: solid 30px #5a5a5a;
+            position: absolute;
+            bottom: 5px;
+        }
+
+            #Curssor:before {
+                content: '';
+                width: 20px;
+                height: 10px;
+                background: #5a5a5a;
+                float: left;
+                margin-left: -10px;
+                margin-top: -40px;
+            }
+    </style>
+    <script>
+        $(document).ready(function () {
+
+            $("#AllInstraction").hide();
+            $("#androidInstructions").hide();
+            $("#iosInstructions").hide();
+
+            $("#AllInstraction").click(function () {
+                $("#AllInstraction").hide(300);
+            });
+
+            if ('@(ViewBag.HaveLearn == null ? "undefined" : ViewBag.HaveLearn)' == 'true') {
+                $("#AllInstraction").show();
+                var iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+                if (iOS == true) {
+                    $("#iosInstructions").show();
+                }
+                else {
+                    $("#androidInstructions").show();
+                }
+            }
+        });
+    </script>
+}

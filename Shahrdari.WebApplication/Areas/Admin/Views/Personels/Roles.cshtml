@@ -1,0 +1,29 @@
+﻿@model List<Shahrdari.Models.M_PersonelRoles>
+@{
+    ViewBag.Title = "نقش ها";
+    Layout = "~/Areas/Admin/Views/Shared/Layout/_master.cshtml";
+}
+
+<div class="ContentSection" mf-slice='1' id="divAddRole">
+    <div class="ContentSectionHeader">
+        نقش ها<span>همه نقش های اضافه شده</span>
+    </div>
+    <input type="button" value="افزودن نقش جدید" class="btnSection btnFormBlue" onclick="window.location = '@Url.Action("AddRole", "Personels")'" />
+    <table class="tbList">
+        <tr class="tbListHeader">
+            <td>عنوان</td>
+            <td>دسترسی کامل دارد ؟</td>
+            <td>عملیات</td>
+        </tr>
+        <tbody>
+            @foreach (var li in Model)
+            {
+                <tr>
+                    <td>@li.Title</td>
+                    <td>@(li.HasFullControl ? "بلی" : "خیر")</td>
+                    <td><img class="tbListModifyIcon" src="~/Areas/Admin/Images/editIcon.png" onclick="window.location = '@Url.Action("ModifyRole", "Personels", new { Id = li.Id })';" /></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

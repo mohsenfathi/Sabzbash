@@ -1,0 +1,162 @@
+﻿
+@{
+    ViewBag.Title = "تنظیمات ناحیه کاربری";
+    Layout = "~/Areas/User/Views/Shared/Layout/_master.cshtml";
+    var user = (Shahrdari.Models.M_Users)ViewBag.User;
+}
+
+<script src="~/Areas/User/Scripts/persianDatepicker.min.js"></script>
+<link href="~/Areas/User/Styles/persianDatepicker-default.css" rel="stylesheet" />
+
+<div id="AllMainUserSetting">
+
+    <div id="UserSettingProfileWrap">
+        <img  id="UserSettingProfileContainer" src="~/Areas/User/Images/Profiles/@user.ImageName" />
+        <label id="UserSettingProfileSetIcon" for="ProfileImageUpload"></label>
+        <input type="file" id="ProfileImageUpload" accept=".png, .jpg, .jpeg"/>
+    </div>
+
+    <div class="UserSettingsInputRow">
+        <input type="text" class="TextInput" id="txtFirstName" mf-required style="margin:5px;" placeholder="نام" value="@user.FirstName"/>
+        <input type="text" class="TextInput" id="txtLastName" mf-required style="margin:5px;" placeholder="نام خانوادگی" value="@user.LastName" />
+        <input type="text" class="TextInput" style="margin:5px;" readonly="readonly" placeholder="شماره تلفن" value="@user.MobileNumber"/>
+    </div>
+    <div class="UserSettingsInputRow">
+        <input type="text" class="TextInput" readonly="readonly" id="txtBirthDate" style="margin:5px;" placeholder="تاریخ تولد" value="@(user.BirthDate.HasValue ? Shahrdari.BussinessLayer.B_PublicFunctions.ConvertMiladiToShamsi(user.BirthDate.Value) : "")" />
+        <input type="text" class="TextInput" id="txtTell" style="margin:5px;" placeholder="تلفن ثابت" value="@user.Tell" />
+    </div>
+    <table>
+        <tr>
+            <td>
+                <label class="rdoCancel">
+                    <input type="radio" value="@((int)Shahrdari.Enums.E_PublicCategory.GENDER.WOMAN)" name="rdoGender" @(user.Gender == Shahrdari.Enums.E_PublicCategory.GENDER.WOMAN ? "checked" : "") />
+                    <span style="font-size:20px;">خانم</span>
+                </label>
+            </td>
+            <td>&nbsp;&nbsp;<span style="font-size:25px;">|</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+            <td>
+                <label class="rdoCancel">
+                    <input type="radio" value="@((int)Shahrdari.Enums.E_PublicCategory.GENDER.MAN)" name="rdoGender" @(user.Gender == Shahrdari.Enums.E_PublicCategory.GENDER.MAN ? "checked" : "") />
+                    <span style="font-size:20px;">آقا</span>
+                </label>
+            </td>
+        </tr>
+    </table>
+
+    <div id="SignUpIconContainer">
+        <div class="rdoUserType @(user.InstituteType == Shahrdari.Enums.E_PublicCategory.INSTITUTE_TYPE.HOME ? "SignUpIconContainerSelected" : "")" ippv-value="@((int)Shahrdari.Enums.E_PublicCategory.INSTITUTE_TYPE.HOME)">
+            <div class="IconSignup"></div>
+            <p class="RegularText" style="font-size:16px;padding:0;">مسکونی</p>
+        </div>
+        <div class="rdoUserType @(user.InstituteType == Shahrdari.Enums.E_PublicCategory.INSTITUTE_TYPE.OFFICIAL ? "SignUpIconContainerSelected" : "")" ippv-value="@((int)Shahrdari.Enums.E_PublicCategory.INSTITUTE_TYPE.OFFICIAL)">
+            <div class="IconSignup" id="IconSignup2"></div>
+            <p class="RegularText" style="font-size:16px;padding:0;">اداره</p>
+        </div>
+        <div class="rdoUserType @(user.InstituteType == Shahrdari.Enums.E_PublicCategory.INSTITUTE_TYPE.COMMERCIAL ? "SignUpIconContainerSelected" : "")" ippv-value="@((int)Shahrdari.Enums.E_PublicCategory.INSTITUTE_TYPE.COMMERCIAL)">
+            <div class="IconSignup" id="IconSignup3"></div>
+            <p class="RegularText" style="font-size:16px;padding:0;">تجاری</p>
+        </div>
+        <div class="rdoUserType @(user.InstituteType == Shahrdari.Enums.E_PublicCategory.INSTITUTE_TYPE.FACTORY ? "SignUpIconContainerSelected" : "")" ippv-value="@((int)Shahrdari.Enums.E_PublicCategory.INSTITUTE_TYPE.FACTORY)">
+            <div class="IconSignup" id="IconSignup4"></div>
+            <p class="RegularText" style="font-size:16px;padding:0;">کارخانه</p>
+        </div>
+    </div>
+
+    <div class="UserSettingsInputRow" id="UserSettingsInputRow2">
+        <input type="text" id="txtPostalCode" class="TextInput" maxlength="10" placeholder="کد پستی" value="@user.PostalCode" />
+        <input type="text" id="txtEmail" class="TextInput" placeholder="پست الکترونیکی" value="@user.Email" />
+    </div>
+
+    <input type="password" id="txtPassword" class="TextInput" mf-required placeholder="گذرواژه" value="@user.Password" />
+    <!--<div id="MakanNamaButtonsContainer">
+        <div id="MakanNamaButton">
+            <span class="WhiteText">مکان نما کارخانه</span>
+            <div class="MakanNamaButtonIcon"></div>
+        </div>
+        <div id="MakanNamaButton">
+            <span class="WhiteText">مکان نما اداری</span>
+            <div class="MakanNamaButtonIcon"></div>
+        </div>
+    </div>-->
+
+   <!-- <div id="UserSettingOptionsRow">
+        <div class="UserSettingOptionButton">
+            <div class="UserSettingOptionButtonContent">
+                <div class="UserSettingOptionButtonIcon"></div>
+                <span class="RegularText">پست الکترونیک</span>
+            </div>
+        </div>
+
+        <div class="UserSettingOptionButton" id="UserSettingOptionButton2" style="padding:5px 10px;">
+            <span class="WhiteText">ارسال مدارک اداری یا کارخانه</span>
+        </div>
+
+        <div class="UserSettingOptionButton" style="padding:5px 10px;" onclick="window.location='@Url.Action("PasswordChangePhone","Login")'">
+            <div class="UserSettingOptionButtonContent">
+                <div class="UserSettingOptionButtonIcon" id="UserSettingOptionButtonIcon"></div>
+                <span class="RegularText">مدیریت رمز عبور</span>
+            </div>
+        </div>
+    </div>-->
+    <div class="btn btnGreen" onclick="SaveChanges();">ذخیره</div>
+</div>
+<a href="@Url.Action("Index", "Home")" class="BackButton">
+    <img src="~/Areas/User/Images/BackButton.png" width="50" />
+</a>
+
+
+
+<script>
+    $(document).ready(function () {
+        
+        $("#txtBirthDate").persianDatepicker();
+        
+
+        $(".rdoUserType").click(function () {
+            $(".rdoUserType").removeClass("SignUpIconContainerSelected");
+            var paretnDiv = this;
+            setTimeout(function () {
+                $(paretnDiv).addClass("SignUpIconContainerSelected");
+            }, 2);
+        });
+    })
+    
+
+    function readURL(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                $('#UserSettingProfileContainer').attr("src", e.target.result);
+                $('#UserSettingProfileContainer').hide();
+                $('#UserSettingProfileContainer').fadeIn(650);
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    $("#ProfileImageUpload").change(function() {
+        readURL(this);
+        UploadFile("/User/Common/UploadImage", this);
+    });
+
+    function SaveChanges()
+    {
+        if (validateForm() == false)
+            return;
+        var param = {
+            FirstName: $("#txtFirstName").val(),
+            LastName: $("#txtLastName").val(),
+            BirthDate: $("#txtBirthDate").val(),
+            Tell: $("#txtTell").val(),
+            Gender: $("input[name=rdoGender]:checked").val(),
+            InstituteType: $(".SignUpIconContainerSelected").attr('ippv-value'),
+            PostalCode: $("#txtPostalCode").val(),
+            Email: $("#txtEmail").val(),
+            Password: $("#txtPassword").val(),
+        };
+        CallMethod("/User/Common/EditUserSetting", JSON.stringify(param), function () {
+            ShowMessage("توجه", "پروفایل شما به روز شد", MessageType.Succes);
+        });
+    }
+
+</script>

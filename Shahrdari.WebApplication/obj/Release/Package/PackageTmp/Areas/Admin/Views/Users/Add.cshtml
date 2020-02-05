@@ -1,0 +1,164 @@
+﻿
+@{
+    ViewBag.Title = "افزودن کاربر";
+    Layout = "~/Areas/Admin/Views/Shared/Layout/_master.cshtml";
+}
+
+<div class="ContentSection" mf-slice='1' id="divAllPersonel">
+    <div class="ContentSectionHeader">
+        کاربر ها<span> افزودن کاربر جدید</span>
+        <input type="button" style="float:left;" value="بازگشت" class="btnForm btnFormOrange" onclick="window.location = '@Url.Action("Index", "ServicesRequests")'" />
+    </div>
+    <table class="tbForm">
+        <tr>
+            <td>
+                <input type="text" class="txtForm" id="txtName" placeholder="نام" mf-required maxlength="50" />
+                <div class="altForm">نام را وارد کنید</div>
+            </td>
+            <td>
+                <input type="text" class="txtForm" id="txtFamily" placeholder="نام خانوادگی" mf-required maxlength="50" />
+                <div class="altForm">نام خانوادگی را وارد کنید</div>
+            </td>
+            <td>
+                <input type="text" mf-type='IntNumber' class="txtForm" id="txtMobile" placeholder="تلفن همراه" mf-required maxlength="11" />
+                <div class="altForm">تلفن همراه را وارد کنید</div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <input type="text" class="txtForm txtDate" id="txtBirthDate" placeholder="تاریخ تولد" readonly />
+                <div class="altForm">تاریخ تولد را وارد کنید</div>
+            </td>
+            <td>
+                <span class="FormInputTitle">جنسیت :</span>
+                <label class="control control--radio">
+                    <input type="radio" value="@((decimal)Shahrdari.Enums.E_PublicCategory.GENDER.MAN)" name="Gender" checked />
+                    <div class="control__indicator"></div><span>مرد</span>
+                </label>
+                <label class="control control--radio">
+                    <input type="radio" value="@((decimal)Shahrdari.Enums.E_PublicCategory.GENDER.WOMAN)" name="Gender" />
+                    <div class="control__indicator"></div><span>زن</span>
+                </label>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="3">
+                <span class="fileUploadTitle">تصویر کاربر : </span>
+                <div class="fileUpload">&nbsp;&nbsp;انتخاب فایل<input id="uplProfileImage" type="file" accept=".jpg" class="upload" mf-upload-role="UserImage" mf-accept="jpg" onchange="UploadChangeEvent(this,true,'Default.jpg','imgProfilePreview');" /></div>
+                <div class="fileUploadAddress" mf-upload-role="UserImage">فایلی انتخاب نشده</div>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="3">
+                <span class="FormInputTitle">پیش نمایش :</span>
+                <img src="~/Areas/Admin/Images/Profile/Default.jpg" style="border-radius:50%;" width="100" height="100" alt="پیش نمایش" id="imgProfilePreview" />
+            </td>
+        </tr>
+    </table>
+
+    <div class="ContentSectionHeader">
+        اطلاعات تکمیلی<span>اطلاعات مربوط به موسسه</span>
+    </div>
+    <table class="tbForm">
+        <tr>
+            <td>
+                <label class="control control--radio">
+                    <input type="radio" value="@((decimal)Shahrdari.Enums.E_PublicCategory.USER_TYPE.HOME_STORE)" name="UserType" checked onchange="changeUserType(@((decimal)Shahrdari.Enums.E_PublicCategory.USER_TYPE.HOME_STORE));" />
+                    <div class="control__indicator"></div><span>خانه / مغازه</span>
+                </label>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label class="control control--radio">
+                    <input type="radio" value="@((decimal)Shahrdari.Enums.E_PublicCategory.USER_TYPE.RESIDENTIAL_OFFICE_OR_COMMERCIAL)" name="UserType" onchange="changeUserType(@((decimal)Shahrdari.Enums.E_PublicCategory.USER_TYPE.RESIDENTIAL_OFFICE_OR_COMMERCIAL));" />
+                    <div class="control__indicator"></div><span>مجتمع مسکونی , اداری یا تجاری / کاخانه / اداره</span>
+                </label>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <select class="txtForm drpForm" id="drpUserType" disabled>
+                    @foreach (Shahrdari.Models.M_PublicCategory li in ViewBag.AnistetoType)
+                    {
+                        <option value="@li.Id">@li.Title</option>
+                    }
+                </select>
+                <div class="altForm">نوع موسسه را انتخاب کنید</div>
+            </td>
+            <td>
+                <input type="text" class="txtForm" id="txtAnisName" disabled placeholder="نام موسسه" mf-required maxlength="50" />
+                <div class="altForm">نام موسسه را وارد کنید</div>
+            </td>
+            <td>
+                <input type="text" mf-type='IntNumber' class="txtForm" disabled id="txtAnisPostalCode" placeholder="کد پستی موسسه" mf-required maxlength="10" />
+                <div class="altForm">کد پستی موسسه را وارد کنید</div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <input type="text" mf-type='IntNumber' class="txtForm" disabled id="txtAnisTell" placeholder="تلفن همراه" mf-required maxlength="11" />
+                <div class="altForm">تلفن را وارد کنید</div>
+            </td>
+        </tr>
+    </table>
+    <div class="ContentSectionFooter">
+        <input type="button" value="افزودن" class="btnForm btnFormGreen" onclick="submitForm();" />
+        <input type="button" value="انصراف" class="btnForm btnFormOrange" onclick="window.location = '@Url.Action("Index", "Users")'" />
+    </div>
+</div>
+
+
+<script>
+    function submitForm() {
+        if (validateForm() == false)
+            return;
+        if ($("#txtBirthDate").val() != "" && !IsValidShamsiDate($("#txtBirthDate").val())) {
+            ShowMessage("توجه", "تاریخ تولد صحیح نیست", MessageType.Warning);
+            return;
+        }
+        var param = {};
+        param["FirstName"] = $("#txtName").val();
+        param["LastName"] = $("#txtFamily").val();
+        if ($("#txtBirthDate").val() != "") {
+            var strBirth = $("#txtBirthDate").val().split("/");
+            param["BirthDate"] = ConverShamsiToMiladi(strBirth[0], strBirth[1], strBirth[2]);
+        }
+        param["MobileNumber"] = $("#txtMobile").val();
+        param["Gender"] = $("input[name=Gender]:checked").val();
+        param["UserType"] = $("input[name=UserType]:checked").val();
+        param["InstituteName"] = $("#txtAnisName").val();
+        param["InstituteType"] = $("#drpUserType").val();
+        param["PostalCode"] = $("#txtAnisPostalCode").val();
+        param["Tell"] = $("#txtAnisTell").val();
+        if (document.getElementById("uplProfileImage").files.length > 0) {
+            UploadFile('@Url.Action("UploadProfileImage", "Users")', document.getElementById("uplProfileImage"), "divAllPersonel", function (response) {
+                param["ImageName"] = response.replace(/"/g,'');
+                CallMethod('@Url.Action("Add", "Users")', JSON.stringify(param), "divAllPersonel", function (response) {
+                    ShowMessage("توجه", "عملیات با موفقیت انجام شد", MessageType.Succes, function () { window.location = '@Url.Action("Index", "Users")' });
+                });
+            });
+        }
+        else {
+            param["ImageName"] = "Default.jpg";
+            CallMethod('@Url.Action("Add", "Users")', JSON.stringify(param), "divAllPersonel", function (response) {
+                ShowMessage("توجه", "عملیات با موفقیت انجام شد", MessageType.Succes, function () { window.location = '@Url.Action("Index", "Users")' });
+            });
+        }
+    }
+
+    function changeUserType(type)
+    {
+        $("#drpUserType").attr("disabled", "true");
+        $("#txtAnisName").attr("disabled", "true");
+        $("#txtAnisPostalCode").attr("disabled", "true");
+        $("#txtAnisTell").attr("disabled", "true");
+        if (type == @((decimal)Shahrdari.Enums.E_PublicCategory.USER_TYPE.RESIDENTIAL_OFFICE_OR_COMMERCIAL))
+        {
+            $("#drpUserType").removeAttr("disabled");
+            $("#txtAnisName").removeAttr("disabled");
+            $("#txtAnisPostalCode").removeAttr("disabled");
+            $("#txtAnisTell").removeAttr("disabled");
+        }
+    }
+</script>

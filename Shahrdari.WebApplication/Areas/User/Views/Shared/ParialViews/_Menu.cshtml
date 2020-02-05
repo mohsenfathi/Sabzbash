@@ -1,0 +1,95 @@
+﻿<div class="MenuContainer">
+
+    <img src="~/Areas/User/Images/BackButton.png" width="50" class="BackButton" onclick="CloseMenu();" />
+
+    <div class="MenuContainerItem">
+        <div class="MenuContainerItemChildProfile" onclick="window.location='@Url.Action("UserSetting","Common")'">
+            <div class="MenuContainerItemChildIcon" style="background-position-x:50px;"></div>
+            <div class="MenuContainerItemChildText RegularText">تنظیمات ناحیه کاربری</div>
+        </div>
+    </div>
+
+    <div class="MenuContainerItem" style="margin-top:50px;">
+        <div class="MenuContainerItemChild" onclick="window.location='@Url.Action("RideMode","Home")'">
+            <div class="MenuContainerItemChildIcon"></div>
+            <div class="MenuContainerItemChildText RegularText">تحویل پسماند در محل</div>
+        </div>
+        <div class="MenuContainerItemChild" onclick="window.location='@Url.Action("StationMode","Home")'">
+            <div class="MenuContainerItemChildIcon" style="background-position-x:-50px;"></div>
+            <div class="MenuContainerItemChildText RegularText">تحویل پسماند به مراکز</div>
+        </div>
+    </div>
+
+    <div class="MenuContainerItem">
+        <div class="MenuContainerItemChild" onclick="OpenPostHistoryDialog(); CloseMenu();">
+            <div class="MenuContainerItemChildIcon" style="background-position-x:-100px;"></div>
+            <div class="MenuContainerItemChildText RegularText">تاریخچه ارسال پسماند</div>
+        </div>
+        <div class="MenuContainerItemChild" onclick="window.location='@Url.Action("Index", "Education")'">
+            <div class="MenuContainerItemChildIcon" style="background-position-x:-200px;"></div>
+            <div class="MenuContainerItemChildText RegularText">آموزش</div>
+        </div>
+        @*<div class="MenuContainerItemChild" onclick="window.location='@Url.Action("Index", "Collect")'">
+                <div class="MenuContainerItemChildIcon" style="background-position-x:-150px;"></div>
+                <div class="MenuContainerItemChildText RegularText">برداشت از اعتبار</div>
+            </div>*@
+    </div>
+
+    <div class="MenuContainerItem">
+
+        @*<div class="MenuContainerItemChild" onclick="window.location='@Url.Action("Messages","Common")'">
+                <div class="MenuContainerItemChildIcon" style="background-position-x:-250px;"></div>
+                <div class="MenuContainerItemChildText RegularText">پیام ها</div>
+            </div>*@
+    </div>
+
+    <div class="MenuContainerItem">
+        @*<div class="MenuContainerItemChild" onclick="window.location='@Url.Action("News", "Common")'">
+                <div class="MenuContainerItemChildIcon" style="background-position-x:-300px;"></div>
+                <div class="MenuContainerItemChildText RegularText">خبرنامه</div>
+            </div>*@
+        <div onclick="window.location='@Url.Action("Presentation", "Common")'" class="MenuContainerItemChild">
+            <div class="MenuContainerItemChildIcon" style="background-position-x:-350px;"></div>
+            <div class="MenuContainerItemChildText RegularText">معرفی به دوستان</div>
+        </div>
+    </div>
+
+    <div class="MenuContainerItem">
+        <div onclick="window.location='@Url.Action("AboutUs", "Common")'" class="MenuContainerItemChild">
+            <div class="MenuContainerItemChildIcon" style="background-position-x:-400px;"></div>
+            <div class="MenuContainerItemChildText RegularText">درباره ما</div>
+        </div>
+        <div onclick="ExitApplication();" class="MenuContainerItemChild">
+            <div class="MenuContainerItemChildIcon" style="background-position-x:-450px;"></div>
+            <div class="MenuContainerItemChildText RegularText">خروج</div>
+        </div>
+    </div>
+
+    <div class="MenuContainerItem" style="margin-top:50px;">
+        <div class="MenuContainerItemChild" style="visibility:hidden;"></div>
+        <div onclick="window.location='@Url.Action("ContactSupport", "Common")'" class="MenuContainerItemChildProfile">
+            <div class="MenuContainerItemChildIcon" style="background-position-x:100px;"></div>
+            <div class="MenuContainerItemChildText RegularText">تماس با مرکز پشتیبانی</div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $(".MenuContainer").fadeOut(0);
+    });
+
+    function OpenMenu() {
+        $(".MenuContainer").fadeIn(400);
+    }
+
+    function CloseMenu() {
+        $(".MenuContainer").fadeOut(200);
+    }
+
+    function ExitApplication(){
+        CallMethod("/User/Home/Exit", {}, function () {
+             window.location = '@Url.Action("Index", "Login")';
+        });
+    }
+</script>

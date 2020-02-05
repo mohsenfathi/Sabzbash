@@ -1,0 +1,301 @@
+﻿
+@{
+    ViewBag.Title = "جزییات درخواست";
+    Layout = "~/Areas/Booth/Views/Shared/Layout/_master.cshtml";
+    var reqItems = (List<Shahrdari.Models.M_ServicesRequestItems>)ViewBag.RequestItems;
+    var request = (Shahrdari.ViewModels.V_ServicesRequests)ViewBag.Request;
+}
+
+<img src="~/Areas/User/Images/BackButton.png" width="35" class="BackButton" onclick="window.location = '/Booth/Default'" />
+
+<div class='RegularText' style="color:#72bf44"><br />جزییات درخواست<br /></div>
+
+<table class="tableShow">
+    <tr>
+        <td style="color:#8DC63F">شماره</td>
+        <td style="color:#777777">@ViewBag.Request.Id</td>
+        <td style="color:#8DC63F" colspan="2">@ViewBag.Request.User.FirstName @ViewBag.Request.User.LastName</td>
+    </tr>
+    <tr>
+        <td style="color:#8DC63F">تاریخ</td>
+        <td style="color:#777777">@(Shahrdari.BussinessLayer.B_PublicFunctions.ConvertMiladiToShamsi(ViewBag.Request.CreateDate))</td>
+        <td style="color:#8DC63F">ساعت</td>
+        <td style="color:#777777">@ViewBag.Request.CreateDate.Hour:@ViewBag.Request.CreateDate.Minute</td>
+    </tr>
+    @if (ViewBag.Request.Pouriya_Type == "CAR")
+    {
+        <tr>
+            <td style="color:#8DC63F;text-align:center" colspan="4">--------------------</td>
+        </tr>
+        <tr>
+            <td style="color:#777777" colspan="4">@ViewBag.Request.Address</td>
+        </tr>
+        <tr>
+            <td style="color:#8DC63F">پلاک</td>
+            <td style="color:#777777">@ViewBag.Request.PlaqueNumber</td>
+            <td style="color:#8DC63F">واحد</td>
+            <td style="color:#777777">@ViewBag.Request.UnitNumber</td>
+        </tr>
+    }
+</table>
+
+<table class="tableShowList">
+    <tr>
+        <td>نوع پسماند</td>
+        <td>تعداد / وزن</td>
+        <td>امتیاز</td>
+    </tr>
+    <tr>
+        <td>الکترونیکی</td>
+        <td>@(reqItems.Where(c => c.CategoryId == 2).Count() > 0 ? reqItems.Where(c => c.CategoryId == 2).FirstOrDefault().Value : 0)</td>
+        <td>@(reqItems.Where(c => c.CategoryId == 2).Count() > 0 ? ViewBag.ElecScore * reqItems.Where(c => c.CategoryId == 2).FirstOrDefault().Value : 0)</td>
+    </tr>
+    <tr>
+        <td>فلزی</td>
+        <td>@(reqItems.Where(c => c.CategoryId == 3).Count() > 0 ? reqItems.Where(c => c.CategoryId == 3).FirstOrDefault().Value : 0)</td>
+        <td>@(reqItems.Where(c => c.CategoryId == 3).Count() > 0 ? ViewBag.MetalScore * reqItems.Where(c => c.CategoryId == 3).FirstOrDefault().Value : 0)</td>
+    </tr>
+    <tr>
+        <td>غیر فلزی</td>
+        <td>@(reqItems.Where(c => c.CategoryId == 8).Count() > 0 ? reqItems.Where(c => c.CategoryId == 8).FirstOrDefault().Value : 0)</td>
+        <td>@(reqItems.Where(c => c.CategoryId == 8).Count() > 0 ? ViewBag.NonMetalScore * reqItems.Where(c => c.CategoryId == 8).FirstOrDefault().Value : 0)</td>
+    </tr>
+    <tr>
+        <td>مخلوط</td>
+        <td>@(reqItems.Where(c => c.CategoryId == 9).Count() > 0 ? reqItems.Where(c => c.CategoryId == 9).FirstOrDefault().Value : 0)</td>
+        <td>@(reqItems.Where(c => c.CategoryId == 9).Count() > 0 ? ViewBag.RandomScore * reqItems.Where(c => c.CategoryId == 9).FirstOrDefault().Value : 0)</td>
+    </tr>
+</table>
+
+@if (request.Status == Shahrdari.Enums.E_PublicCategory.REQUEST_STATUS.NEW_REQUEST)
+{
+    <input type="button" class="btn btnGreen" onclick="Accept();" value="قبول درخواست" />
+}
+else if (request.Status != Shahrdari.Enums.E_PublicCategory.REQUEST_STATUS.CLOSED && request.Status != Shahrdari.Enums.E_PublicCategory.REQUEST_STATUS.CANCEL)
+{
+
+    <a href="tel:@request.User.MobileNumber"><input type="button" class="btn btnGreen" value="تماس با کاربر" /></a>
+    <input type="button" class="btn btnYellow" onclick="OpenRequestDialog();" value="ویرایش مقادیر" />
+    <input type="button" class="btn btnGreen" onclick="CloseRequest();" value="اتمام درخواست" />
+}
+@if (request.Pouriya_Type == "CAR")
+{
+    <input type="button" class="btn btnYellow" onclick="showMap();" value="نمایش روی نقشه" />
+}
+
+@section EndOfPage
+{<div Class="AllLDialogBox" id="AllRequestDialogBox">
+        <div class="AllLDialogBoxContetn" id="AllRequestDialogBoxContetn">
+            <img src="~/Areas/User/Images/BackButton.png" width="35" class="BackButton" onclick="CloseRequestDialog();" />
+            <div class="AllLDialogBoxContetnContainer">
+
+                <div class="AllDialogCategoryItem" style="margin-top:-20px;">
+
+                    <div class="DialogCategoryItem" score="@ViewBag.ElecScore">
+                        <div class="DialogCategoryItemCircle" category-id="2" id="ElectronicCounter">@(reqItems.Where(c => c.CategoryId == 2).Count() > 0 ? reqItems.Where(c => c.CategoryId == 2).FirstOrDefault().Value : 0)</div>
+                        <div class="DialogCategoryItemContent">
+                            <div class="DialogCategoryItemContentCircle">
+                                <div class="DialogCategoryItemContentCircleImage" style="background-position-x:60px"></div>
+                                <div class="DialogCategoryItemContentCircleText">الکترونیکی</div>
+                            </div>
+                            <div class="DialogCategoryItemContentBtnContainer">
+                                <img src="~/Areas/User/Images/PlusIcon.png" class="DialogCategoryItemContentPlus" onclick="AddService(this)" />
+                                <img src="~/Areas/User/Images/NegIcon.png" class="DialogCategoryItemContentPlus" onclick="RemoveService(this)" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="DialogCategoryItem" score="@ViewBag.MetalScore">
+                        <div class="DialogCategoryItemCircle" category-id="3" id="MetalCounter">@(reqItems.Where(c => c.CategoryId == 3).Count() > 0 ? reqItems.Where(c => c.CategoryId == 3).FirstOrDefault().Value : 0)</div>
+                        <div class="DialogCategoryItemContent">
+                            <div class="DialogCategoryItemContentCircle">
+                                <div class="DialogCategoryItemContentCircleImage" style="background-position-x:120px"></div>
+                                <div class="DialogCategoryItemContentCircleText">فلزی</div>
+                            </div>
+                            <div class="DialogCategoryItemContentBtnContainer">
+                                <img src="~/Areas/User/Images/PlusIcon.png" class="DialogCategoryItemContentPlus" onclick="AddService(this)" />
+                                <img src="~/Areas/User/Images/NegIcon.png" class="DialogCategoryItemContentPlus" onclick="RemoveService(this)" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="DialogCategoryItem" score="@ViewBag.NonMetalScore">
+                        <div class="DialogCategoryItemCircle" category-id="8" id="NoneMetalCounter">@(reqItems.Where(c => c.CategoryId == 8).Count() > 0 ? reqItems.Where(c => c.CategoryId == 8).FirstOrDefault().Value : 0)</div>
+                        <div class="DialogCategoryItemContent">
+                            <div class="DialogCategoryItemContentCircle">
+                                <div class="DialogCategoryItemContentCircleImage" style="background-position-x:180px"></div>
+                                <div class="DialogCategoryItemContentCircleText">غیر فلزی</div>
+                            </div>
+                            <div class="DialogCategoryItemContentBtnContainer">
+                                <img src="~/Areas/User/Images/PlusIcon.png" class="DialogCategoryItemContentPlus" onclick="AddService(this)" />
+                                <img src="~/Areas/User/Images/NegIcon.png" class="DialogCategoryItemContentPlus" onclick="RemoveService(this)" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="DialogCategoryItem" score="@ViewBag.RandomScore">
+                        <div class="DialogCategoryItemCircle" category-id="9" id="MixCounter">@(reqItems.Where(c => c.CategoryId == 9).Count() > 0 ? reqItems.Where(c => c.CategoryId == 9).FirstOrDefault().Value : 0)</div>
+                        <div class="DialogCategoryItemContent">
+                            <div class="DialogCategoryItemContentCircle">
+                                <div class="DialogCategoryItemContentCircleImage"></div>
+                                <div class="DialogCategoryItemContentCircleText">مخلوط</div>
+                            </div>
+                            <div class="DialogCategoryItemContentBtnContainer">
+                                <img src="~/Areas/User/Images/PlusIcon.png" class="DialogCategoryItemContentPlus" onclick="AddService(this)" />
+                                <img src="~/Areas/User/Images/NegIcon.png" class="DialogCategoryItemContentPlus" onclick="RemoveService(this)" />
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div style="float:right;width:100%;margin-top:30px;text-align:center;padding-bottom:15px;">
+                    <input class="btn btnGreen" onclick="EditRequestList();" value="ویرایش مقادیر" type="button" style="margin:15px 0;" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script src="~/Scripts/jquery.signalR-2.2.2.min.js"></script>
+<script src="@ViewBag.SignalRUrl/hubs"></script>
+
+    <script>
+        $(document).ready(function (e) {
+            $("#AllElectronicDLB").hide();
+            $("#AllRequestDialogBox").fadeOut(0);
+            $("#AllRequestDialogBox").click(function (e) {
+                if (e.target !== this)
+                    return;
+                CloseRequestDialog();
+            });
+        });
+
+        function OpenRequestDialog() {
+            $("#AllContent").addClass("AllContentBlur");
+            $("#AllRequestDialogBoxContetn").addClass("AllLightBoxContetnShow");
+            $("#txtAreaAddress").val($("#MapAddress").html());
+            $("#AllRequestDialogBox").fadeIn(150);
+        }
+
+        function CloseRequestDialog() {
+            $("#AllContent").removeClass("AllContentBlur");
+            $("#AllRequestDialogBoxContetn").removeClass("AllLightBoxContetnShow");
+            $("#AllRequestDialogBox").fadeOut(150);
+        }
+
+        function AddService(element) {
+            var point = $("#Point").html();
+            var parent = $(element).closest(".DialogCategoryItem");
+            $(".DialogCategoryItemCircle", parent).html(parseInt($(".DialogCategoryItemCircle", parent).html()) + 1);
+            point = parseInt(parent.attr("score")) + parseInt(point);
+            $("#Point").html(point);
+        }
+
+        function RemoveService(element) {
+            var point = $("#Point").html();
+            var parent = $(element).closest(".DialogCategoryItem");
+            if (parseInt($(".DialogCategoryItemCircle", parent).html()) != 0) {
+                $(".DialogCategoryItemCircle", parent).html(parseInt($(".DialogCategoryItemCircle", parent).html()) - 1);
+                point = parseInt(parseInt(point) - parent.attr("score"));
+                $("#Point").html(point);
+            }
+        }
+
+        function showMap() {
+            var url = "https://maps.google.com/?q=@ViewBag.Request.GeographicalCoordinates";
+            window.open(url);
+        }
+
+        function CloseRequest()
+        {
+            ShowConfirm("توجه", "مایل به اتمام درخواست میباشد ؟", MessageType.Information, function () {
+                CallMethod("/Booth/Default/DoneRequest", JSON.stringify({ Id: '@request.Id' }), function (response) {
+                    ShowMessage("توجه", "عملیات با موفقیت انجام شد", MessageType.Succes, function () {
+                        window.location.reload();
+                    });
+                });
+            });
+        }
+
+        function Accept()
+        {
+            CallMethod("/Booth/Default/AcceptRequest", JSON.stringify({ Id: '@request.Id' }), function (response) {
+                ShowMessage("توجه", "عملیات با موفقیت انجام شد", MessageType.Succes, function () {
+                    window.location.reload();
+                });
+            });
+        }
+
+        function EditRequestList()
+        {
+            ShowConfirm("توجه", "مایل به ویرایش اطلاعات میباشد ؟", MessageType.Information, function () {
+                var items = [];
+                $(".DialogCategoryItemCircle").each(function () {
+                    items.push({
+                        Id: $(this).attr("category-id"),
+                        Value: $(this).html()
+                    });
+                });
+                CallMethod("/Booth/Default/EditRequest", JSON.stringify({ RequestId: '@request.Id', RequestItems : items }), function (response) {
+                    ShowMessage("توجه", "عملیات با موفقیت انجام شد", MessageType.Succes, function () {
+                        window.location.reload();
+                    });
+                });
+            });
+        }
+
+        $(function () {
+        var requestProxy;
+        $.connection.hub.url = '@ViewBag.SignalRUrl';
+        $.connection.hub.logging = true;
+        requestProxy = $.connection.Reqeust;
+
+        requestProxy.client.RequestChangedStatusPersonel = function (response) {
+            window.location.reload();
+        };
+
+        requestProxy.client.NewRequestCar = function (response) {
+            window.location.reload();
+        };
+
+        $.connection.hub.start().done(function () {
+            requestProxy.server.loginPersonel("@ViewBag.CurrentUser.UserName", "@ViewBag.CurrentUser.Password");
+        });
+    });
+
+    </script>
+}
+
+<style>
+    .tableShow {
+        margin-top: 20px;
+        width: 90%;
+        float: left;
+    }
+
+        .tableShow td {
+            font-size: 20px;
+        }
+
+    .tableShowList {
+        margin-top: 20px;
+        width: 90%;
+        float: left;
+        margin-left: 5%;
+        text-align: center;
+        border-collapse: separate;
+        border-spacing: 5px;
+    }
+
+        .tableShowList tr:first-child td {
+            margin: 0px 10px;
+            border-radius: 20px;
+            background: #FBB716;
+        }
+
+        .tableShowList tr:not(:first-child) td {
+            margin: 0px 10px;
+            border-radius: 20px;
+            background: #FFF;
+            top: 5px;
+        }
+</style>

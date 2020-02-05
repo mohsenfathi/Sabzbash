@@ -1,0 +1,94 @@
+﻿<div class="AllLDialogBox" id="PostHistoryDialog">
+    <div class="PostHistoryDialogBox" id="PostHistoryDialogBox">
+        <img src="~/Areas/User/Images/BackButton.png" class="BackButton" onclick="ClosePostHistoryDialog();" />
+        <div class="PostHistoryDialogBoxHeadRow">
+            <span class="RegularText">تاریخچه ارسال پسماند</span>
+        </div>
+        <div class="PostHistoryItemsContainer" id="PostHistoryItemsContainerId">
+
+        </div>
+    </div>
+</div>
+
+
+<style>
+    #border {
+        height: 100%;
+        width: 5px;
+        background: inherit;
+        position: absolute;
+        right: 0;
+    }
+
+    #Green {
+        height: 70%;
+        width: 100%;
+        background: #72bf44;
+    }
+
+    #Yellow {
+        height: 30%;
+        width: 100%;
+        background: #fbb716;
+    }
+
+    #ScoreLog {
+        font-size: 20px;
+        color: #72bf44;
+    }
+
+    .BackButton {
+        top: 10px;
+    }
+</style>
+
+
+<script>
+    $(document).ready(function (e) {
+        $("#PostHistoryDialog").fadeOut(0);
+        $("#PostHistoryDialog").click(function (e) {
+            if (e.target !== this)
+                return;
+            ClosePostHistoryDialog();
+        });
+        bindData();
+    });
+
+    function bindData()
+    {
+        CallMethod("/User/Home/GetRequestHistory", null, function (response) {
+            var res = "";
+            if (response != null || response != undefined)
+                $(response).each(function () {
+                    res += "<div class='PostHistoryItem'>" +
+                        "<div class='PostHistoryItemDateAndNumber'>" +
+                        "<div id='border'>" +
+                        "<div id='Green'></div>" +
+                        "<div id='Yellow'></div>" +
+                        "</div>" +
+                        "<span class='RegularText'>تاریخ " + this["Date"] + "</span>" +
+                        "<span class='RegularText'> شماره " + this["Number"] + " </span>" +
+                        "</div>" +
+                        "<div class='PostHistoryItemScoreLog'>" +
+                        "<h1 id='ScoreLog'>مجموع امتیاز : " + this["Point"] + "</h1>" +
+                        "</div>" +
+                        "</div>";
+                });
+            $("#PostHistoryItemsContainerId").html(res);
+        });
+    }
+    
+    function OpenPostHistoryDialog()
+    {
+        $("#AllContent").addClass("AllContentBlur");
+        $("#PostHistoryDialogBox").addClass("AllLightBoxContetnShow");
+        $("#PostHistoryDialog").fadeIn(150);
+    }
+
+    function ClosePostHistoryDialog()
+    {
+        $("#AllContent").removeClass("AllContentBlur");
+        $("#PostHistoryDialogBox").removeClass("AllLightBoxContetnShow");
+        $("#PostHistoryDialog").fadeOut(150);
+    }
+</script>

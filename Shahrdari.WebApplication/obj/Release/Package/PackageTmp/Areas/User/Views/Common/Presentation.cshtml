@@ -1,0 +1,55 @@
+﻿@model Shahrdari.Models.M_Users
+@{
+    ViewBag.Title = "معرفی به دوستان";
+    Layout = "~/Areas/User/Views/Shared/Layout/_master.cshtml";
+}
+
+<div id="AllMainPresentation">
+    <div id="PresentationElements">
+        <img src="~/Areas/User/Images/HornIcon.png" />
+        <span class="RegularText" style="margin-top:15px;font-size:25px;">معرفی به دوستان</span>
+    </div>
+    <div id="PresentationElements">
+        <span class="RegularText"> با معرفی به دوستان ۲۰۰ امتیاز دریافت کنید! </span>
+        <div id="PresentationCodeContainer">
+            <span id="PresentationCode">
+                @Model.ReagentCode
+            </span>
+        </div>
+        <div id="PresentationShareAndCopyContainer">
+            @*<div id="PresentationShareAndCopyItem" onclick="ShowShareDialog();">
+                <div id="PresentationShareAndCopyItemLogo"></div>
+                <span class="RegularText" style="margin:0 10px;">اشتراک گذاری</span>
+            </div>*@
+            <div id="PresentationShareAndCopyItem" onclick="CopyToClipBoard();">
+                <div id="PresentationShareAndCopyItemLogo"></div>
+                <span class="RegularText" style="margin:0 10px;">ذخیره در کلیپ برد</span>
+            </div>
+        </div>
+    </div>
+    <a href="@Url.Action("Index", "Home")" style="margin-right:5px;">
+        <img src="~/Areas/User/Images/BackButton.png" width="50" class="BackButton" />
+    </a>
+</div>
+
+<script>
+    $("#PresentationCode").click(function () {
+        $(this).selectText();
+    });
+
+    function CopyToClipBoard() {
+        var copyText = document.getElementById("PresentationCode");
+        var textArea = document.createElement("textarea");
+        textArea.value = copyText.textContent.trim();
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand("Copy");
+        textArea.remove();
+        ShowMessage("توجه", "متن مورد نظر کپی شد", MessageType.Succes);
+    }
+
+    function ShowShareDialog() {
+
+    }
+
+</script>

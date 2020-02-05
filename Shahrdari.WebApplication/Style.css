@@ -1,0 +1,355 @@
+@font-face {
+    font-family: 'WYekan';
+    src: url('Font/Wyekan.eot?#') format('eot'),
+         url('Font/Wyekan.otf') format('otf'),
+         url('Font/Wyekan.svg') format('svg'),
+         url('Font/Wyekan.woff2') format('woff2'),
+         url('Font/Wyekan.woff') format('woff'),
+         url('Font/BBadr.ttf') format('truetype');
+}
+*
+{
+    margin:0;
+    padding:0;
+    direction:rtl;
+    font-family:'WYekan';
+    font-size:14px;
+}
+.BeforeHeader
+{
+    float: right;
+    width: 100%;
+    height: 20px;
+    background: #8dc63f;
+}
+.AllHeader
+{
+    float: right;
+    width: 100%;
+    margin-top: 10px;
+    min-height: calc(100vh - 30px);
+    min-height: -o-calc(100vh - 30px);
+    min-height: -ms-calc(100vh - 30px);
+    min-height: -moz-calc(100vh - 30px);
+    min-height: -webkit-calc(100vh - 30px);
+    background: url(Images/HeaderBackground.png);
+    background-size: cover;
+    background-position: center;
+
+    
+}
+.HeaderLogo
+{
+    float: right;
+    width: 90px;
+    margin:0px 100px 0px 10px;
+}
+.MenuItem
+{
+    display: inline-block;
+    padding: 10px 25px;
+    font-size: 18px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+.MenuItem:hover
+{
+    background: #8dc63f;
+    color: #FFF;
+}
+.TopBanner
+{
+    float: right;
+    width: 75%;
+}
+.DownloadHeader
+{
+    float: right;
+    width: 100%;
+    text-align: center;
+}
+.DownloadHeaderItem
+{
+    margin: 15px;
+    width: 200px;
+    cursor: pointer;
+}
+.Target
+{
+    float: right;
+    width: 100%;
+    height: 100vh;
+    background: url(Images/Section2BG.jpg);
+    background-size: cover;
+    background-position: center;
+    border-bottom: solid 1px #FFF;
+}
+.TargetText
+{
+    float: right;
+    width: 100%;
+    height: 44vh;
+    padding-top: 6vh;
+    margin-top: 50vh;
+    background: rgba(15,10,64,0.4);
+    text-align: center;
+    font-size: 45px;
+    color:#FFF;
+}
+.StepsSection {
+    background: url(Images/StepsBackground.jpg);
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    border-bottom: solid 5px #9f9f9f;
+}
+.StepsSection .TargetText
+{
+    background: rgba(46,49,43,0.4);
+}
+.StepsItem
+{
+    float: right;
+    width: 20%;
+    margin: 50px 2.5% 0px 2.5%;
+    text-align: center;
+}
+.StepsItem img
+{
+    display: inline-block;
+    width: 80px;
+}
+.StepsItem span
+{
+    display: inline-block;
+    width: 100%;
+    text-align: center;
+    color: #FFF;
+    margin-top: 20px;
+    font-size: 25px;
+}
+.BeforeFooter
+{
+    float: right;
+    width: 100%;
+    height: 40px;
+    background: #ffb71d;
+}
+.Footer
+{
+    float: right;
+    width: 100%;
+    padding: 30px 0px;
+    background: #d1dee0;
+}
+.FooterRight
+{
+    float: right;
+    width: 40%;
+}
+.FooterLeft
+{
+    float: right;
+    width: 60%;
+}
+.FooterRightItem
+{
+    float: right;
+    width: 80%;
+    margin-right: 10%;
+    border-right: solid 4px #9ea2a1;
+    padding-top: 15px;
+}
+.FooterRightItem .FooterRightItemTitle
+{
+    float: right;
+    margin-right: 15px;
+    color:#72bf44;
+    font-size: 18px;
+}
+.FooterRightItem .FooterRightItemPhone
+{
+    float: left;
+    font-size: 18px;
+    margin-left: 30px;
+}
+.FooterRightItem .FooterRightItemPhone span
+{
+    color:#72bf44;
+}
+.FooterRightItem .FooterRightItemAddress
+{
+    float: right;
+    margin-right: 15px;
+    width: calc(100% - 36px);
+    width: -o-calc(100% - 36px);
+    width: -ms-calc(100% - 36px);
+    width: -moz-calc(100% - 36px);
+    width: -webkit-calc(100% - 36px);
+    font-size: 16px;
+    padding-bottom: 20px;
+    border-bottom: solid 2px #9ea2a1;
+}
+.FooterBanner
+{
+    width: 15%;
+    float: right;
+    margin: 40px 5%;
+    cursor: pointer;
+}
+.FooterBanner:hover
+{
+    transform: scale(1.2,1.2);
+    transform: -o-scale(1.2,1.2);
+    transform: -ms-scale(1.2,1.2);
+    transform: -moz-scale(1.2,1.2);
+    transform: -webkit-scale(1.2,1.2);
+}
+
+.NavigationButton {
+    width: 40px;
+    height: 40px;
+    position: absolute;
+    background: url(Images/MenuIcon.png) no-repeat;
+    background-position-y: 7px;
+    top: 30px;
+    left: 10px;
+    display: none;
+    cursor:pointer;
+    transition: all 300ms ease-in-out 0s;
+    -o-transition: all 300ms ease-in-out 0s;
+    -ms-transition: all 300ms ease-in-out 0s;
+    -moz-transition: all 300ms ease-in-out 0s;
+    -webkit-transition: all 300ms ease-in-out 0s;
+}
+
+.NavigationButton:hover{
+    transform:translateX(10px);
+}
+
+.StepsItemWrap{
+    width:100%;
+}
+@media screen and (max-width:999px){
+    
+    .NavigationMenu {
+        position: fixed;
+        width: 70%;
+        margin: 0px;
+        top: 0px;
+        bottom: 0px;
+        right: -20px;
+        padding-right: 20px;
+        z-index: 2;
+        background: #FFF;
+        border-left: solid 1px #CCC;
+        box-shadow: 0px 0px 20px #CCC;
+        transform:translateX(999px);
+        transition:all 300ms ease-in-out 0s;
+    }
+
+    .MenuBG {
+        position: fixed;
+        width: 120%;
+        height: 120vh;
+        z-index: 1;
+        background: rgba(255,255,255,0.9);
+        top: 0;
+        left: 0;
+        display: none;
+    }
+
+    .MenuItem {
+        position: relative;
+        width: 80%;
+        margin-top: 10px;
+        border-bottom:solid 1px #ddd;
+    }
+
+    .NavigationButton
+    {
+        display:block;
+    }
+
+    .HeaderLogo{
+        margin:10px;
+    }
+
+    .TopBanner{
+        width:100%;
+    }
+
+    .DownloadHeaderItem{
+        width:150px;
+    }
+
+    .StepsItem{
+        width:50%;
+        margin:0;
+    }
+
+    .TargetText {
+        height: auto;
+        position:absolute;
+        bottom:0px;
+        padding-top: 0;
+    }
+
+    .StepsSection{
+        height:110vh;
+    }
+
+    .FooterLeft{
+        width:100%;
+    }
+
+    .FooterRight {
+        width: 100%;
+    }
+
+    .StepsItemWrap
+    {
+        height:auto;
+        float:left;
+    }
+    .Target {
+        min-height:100vh;
+        position:relative;
+    }
+}
+
+.NavigationShow {
+    transform: translateX(0px);
+}
+
+.BottomNavigationBar{
+    background:#333;
+    width:100%;
+    color:#fff;
+    float:right;
+}
+
+#spnGoToApp {
+    padding: 10px 30px;
+    background: #7ebe55;
+    color: #FFF;
+    box-shadow: 0px 0px 100px #575757;
+    border: solid 1px #bcdc91;
+    border-radius: 30px;
+    font-size: 20px;
+    transition: all 300ms ease-in-out 0s;
+    -o-transition: all 300ms ease-in-out 0s;
+    -ms-transition: all 300ms ease-in-out 0s;
+    -webkit-transition: all 300ms ease-in-out 0s;
+    -moz-transition: all 300ms ease-in-out 0s;
+    cursor:pointer;
+    display:inline-block;
+}
+
+#spnGoToApp:hover {
+    transform: scale(1.4);
+    -o-transform: scale(1.4);
+    -ms-transform: scale(1.4);
+    -moz-transform: scale(1.4);
+    -webkit-transform: scale(1.4);
+}

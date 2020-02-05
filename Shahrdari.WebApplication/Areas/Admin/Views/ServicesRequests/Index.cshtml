@@ -1,0 +1,209 @@
+﻿@{
+    ViewBag.Title = "لیست درخواست ها";
+    Layout = "~/Areas/Admin/Views/Shared/Layout/_master.cshtml";
+}
+
+<input type="button" value="افزودن درخواست جدید" class="btnSection btnFormBlue" onclick="window.location = '@Url.Action("Add", "ServicesRequests")'" />
+
+<div class="ContentSection" mf-slice='1' id="divAllPersonel">
+    <div class="ContentSectionHeader">
+        جستجوی درخواست<span>درخواست ها را میتوانید از اینجا فیلتر کنید</span>
+    </div>
+    <table class="tbForm">
+        <tr>
+            <td>
+                <input type="text" class="txtForm" id="txtName" placeholder="نام" maxlength="50" />
+                <div class="altForm">نام را وارد کنید</div>
+            </td>
+            <td>
+                <input type="text" class="txtForm" id="txtFamily" placeholder="نام خانوادگی" maxlength="50" />
+                <div class="altForm">نام خانوادگی را وارد کنید</div>
+            </td>
+            <td>
+                <select class="txtForm drpForm" id="drpStatus">
+                    <option value="0">همه وضعیت ها</option>
+                    @foreach (Shahrdari.Models.M_PublicCategory li in ViewBag.RequestType)
+                    {
+                        <option value="@li.Id">@li.Title</option>
+                    }
+                </select>
+                <div class="altForm">وضعیت درخواست را انتخاب کنید</div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <input type="text" class="txtForm txtDate" readonly id="txtFromDate" placeholder="از تاریخ" maxlength="50" />
+                <div class="altForm">از تاریخ</div>
+            </td>
+            <td>
+                <input type="text" class="txtForm txtDate" readonly id="txtToDate" placeholder="تا تاریخ" maxlength="50" />
+                <div class="altForm">تا تاریخ</div>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="3">
+                <input type="button" value="جستجو" class="btnSection btnFormBlue" onclick="getDatas(0);" style="float:right;margin-right:10px;" />
+            </td>
+        </tr>
+    </table>
+</div>
+
+<div class="ContentSection" mf-slice='1' id="divAllRequests">
+    <div class="ContentSectionHeader">
+        درخواست ها<span>لیست درخواست های سیستم</span>
+    </div>
+    <table class="tbList">
+        <tr class="tbListHeader">
+            <td>نام و نام خانوادگی</td>
+            <td>وضعیت</td>
+            <td>تاریخ ایجاد</td>
+            <td>درخواست آنی</td>
+            <td>تاریخ ارجاء</td>
+            <td>آدرس</td>
+            <td>عملیات</td>
+        </tr>
+        <tbody id="tbdDatas"></tbody>
+    </table>
+</div>
+<input type="button" value="بارگذاری بیشتر ..." class="btnSection btnFormBlue" id="btnUserLoad" onclick="getDatas(1);" style="float:right;margin-bottom:35px;margin-top:0px;display:none;" />
+
+
+@section EndOfPage
+{
+    <div class="AllCLightBox" id="divAllSelectParent">
+        <div class="AllCLightBoxContetn" id="divAllSelectParentContetn">
+            <div class="AllCLightBoxHeader">
+                <span>نقشه</span>
+                <img src="/Areas/Admin/Images/LightBoxCloseIcon.png" width="30" onclick="hideParentSelectLightBox();" />
+            </div>
+            <div class="AllCLightBoxContent">
+                <div id="divMap" style="float:right;width:100%;height:calc(80vh - 110px);"></div>
+            </div>
+            <div class="AllCLightBoxFooter">
+                <input type="button" value="تایید" class="btnForm btnFormGreen" onclick="hideParentSelectLightBox();" />
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        var pageNumber = 1;
+
+        $(document).ready(function () {
+            getDatas(0);
+        });
+
+        function getDatas(type) {
+            if (type == 0)
+                pageNumber = 1;
+            else
+                pageNumber++;
+
+            var param = {};
+            param["StatusId"] = $("#drpStatus").val();
+            param["FirstName"] = $("#txtName").val();
+            param["LastName"] = $("#txtFamily").val();
+            param["FromCreateDate"] = "";
+            param["ToCreateDate"] = "";
+            param["PageNumber"] = pageNumber;
+
+            if (IsValidShamsiDate($("#txtFromDate").val(), ""))
+            {
+                var tmpDate = $("#txtFromDate").val().split("/");
+                param["FromCreateDate"] = ConverShamsiToMiladi(tmpDate[0], tmpDate[1], tmpDate[2]);
+            }
+            if (IsValidShamsiDate($("#txtToDate").val(), "")) {
+                var tmpDate = $("#txtToDate").val().split("/");
+                param["ToCreateDate"] = ConverShamsiToMiladi(tmpDate[0], tmpDate[1], tmpDate[2]);
+            }
+
+            CallMethod("@Url.Action("GetRequests", "ServicesRequests")", JSON.stringify(param), "divAllRequests", function (response) {
+                var counter = 0;
+                if (type == 0)
+                    $("#tbdDatas").html("");
+                $(response).each(function () {
+                    counter++;
+                    var createDate = ToJavaScriptDate(this["CreateDate"]).split('/');
+                    createDate = ConverMiladiToShamsi(createDate[0], createDate[1], createDate[2]);
+                    var referralDate = "";
+                    if (this["ToDoDate"] != null)
+                    {
+                        referralDate = ToJavaScriptDate(this["ToDoDate"]).split('/');
+                        referralDate = ConverMiladiToShamsi(referralDate[0], referralDate[1], referralDate[2]);
+                    }
+                    var user = this.User;
+                    var status = "<span style='color:red;'>درخواست جدید</span>";
+                    if (this["Status"] != @((int)Shahrdari.Enums.E_PublicCategory.REQUEST_STATUS.NEW_REQUEST))
+                        status = this.RequetsStatus;
+                    $("#tbdDatas").append("<tr>"
+                        + "<td>" + user.FirstName + " " + user.LastName+"</td>"
+                        + "<td>" + status + "</td>"
+                        + "<td>" + createDate + "</td>"
+                        + "<td>" + (this["ImmediatelyRequest"] == true ? 'بلی' : 'خیر') + "</td>"
+                        + "<td>" + referralDate+"</td>"
+                        + "<td>" + this["Address"]+"</td>"
+                        + "<td>"
+                        + "<img class='tbListModifyIcon' src='/Areas/Admin/Images/editIcon.png' onclick=\"window.location = '@Url.Action("Modify", "ServicesRequests")/" + this["Id"] + "';\"/>"
+                        + "<img class='tbListModifyIcon' src='/Areas/Admin/Images/ShowDetails.png' onclick=\"window.location = '@Url.Action("ShowDetails", "ServicesRequests")/" + this["Id"] + "?FromNew=false';\"/>"
+                        + "<img class='tbListModifyIcon' src='/Areas/Admin/Images/Location.png' onclick=\"showMaps('" + this.GeographicalCoordinates + "', '" + user.ImageName + "', '" + user.FirstName + " " + user.LastName + "', '" + user.MobileNumber + "', '" + this.Address + "', '" + this.PlaqueNumber + "', '" + this.UnitNumber+"')\" />"
+                        + "</td>"
+                        + "</tr>");
+                });
+                if (counter < 30)
+                    $("#btnUserLoad").hide(250);
+                else
+                    $("#btnUserLoad").show(250);
+            });
+        }
+
+        function hideParentSelectLightBox() {
+            $("#divAllSelectParentContetn").removeClass("AllLightBoxContetnShow");
+            $("#divAllSelectParent").fadeOut(150);
+        }
+
+        function showMaps(geoLocation, imageName, fullName, mobileNumber, address, plaqueNumber, unitNumber) {
+            $("#divAllSelectParentContetn").addClass("AllLightBoxContetnShow");
+            $("#divAllSelectParent").fadeIn(150, function () {
+                $("#divMap").replaceWith('<div id="divMap" style="float:right;width:100%;height:calc(80vh - 110px);"></div>');
+                geoLocation = geoLocation.split(',');
+                
+                var tileJSONUrl = 'https://api.cedarmaps.com/v1/tiles/cedarmaps.streets.json?access_token=' + L.cedarmaps.accessToken;
+
+                var map = L.cedarmaps.map('divMap', tileJSONUrl, {
+                    scrollWheelZoom: true
+                }).setView([geoLocation[0], geoLocation[1]], 11);
+
+
+                var markers = [
+                    { 'popupContent': 'موقعیت مکانی درخواست', 'center': { 'lat': geoLocation[0], 'lng': geoLocation[1] }, 'iconOpts': { 'iconUrl': '/Areas/Admin/Images/MapMarkerOther.png', 'iconRetinaUrl': '/Areas/Admin/Images/MapMarkerOther.png', 'iconSize': [30, 38] } }
+                ];
+                var markersLeaflet = [];
+                var _marker = null;
+
+
+                if (markers.length === 0) return;
+                markers.map(function (marker) {
+                    var iconOpts = {
+                        iconUrl: marker.iconOpts.iconUrl,
+                        iconRetinaUrl: marker.iconOpts.iconRetinaUrl,
+                        iconSize: marker.iconOpts.iconSize,
+                        popupAnchor: [0, -49]
+                    };
+
+                    const markerIcon = {
+                        icon: window.L.icon(iconOpts)
+                    };
+
+                    _marker = new window.L.marker(marker.center, markerIcon);
+                    markersLeaflet.push(_marker);
+                    if (marker.popupContent) {
+                        _marker.bindPopup(marker.popupContent);
+                    }
+                    _marker.addTo(map);
+                });
+
+            });
+        }
+
+    </script>
+}

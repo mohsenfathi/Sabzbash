@@ -1,0 +1,47 @@
+﻿
+@{
+    ViewBag.Title = "افزودن پیام جدید";
+    Layout = "~/Areas/Admin/Views/Shared/Layout/_master.cshtml";
+}
+
+<div class="ContentSection" mf-slice='1' id="divAddRole">
+    <div class="ContentSectionHeader">
+        پیامها<span> افزودن پیام جدید</span>
+        <input type="button" style="float:left;" value="بازگشت" class="btnForm btnFormOrange" onclick="window.location = '@Url.Action("Index", "Message")'" />
+    </div>
+    <table class="tbForm">
+        <tr>
+            <td>
+                <input type="text" class="txtForm" id="txtTitle" placeholder="عنوان" mf-required maxlength="50" />
+                <div class="altForm">عنوان را وارد کنید</div>
+            </td>
+            <td>
+                <input type="text" class="txtForm" id="txtMessage" placeholder="متن پیام" mf-required maxlength="200" />
+                <div class="altForm">متن پیام را وارد کنید</div>
+            </td>
+        </tr>
+    </table>
+
+    <input type="button" value="افزودن" class="btnForm btnFormGreen" onclick="submitForm();" />
+    <input type="button" value="انصراف" class="btnForm btnFormOrange" onclick="window.location = '@Url.Action("Index", "Message")'" />
+</div>
+
+
+<script>
+    var haveLoad = false;
+
+    $(document).ready(function () {
+        if (haveLoad == true)
+            return;
+        haveLoad = true;
+    });
+
+    function submitForm() {
+        var param = {};
+        param["title"] = $("#txtTitle").val();
+        param["messages"] = $("#txtMessage").val();
+        CallMethod('@Url.Action("Add", "Message")', JSON.stringify(param), "divAddRole", function (response) {
+            ShowMessage("توجه", "عملیات با موفقیت انجام شد", MessageType.Succes, function () { window.location = '@Url.Action("Index", "Message")' });
+        });
+    }
+</script>

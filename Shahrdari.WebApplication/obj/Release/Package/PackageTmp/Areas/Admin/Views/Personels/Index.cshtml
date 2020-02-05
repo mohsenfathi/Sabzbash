@@ -1,0 +1,118 @@
+﻿@model List<Shahrdari.Models.M_Personels>
+@{
+    ViewBag.Title = "لیست کارکنان";
+    Layout = "~/Areas/Admin/Views/Shared/Layout/_master.cshtml";
+    var roles = (List<Shahrdari.Models.M_PersonelRoles>)ViewBag.Roles;
+}
+@using Shahrdari.BussinessLayer
+
+<div class="ContentSection" mf-slice='1' id="divAddRole">
+    <div class="ContentSectionHeader">
+        کارکنان<span>همه پرسنل سیستم</span>
+    </div>
+    <input type="button" value="افزودن پرسنل جدید" class="btnSection btnFormBlue" onclick="window.location = '@Url.Action("Add", "Personels")'" />
+    <input type="button" value="پرسنل حذف شده" class="btnSection btnFormOrange" onclick="window.location = '@Url.Action("Deleted", "Personels")'" style="margin-right:10px;" />
+    <table class="tbList">
+        <tr class="tbListHeader">
+            <td>نام</td>
+            <td>نام خانوادگی</td>
+            <td>نام کاربری</td>
+            <td>نقش کاربر</td>
+            <td>نوع کاربر</td>
+            <td>وضعیت</td>
+            <td>جنسیت</td>
+            <td>عملیات</td>
+        </tr>
+        <tbody>
+            @foreach (var li in Model)
+            {
+                <tr>
+                    <td>@li.FirstName</td>
+                    <td>@li.LastName</td>
+                    <td>@li.UserName</td>
+                    <td>@roles.Where(c => c.Id == li.PersonelRoleId).FirstOrDefault().Title</td>
+                    <td>@(new B_PublicCategory().GetCategoryTitle((int)li.PersonelType))</td>
+                    <td>@(li.IsActive ? Html.Raw("<span style='color:#1bb394;'>فعال</span>") : Html.Raw("<span style='color:#ed5666;'>غیر فعال</span>"))</td>
+                    <td>@(li.Gender == Shahrdari.Enums.E_PublicCategory.GENDER.MAN ? "آقا" : "خانم")</td>
+                    <td>
+                        <img class="tbListModifyIcon" src="~/Areas/Admin/Images/editIcon.png" onclick="window.location = '@Url.Action("Modify", "Personels", new { Id = li.Id })';" />
+                        <img class='tbListModifyIcon' src='/Areas/Admin/Images/Location.png' onclick="getRequestData(@li.Id)" />
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+
+
+@section EndOfPage
+{
+    <div class="AllCLightBox" id="divAllSelectParent">
+        <div class="AllCLightBoxContetn" id="divAllSelectParentContetn">
+            <div class="AllCLightBoxHeader">
+                <span>نقشه</span>
+                <img src="/Areas/Admin/Images/LightBoxCloseIcon.png" width="30" onclick="hideParentSelectLightBox();" />
+            </div>
+            <div class="AllCLightBoxContent">
+                <div id="divMap" style="float:right;width:100%;height:calc(80vh - 110px);"></div>
+            </div>
+            <div class="AllCLightBoxFooter">
+                <input type="button" value="تایید" class="btnForm btnFormGreen" onclick="hideParentSelectLightBox();" />
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        function getRequestData(id) {
+            CallMethod('@Url.Action("GetServiceMapPointes", "Personels")', "{ Id : " + id + " }", "divAddRole", function (response) {
+                showMaps(response);
+            });
+        }
+
+        function hideParentSelectLightBox() {
+            $("#divAllSelectParentContetn").removeClass("AllLightBoxContetnShow");
+            $("#divAllSelectParent").fadeOut(150);
+        }
+        
+        function showMaps(locations) {
+            $("#divAllSelectParentContetn").addClass("AllLightBoxContetnShow");
+            $("#divAllSelectParent").fadeIn(150, function () {
+                $("#divMap").replaceWith('<div id="divMap" style="float:right;width:100%;height:calc(80vh - 110px);"></div>');
+                
+                var tileJSONUrl = 'https://api.cedarmaps.com/v1/tiles/cedarmaps.streets.json?access_token=' + L.cedarmaps.accessToken;
+
+                var map = L.cedarmaps.map('divMap', tileJSONUrl, {
+                    scrollWheelZoom: true
+                }).setView([35.69410994928452, 51.38031005859376], 11);
+                
+                var markers = locations;
+                var markersLeaflet = [];
+                var _marker = null;
+                
+                if (markers.length === 0) return;
+                markers.map(function (marker) {
+                    var iconOpts = {
+                        iconUrl: marker.iconOpts.iconUrl,
+                        iconRetinaUrl: marker.iconOpts.iconRetinaUrl,
+                        iconSize: marker.iconOpts.iconSize,
+                        popupAnchor: [0, -49]
+                    };
+
+                    const markerIcon = {
+                        icon: window.L.icon(iconOpts)
+                    };
+
+                    _marker = new window.L.marker(marker.center, markerIcon);
+                    markersLeaflet.push(_marker);
+                    if (marker.popupContent) {
+                        _marker.bindPopup(marker.popupContent);
+                    }
+                    _marker.addTo(map);
+                });
+            });
+        }
+
+    </script>
+}

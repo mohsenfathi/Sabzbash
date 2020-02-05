@@ -1,0 +1,108 @@
+﻿
+@{
+    ViewBag.Title = "درخواست ها";
+    Layout = "~/Areas/Booth/Views/Shared/Layout/_master.cshtml";
+}
+
+<div class='RegularText' style="color:#72bf44"><br /><br /><img width="150" src="~/Areas/User/Images/CapLogo.png" /><br />درخواست های شما<br /><br /></div>
+
+<div id="divParetn" style="float:right;width:95%"></div>
+
+<style>
+    #border {
+        height: 100%;
+        width: 5px;
+        background: inherit;
+        position: absolute;
+        right: 0;
+    }
+
+    #Green {
+        height: 70%;
+        width: 100%;
+        background: #72bf44;
+    }
+
+    #Yellow {
+        height: 30%;
+        width: 100%;
+        background: #fbb716;
+    }
+
+    #ScoreLog {
+        font-size: 20px;
+        color: #72bf44;
+    }
+
+    .BackButton {
+        top: 10px;
+    }
+</style>
+
+<script src="~/Scripts/jquery.signalR-2.2.2.min.js"></script>
+<script src="@ViewBag.SignalRUrl/hubs"></script>
+
+<script>
+    $(document).ready(function () {
+        GetDatas();
+    });
+
+    var requests = [];
+
+    function GetDatas() {
+        CallMethod("/Booth/Default/GetRequests", {}, function (response) {
+            var res = "";
+            requests = response;
+            $(response).each(function () {
+                var createDate = ToJavaScriptDate(this.CreateDate).split('/');
+                res += "<div class='PostHistoryItem' style='height:auto;' onclick='ShowDetails(" + this.Id + ")'>"
+                    + "<div id='border'><div id='Green'></div><div id='Yellow'></div></div>"
+                    + "<div class='PostHistoryItemDateAndNumber'>"
+                    + "<span class='RegularText'>تاریخ : " + ConverMiladiToShamsi(createDate[0], createDate[1], createDate[2]) + "</span>"
+                    + "<span class='RegularText'>زمان : " + ToJavaScriptTime(this.CreateDate) + "</span>"
+                    + "<span class='RegularText'>کاربر : " + this.User.FirstName + " " + this.User.LastName + "</span>"
+                    + "<span class='RegularText' style='" + GetStatus(this.Status) + "'>وضعیت : " + this.RequetsStatus + "</span>"
+                    + "</div></div>";
+            });
+            $("#divParetn").html(res);
+        });
+    }
+
+    function GetStatus(status) {
+        var res = "";
+        if (status == @((int)Shahrdari.Enums.E_PublicCategory.REQUEST_STATUS.NEW_REQUEST))
+        {
+            res = "color:red";
+        }
+        if (status == @((int)Shahrdari.Enums.E_PublicCategory.REQUEST_STATUS.WAIT_FOR_GET))
+        {
+            res = "color:orange";
+        }
+        return res;
+    }
+
+    function ShowDetails(requestId)
+    {
+        window.location = '/Booth/Default/RequestDetails/' + requestId;
+    }
+
+    $(function () {
+        var requestProxy;
+        $.connection.hub.url = '@ViewBag.SignalRUrl';
+        $.connection.hub.logging = true;
+        requestProxy = $.connection.Reqeust;
+
+        requestProxy.client.NewRequestCar = function (response) {
+            window.location.reload();
+        };
+
+        requestProxy.client.RequestChangedStatusPersonel = function (response) {
+            window.location.reload();
+        };
+
+        $.connection.hub.start().done(function () {
+            requestProxy.server.loginPersonel("@ViewBag.CurrentUser.UserName", "@ViewBag.CurrentUser.Password");
+        });
+    });
+
+</script>

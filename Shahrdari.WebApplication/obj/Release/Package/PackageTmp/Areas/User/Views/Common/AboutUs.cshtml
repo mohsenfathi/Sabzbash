@@ -1,0 +1,81 @@
+﻿
+@{
+    ViewBag.Title = "AboutUs";
+    Layout = "~/Areas/User/Views/Shared/Layout/_master.cshtml";
+}
+
+<div id="AllMainPresentation">
+    <a href="@Url.Action("Index", "Home")" style="margin-right:5px;">
+        <img src="~/Areas/User/Images/BackButton.png" width="50" class="BackButton" />
+    </a>
+    <div id="AboutUsTextContainer">
+        <span id="AboutUsTextHeader">درباره ما</span>
+        <span class="RegularText">
+            سبز باش سامانه هوشمند آموزش وفرهنگ سازی تفکیک  زباله از مبدا است که با هدف حمایت از محیط ‌زیست و بهبود چرخه مدیریت پسماند، به عنوان پلي بین علاقمندان محیط زیست، دوست داران طبیعت و زیست بانان در مسير  بهبود مدیریت شهری است. سبز باش هزینه های تفکیک زباله را به طرز چشم‌گیری کاهش می دهد، حجم زباله خشک را به صورت معناداری افزایش می دهد و در نتیجه، تاثیر به سزايي در حفظ و بقای محیط زیست و پيش بيني اینده ای سبز  برای ما و فرزندانمان دارد.
+        </span>
+
+    </div>
+    <div id="AboutUsButtonContainer">
+        <input type="button" onclick="OpenEarDialog();" class="btn btnGreen" value="گوش شنوا" />
+        @*<input type="button" onclick="window.location='@Url.Action("News", "Common")'" class="btn btnTrans" value="خبرنامه" />*@
+
+    </div>
+</div>
+@section EndOfPage{
+    <div class="EarDialogBoxContainer">
+        <div class="EarDialogBox" id="EarDialogBox">
+            <div class="EarDialogBoxHeader">
+                <div class="EarDialogBoxHeaderItems">
+                    <span class="WhiteText" style="margin:0 15px; font-size:28px;">گوش شنوا</span>
+                    <img src="~/Areas/User/Images/EarIcon.png" width="30" />
+                </div>
+            </div>
+            <div class="EarDialogBoxItems">
+                <span class="RegularText">ما منتظر شنیدن انتقادات و پیشنهادات شما هستیم</span>
+                <textarea id="EarText" class="TextInput TextArea" placeholder="توضیحات" style="min-width:80%;max-width:80%;border:solid 1px #c2c2c2"></textarea>
+                <div>
+                    <input type="button" class="btn btnGreen" onclick="InsertEarDialog()" style="" value="ثبت" />
+                    <input type="button" class="btn btnRed" onclick="CloseEarDialog()" style="" value="انصراف" />
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+<script>
+    $(document).ready(function (e) {
+        $(".EarDialogBoxContainer").fadeOut(0);
+        $(".EarDialogBoxContainer").click(function (e) {
+            if (e.target !== this)
+                return;
+            CloseEarDialog();
+        });
+    });
+    function OpenEarDialog() {
+        $(".EarDialogBoxContainer").fadeIn(150);
+        $("#EarDialogBox").addClass("AllLightBoxContetnShow");
+        $("#AllContent").addClass("AllContentBlur");
+    }
+
+    function CloseEarDialog() {
+        $(".EarDialogBoxContainer").fadeOut(150);
+        $("#EarDialogBox").removeClass("AllLightBoxContetnShow");
+        $("#AllContent").removeClass("AllContentBlur");
+    }
+
+    function InsertEarDialog()
+    {
+        CallMethod("/Common/ListenEar", "{EarText : '" + $("#EarText").val() + "'}", function () {
+            ShowMessage("توجه", "انتقادات و پیشنهادات شما با موفقیت ثبت شد", MessageType.Succes);
+            CloseEarDialog();
+        });
+    }
+
+</script>
+
+<style>
+    #AllMainPresentation {
+        justify-content: center;
+    }
+</style>

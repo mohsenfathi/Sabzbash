@@ -1,0 +1,7 @@
+D:\Projects\Sabzbash Projects\Sabzbash\Sabzbash\Shahrdari.Factory\bin\Debug\Shahrdari.Factory.dll
+D:\Projects\Sabzbash Projects\Sabzbash\Sabzbash\Shahrdari.Factory\bin\Debug\Shahrdari.Factory.pdb
+D:\Projects\Sabzbash Projects\Sabzbash\Sabzbash\Shahrdari.Factory\bin\Debug\Shahrdari.Enums.dll
+D:\Projects\Sabzbash Projects\Sabzbash\Sabzbash\Shahrdari.Factory\bin\Debug\Shahrdari.Enums.pdb
+D:\Projects\Sabzbash Projects\Sabzbash\Sabzbash\Shahrdari.Factory\obj\Debug\Shahrdari.Factory.csprojResolveAssemblyReference.cache
+D:\Projects\Sabzbash Projects\Sabzbash\Sabzbash\Shahrdari.Factory\obj\Debug\Shahrdari.Factory.dll
+D:\Projects\Sabzbash Projects\Sabzbash\Sabzbash\Shahrdari.Factory\obj\Debug\Shahrdari.Factory.pdb

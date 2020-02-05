@@ -1,0 +1,103 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26228.4
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shahrdari.Models", "JavanMode.Models\Shahrdari.Models.csproj", "{18E02D6A-D6B1-4A8E-8D4D-169AF037B5C6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shahrdari.Settings", "JavanMode.Settings\Shahrdari.Settings.csproj", "{6003FBF5-E6FD-4EB5-AF68-629F2126E917}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shahrdari.BussinessLayer", "Shahrdari.BussinessLayer\Shahrdari.BussinessLayer.csproj", "{B7377756-2263-4DE6-9D31-0704CBBF450E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shahrdari.DataAccessLayer", "Shahrdari.DataAccessLayer\Shahrdari.DataAccessLayer.csproj", "{F8E43D63-FEE9-406E-B7B7-B46D256FA0C4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shahrdari.Enums", "Shahrdari.Enums\Shahrdari.Enums.csproj", "{0F4337EB-B8CB-4E3F-BEC4-5B956AA5AD81}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shahrdari.Factory", "Shahrdari.Factory\Shahrdari.Factory.csproj", "{4F666C03-2BE3-4478-B36B-07FB373038F9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shahrdari.Logging", "Shahrdari.Logging\Shahrdari.Logging.csproj", "{D7620396-B8D9-499C-970D-92FDCE2621EE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shahrdari.ViewModels", "Shahrdari.ViewModels\Shahrdari.ViewModels.csproj", "{78785E1F-3EE6-4F97-91FE-C09B38B48979}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shahrdari.WebApplication", "Shahrdari.WebApplication\Shahrdari.WebApplication.csproj", "{91C45853-CE07-4BAC-AD74-7B53E072157E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{18E02D6A-D6B1-4A8E-8D4D-169AF037B5C6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{18E02D6A-D6B1-4A8E-8D4D-169AF037B5C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{18E02D6A-D6B1-4A8E-8D4D-169AF037B5C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{18E02D6A-D6B1-4A8E-8D4D-169AF037B5C6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6003FBF5-E6FD-4EB5-AF68-629F2126E917}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6003FBF5-E6FD-4EB5-AF68-629F2126E917}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6003FBF5-E6FD-4EB5-AF68-629F2126E917}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6003FBF5-E6FD-4EB5-AF68-629F2126E917}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B7377756-2263-4DE6-9D31-0704CBBF450E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B7377756-2263-4DE6-9D31-0704CBBF450E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B7377756-2263-4DE6-9D31-0704CBBF450E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B7377756-2263-4DE6-9D31-0704CBBF450E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F8E43D63-FEE9-406E-B7B7-B46D256FA0C4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F8E43D63-FEE9-406E-B7B7-B46D256FA0C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F8E43D63-FEE9-406E-B7B7-B46D256FA0C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F8E43D63-FEE9-406E-B7B7-B46D256FA0C4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0F4337EB-B8CB-4E3F-BEC4-5B956AA5AD81}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0F4337EB-B8CB-4E3F-BEC4-5B956AA5AD81}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0F4337EB-B8CB-4E3F-BEC4-5B956AA5AD81}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0F4337EB-B8CB-4E3F-BEC4-5B956AA5AD81}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4F666C03-2BE3-4478-B36B-07FB373038F9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4F666C03-2BE3-4478-B36B-07FB373038F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4F666C03-2BE3-4478-B36B-07FB373038F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4F666C03-2BE3-4478-B36B-07FB373038F9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D7620396-B8D9-499C-970D-92FDCE2621EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D7620396-B8D9-499C-970D-92FDCE2621EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D7620396-B8D9-499C-970D-92FDCE2621EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D7620396-B8D9-499C-970D-92FDCE2621EE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{78785E1F-3EE6-4F97-91FE-C09B38B48979}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{78785E1F-3EE6-4F97-91FE-C09B38B48979}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{78785E1F-3EE6-4F97-91FE-C09B38B48979}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{78785E1F-3EE6-4F97-91FE-C09B38B48979}.Release|Any CPU.Build.0 = Release|Any CPU
+		{91C45853-CE07-4BAC-AD74-7B53E072157E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{91C45853-CE07-4BAC-AD74-7B53E072157E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{91C45853-CE07-4BAC-AD74-7B53E072157E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{91C45853-CE07-4BAC-AD74-7B53E072157E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 10
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = http://ippv-server:8080/tfs/defaultcollection
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = JavanMode.Models\\Shahrdari.Models.csproj
+		SccProjectName1 = JavanMode.Models
+		SccLocalPath1 = JavanMode.Models
+		SccProjectUniqueName2 = JavanMode.Settings\\Shahrdari.Settings.csproj
+		SccProjectName2 = JavanMode.Settings
+		SccLocalPath2 = JavanMode.Settings
+		SccProjectUniqueName3 = Shahrdari.BussinessLayer\\Shahrdari.BussinessLayer.csproj
+		SccProjectName3 = Shahrdari.BussinessLayer
+		SccLocalPath3 = Shahrdari.BussinessLayer
+		SccProjectUniqueName4 = Shahrdari.DataAccessLayer\\Shahrdari.DataAccessLayer.csproj
+		SccProjectName4 = Shahrdari.DataAccessLayer
+		SccLocalPath4 = Shahrdari.DataAccessLayer
+		SccProjectUniqueName5 = Shahrdari.Enums\\Shahrdari.Enums.csproj
+		SccProjectName5 = Shahrdari.Enums
+		SccLocalPath5 = Shahrdari.Enums
+		SccProjectUniqueName6 = Shahrdari.Factory\\Shahrdari.Factory.csproj
+		SccProjectName6 = Shahrdari.Factory
+		SccLocalPath6 = Shahrdari.Factory
+		SccProjectUniqueName7 = Shahrdari.Logging\\Shahrdari.Logging.csproj
+		SccProjectName7 = Shahrdari.Logging
+		SccLocalPath7 = Shahrdari.Logging
+		SccProjectUniqueName8 = Shahrdari.ViewModels\\Shahrdari.ViewModels.csproj
+		SccProjectName8 = Shahrdari.ViewModels
+		SccLocalPath8 = Shahrdari.ViewModels
+		SccProjectUniqueName9 = Shahrdari.WebApplication\\Shahrdari.WebApplication.csproj
+		SccProjectName9 = Shahrdari.WebApplication
+		SccLocalPath9 = Shahrdari.WebApplication
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,220 @@
+﻿@{
+    ViewBag.Title = "خانه";
+    Layout = "~/Areas/User/Views/Shared/Layout/_master.cshtml";
+}
+
+<div class="AllHomeMain">
+    <div class="SideBar">
+        @*<div class="SideBarItem" onclick="window.location='@Url.Action("Index", "Collect")'">
+                <div class="SideBarHomeIcon"></div>
+                <span class="RegularText">برداشت از امتیاز</span>
+            </div>*@
+        <div class="SideBarItem" onclick="window.location='@Url.Action("Index", "Education")'">
+            <div class="SideBarHomeIcon" id="SideBarHomeIcon2"></div>
+            <span class="RegularText">آموزش</span>
+        </div>
+        <div class="SideBarItem" onclick="window.location='@Url.Action("Presentation", "Common")'">
+            <div class="SideBarHomeIcon" id="SideBarHomeIcon3"></div>
+            <span class="RegularText">معرفی به دوستان</span>
+        </div>
+    </div>
+    <div class="AllMainWithSideBar">
+        <div class="AllMainWithSideBarHeader">
+            <img id="AllMainWithSideBarHeaderLogo" src="~/Areas/User/Images/CapLogo.png" />
+            <div id="AllMainWithSideBarHeaderRow" style="position:relative;">
+                <div id="UserMenuButtonContainerPD">
+                    <img src="~/Areas/User/Images/Icons/UserIcon.png" class="UserMenuButton" onclick="OpenMenu();" />
+                    <div id="NameAndScore">
+                        <span class="RegularText UserFullName">@ViewBag.FullName</span>
+                        <span style="color: #72bf44;left:5px;font-size:23px;">@ViewBag.Score</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="AllMainWithSideBarContent">
+            <div class="SabzBashMap" id="SabzBashMap"></div>
+            <div id="SabzBashMapButtonContainer">
+                <div id="SabzBashMapButton" onclick="goToRideMode();">
+                    <div id="SabzBashMapTahvilDarIcon" style="width:60px;height:44px;"></div>
+                    <div class="RegularText" style="font-size:16px;margin-top:5px;">تحویل در محل</div>
+                </div>
+                <div id="SabzBashMapButton" onclick="goToStationMode();">
+                    <div id="SabzBashMapTahvilDarIcon2" style="width:40px;height:44px;"></div>
+                    <div class="RegularText" style="font-size:16px;margin-top:5px;">تحویل به مراکز</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@Html.Partial("~/Areas/User/Views/Shared/ParialViews/_Menu.cshtml")
+
+@section EndOfPage{
+    @Html.Partial("~/Areas/User/Views/Shared/ParialViews/_PostHistoryLightBox.cshtml")
+    @Html.Partial("~/Areas/User/Views/Shared/ParialViews/_Satisfaction.cshtml")
+    @Html.Partial("~/Areas/User/Views/Shared/ParialViews/_Tabrik.cshtml")
+}
+
+<style>
+    #UserMenuButtonContainerPD {
+        width: 100%;
+        height: auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: absolute;
+    }
+
+    #NameAndScore {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+    }
+</style>
+
+<script>
+
+    var lastRequest = "";
+
+    $(document).ready(function () {
+        var pos = { Lat: 35.69410994928452, Lng: 51.38031005859376 };
+        prepareMap(pos);
+        congratulations();
+        //handlePermission();
+    });
+
+    function congratulations() {
+        CallMethod("/User/Home/GetLastRequestUser", "", function (response) {
+            if (response != "") {
+                lastRequest = response;
+                OpenTabrikDialog(response["Point"]);
+            }
+        });
+    }
+
+    function goToRideMode() {
+        CallMethod("/User/Home/GetLastRequest", "{Type : 'CAR'}", function (response) {
+            if (response != "") {
+                window.location = '/User/Home/RideModeProceed';
+            }
+            else
+                window.location = '/User/Home/RideMode';
+        });
+    }
+
+    function goToStationMode() {
+        CallMethod("/User/Home/GetLastRequest", "{Type : 'BOOTH'}", function (response) {
+            if (response != "") {
+                window.location = '/User/Home/StationModeProceed';
+            }
+            else {
+                window.location = '/User/Home/StationMode';
+            }
+        });
+    }
+
+    //function handlePermission() {
+    //    alert(GetCurrentLocation());
+    //    navigator.permissions.query({ name: 'geolocation' }).then(function (result) {
+    //        if (result.state == 'granted') {
+    //            prepareMap(GetCurrentLocation());
+    //        } else if (result.state == 'prompt') {
+    //            prepareMap(GetCurrentLocation());
+    //        } else if (result.state == 'denied') {
+    //            prepareMap(null);
+    //        }
+    //        result.onchange = function () {
+    //            console.log(result.state);
+    //        }
+    //    });
+    //}
+
+    function prepareMap(position) {
+
+        $("#SabzBashMap").replaceWith('<div class="SabzBashMap" id="SabzBashMap"></div>');
+
+        var tileJSONUrl = 'https://api.cedarmaps.com/v1/tiles/cedarmaps.streets.json?access_token=' + L.cedarmaps.accessToken;
+
+
+        var map = L.cedarmaps.map('SabzBashMap', tileJSONUrl, {
+            scrollWheelZoom: true
+        }).setView([position.Lat, position.Lng], 13);
+        var markers = [
+
+        ];
+
+        //if (position != null) {
+        //    markers.push(
+        //        {
+        //            'center': {
+        //                'lat': position.Lat,
+        //                'lng': position.Lng
+        //            },
+        //            'iconOpts': {
+        //                'iconUrl': '/Areas/Admin/Images/LocationIcon.png',
+        //                'iconRetinaUrl': '/Areas/Admin/Images/LocationIcon.png',
+        //                'iconSize': [30, 40]
+        //            }
+        //        }
+        //    );
+        //}
+
+        var markersLeaflet = [];
+        var _marker = null;
+
+
+        if (markers.length === 0) return;
+        markers.map(function (marker) {
+            var iconOpts = {
+                iconUrl: marker.iconOpts.iconUrl,
+                iconRetinaUrl: marker.iconOpts.iconRetinaUrl,
+                iconSize: marker.iconOpts.iconSize,
+                popupAnchor: [0, -49]
+            };
+
+            const markerIcon = {
+                icon: window.L.icon(iconOpts)
+            };
+
+            _marker = new window.L.marker(marker.center, markerIcon);
+            markersLeaflet.push(_marker);
+            if (marker.popupContent) {
+                _marker.bindPopup(marker.popupContent);
+            }
+            _marker.addTo(map);
+        });
+    }
+
+    function GetCurrentLocation() {
+        var lat = 0;
+        var lng = 0;
+        var acc = 0;
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function (location) {
+                lat = location.coords.latitude;
+                lng = location.coords.longitude;
+                acc = location.coords.accuracy;
+                prepareMap({ Lat: lat, Lng: lng, Acc: acc });
+            }, function (error) { showError(error); });
+        }
+    }
+
+    function showError(error) {
+        switch (error.code) {
+            case error.PERMISSION_DENIED:
+                alert("User denied the request for Geolocation.");
+                break;
+            case error.POSITION_UNAVAILABLE:
+                alert("Location information is unavailable.");
+                break;
+            case error.TIMEOUT:
+                alert("The request to get user location timed out.");
+                break;
+            case error.UNKNOWN_ERROR:
+                alert("An unknown error occurred.");
+                break;
+        }
+    }
+
+
+</script>

@@ -1,0 +1,97 @@
+﻿
+@{
+    ViewBag.Title = "برداشت از امتیاز";
+    Layout = "~/Areas/User/Views/Shared/Layout/_master.cshtml";
+}
+
+<div class="AllCollectMain">
+    <div class="AllCollectHeader">
+        <div style="display:flex;justify-content:space-around;">
+            <div class="UserMenuButtonContainer" style="width:unset;margin:0;">
+                <img src="~/Areas/User/Images/Icons/UserIcon.png" class="UserMenuButton" onclick="OpenMenu();" />
+            </div>
+            <span class="RegularText UserFullName">@ViewBag.FullName</span>
+        </div>
+        <a href="@Url.Action("Index", "Home")" style="margin-right:5px;">
+            <img src="~/Areas/User/Images/BackButton.png" width="50" id="BackButton" />
+        </a>
+
+    </div>
+
+    <h1>‌@ViewBag.Score</h1>
+    <div id="CenterOfCollect">
+        <img src="~/Areas/User/Images/CoinIcon.png" width="100px"/>
+        <h1>برداشت از امتیاز</h1>
+    </div>
+    <div class="CollectPaymentItemsContainer">
+
+        <div id="CollectPaymentItem" onclick="window.location='@Url.Action("CimCharge","Collect")'">
+            <div id="CollectPaymentItemLogoContainer">
+                <div id="CollectPaymentItemLogo"></div>
+            </div>
+            <span class="RegularText">شارژ سیم کارت</span>
+        </div>
+
+        <div id="CollectPaymentItem">
+            <div id="CollectPaymentItemLogoContainer">
+                <div id="CollectPaymentItemLogo"></div>
+            </div>
+            <span class="RegularText">نیکوکاری</span>
+        </div>
+
+        <div id="CollectPaymentItem">
+            <div id="CollectPaymentItemLogoContainer">
+                <div id="CollectPaymentItemLogo"></div>
+            </div>
+            <span class="RegularText">کمک به<br /> محیط زیست</span>
+        </div>
+
+        <div id="CollectPaymentItem">
+            <div id="CollectPaymentItemLogoContainer">
+                <div id="CollectPaymentItemLogo"></div>
+            </div>
+            <span class="RegularText">کوپن تخفیف</span>
+        </div>
+
+        <div id="CollectPaymentItem">
+            <div id="CollectPaymentItemLogoContainer">
+                <div id="CollectPaymentItemLogo"></div>
+            </div>
+            <span class="RegularText">محصولات</span>
+        </div>
+
+        <div id="CollectPaymentItem" onclick="window.location='@Url.Action("PayInCash","Collect")'">
+            <div id="CollectPaymentItemLogoContainer">
+                <div id="CollectPaymentItemLogo"></div>
+            </div>
+            <span class="RegularText">پرداخت نقدی</span>
+        </div>
+
+    </div>
+</div>
+
+<style>
+
+    @@media screen and (max-width:800px){
+        .CollectPaymentItemsContainer {
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            width: 100%;
+        }
+
+        #CollectPaymentItem{
+            margin-top:10px;
+        }
+
+    }
+
+</style>
+
+
+@Html.Partial("~/Areas/User/Views/Shared/ParialViews/_Menu.cshtml")
+@section EndOfPage
+{
+    @Html.Partial("~/Areas/User/Views/Shared/ParialViews/_PostHistoryLightBox.cshtml")
+}

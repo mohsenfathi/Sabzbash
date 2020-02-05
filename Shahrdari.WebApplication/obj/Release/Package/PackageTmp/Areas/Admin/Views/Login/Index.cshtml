@@ -1,0 +1,151 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <script src="~/Areas/Admin/Scripts/jquery.min.js"></script>
+    <link href="~/Areas/Admin/Styles/Login.css" rel="stylesheet" />
+    <title>ورود به سیستم</title>
+</head>
+<body>
+    <section id="TopMain"></section>
+    <section id="LoginSection">
+        <header id="LoginSectionHeader">
+            <img src="~/Areas/Admin/Images/CrmLogo.png" title="سیستم ارتباط با مشتری" alt="سیستم ارتباط با مشتری" />
+            <span>سیستم مدیریت پسماند</span>
+        </header>
+        <div id="LoginSectionContetn">
+            <div id="LoginSectionContetnImage"><img src="~/Areas/Admin/Images/LoginProfile.jpg" alt="تصویر پروفایل" title="تصویر پروفایل" /></div>
+            <span class="LoginSectionTitles">به سیستم مدیریت ارتباط با مشتری خوش آمدید </span>
+            <span class="LoginSectionTitles">نام کاربری و گذرواژه خودر را وارد کنید</span>
+            <table id="TblLogin">
+                <tr>
+                    <td colspan="2">
+                        <input class="txt" id="txtUser" type="text" placeholder="نام کاربری" />
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <input class="txt" id="txtPass" type="password" placeholder="گذرواژه" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <input class="txt" id="txtCaptcha" type="text" placeholder="کد امنیتی" />
+                    </td>
+                    <td>
+                        @{
+                            var cp = (Shahrdari.WebApplication.Classes.Models.MFCaptcha)ViewBag.CaptchaImage;
+                            var base64 = Convert.ToBase64String(cp.ImageContent);
+                            var imgSrc = String.Format("data:image/gif;base64,{0}", base64);
+                        }
+                        <img src="@imgSrc" id="imgCaptcha" style="float:left;width:180px;height:37px;margin-top:10px;" />
+                    </td>
+                </tr>
+                <tr>
+                    <td style="color:peru;" id="tdErrorMessage">
+                    </td>
+                    <td>
+                        <input type="button" class="btn" id="btnLogin" value="ورود" />
+                        <input type="button" class="btn" id="btnCaptcha" value="تغییر کد امنیتی" />
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <br />
+                        <a href="#">فراموشی گذرواژه</a>
+                        | <a href="#">مشکلی در ورود دارید ؟</a>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </section>
+    <section id="BottonMain">
+        <img src="~/Areas/Admin/Images/Logo.png" title="سیستم ارتباط با مشتری" alt="سیستم ارتباط با مشتری" width="60" />
+        <img src="~/Areas/Admin/Images/PouyanLogo.png" title="سیستم ارتباط با مشتری" alt="سیستم ارتباط با مشتری" width="60" /><br />
+        سیستم مدیریت نرم افزار خدماتی <a href="#">شرکت فنی مهندسی نوین پردازش</a><br /> تمامی حقوق محفوظ است
+    </section>
+
+
+    <script>
+        $(document).ready(function () {
+            $("#btnLogin").click(function () {
+                var user = $("#txtUser").val();
+                var pass = $("#txtPass").val();
+                var captcha = $("#txtCaptcha").val();
+                if (user == "") {
+                    $("#tdErrorMessage").html("نام کاربری را وارد کنید");
+                    return;
+                }
+                if (pass == "") {
+                    $("#tdErrorMessage").html("گذرواژه را وارد کنید");
+                    return;
+                }
+                if (captcha == "") {
+                    $("#tdErrorMessage").html("کد امنیتی را وارد کنید");
+                    return;
+                }
+                $("#tdErrorMessage").html("در حال ارسال");
+                document.getElementById("btnLogin").disabled = true;
+                $("#btnLogin").css("opacity", "0.1");
+                $.ajax({
+                    url: '@Url.Action("LoginRequest", "Login")',
+                    dataType: "html",
+                    type: "Post",
+                    data: { 'UName': user, 'Pass': pass, 'Captcha': captcha },
+                    success: Sus,
+                    error: Err
+                });
+            });
+            function Sus(data) {
+                if (data == "Sussess")
+                    window.location = '@Url.Action("Index", "Dashboard")';
+                else {
+                    $("#tdErrorMessage").html(data);
+                    $.ajax({
+                        url: '@Url.Action("ChangeCaptcha", "Login")',
+                        dataType: "html",
+                        type: "Post",
+                        success: function (data) {
+                            $("#imgCaptcha").attr("src", "data:image/gif;base64," + data);
+                            document.getElementById("btnLogin").disabled = false;
+                            $("#btnLogin").css("opacity", "1");
+                            var pass = $("#txtPass").val("");
+                            var captcha = $("#txtCaptcha").val("");
+                        },
+                        error: Err
+                    });
+                }
+            }
+            function Err(er) {
+                $("#btnLogin").css("opacity", "1");
+                document.getElementById("btnLogin").disabled = false;
+            }
+            $("#btnCaptcha").click(function () {
+                document.getElementById("btnCaptcha").disabled = true;
+                $("#btnCaptcha").css("opacity", "0.1");
+                $.ajax({
+                    url: '@Url.Action("ChangeCaptcha", "Login")',
+                    dataType: "html",
+                    type: "Post",
+                    success: function (data) {
+                        document.getElementById("btnCaptcha").disabled = false;
+                        $("#btnCaptcha").css("opacity", "1");
+                        $("#imgCaptcha").attr("src", "data:image/gif;base64," + data);
+                    },
+                    error: function (er) {
+                        document.getElementById("btnCaptcha").disabled = false;
+                        $("#btnCaptcha").css("opacity", "1");
+                    }
+                });
+            });
+        });
+    </script>
+
+</body>
+</html>

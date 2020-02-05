@@ -1,0 +1,37 @@
+﻿
+@{
+    ViewBag.Title = "CimCharge";
+    Layout = "~/Areas/User/Views/Shared/Layout/_master.cshtml";
+}
+
+<img src="~/Areas/User/Images/404Logo.png" id="CimChargeLogo"/>
+<span class="BigText">شارژ اعتباری سیمکارت</span>
+<h1> امتیاز شما: ۱۲۳۴ </h1>
+<div id="CimChargeContainer">
+    <div class="CimChargeItem"></div>
+    <div class="CimChargeItem"></div>
+    <div class="CimChargeItem CimChargeChecked"></div>
+</div>
+<span class="BigText" style="margin:10px 0;">مبلغ شارژ</span>
+<select class="TextInput">
+    <option>Hello</option>
+    <option>Hello</option>
+    <option>Hello</option>
+    <option>Hello</option>
+</select>
+<br />
+<input class="btn btnGreen"  value="درخواست" type="button" />
+
+<img src="~/Areas/User/Images/BackButton.png" onclick="window.location='@Url.Action("index","Collect")'" class="BackButton" />
+
+
+<script>
+    $(document).ready(function () {
+        $('.CimChargeItem').click(function () {
+            $('.CimChargeItem').removeClass('CimChargeChecked');
+            $(this).addClass('CimChargeChecked');
+        })
+    })
+    
+
+</script>

@@ -1,0 +1,36 @@
+﻿
+@{
+    ViewBag.Title = "صفحه ورود";
+    Layout = "~/Areas/Booth/Views/Shared/Layout/_master.cshtml";
+}
+
+<img src="~/Areas/User/Images/CapLogo.png" width="180" id="LoginPageIcon"/>
+<br />
+<span class="RegularText">برای ورود مشخصات خود را وارد کنید:‌</span>
+<br />
+<input type="text" id="txtPhoneNumber" mf-required class="TextInput" placeholder="نام کاربری" />
+<input type="password" id="txtPassword" mf-required class="TextInput" placeholder="گذرواژه" />
+<!--<input type="password" id="txtPassword" class="TextInput" placeholder="رمز عبور" /> -->
+<br />
+<input type="button" class="btn btnGreen" onclick="Login();" value="ورود" />
+<span class="RegularText" style="font-size:18px;width:100%;text-align:center;"> رمز عبور خود را فراموش کرده اید؟‌ <a class="BlackText" href="/Booth/Default/PasswordChange" style="cursor:pointer;"> اینجا </a> را کلیک کنید‌ </span>
+
+<script>
+    function Login() {
+        if (validateForm() == false)
+            return;
+        var param = {
+            PhoneNumber: $("#txtPhoneNumber").val(),
+            Password: $("#txtPassword").val(),
+        };
+        CallMethod("/Booth/Default/LoginSubmit", JSON.stringify(param), function (response) {
+            window.location = "/Booth/Default";
+        });
+    }
+</script>
+
+<style>
+    #LoginPageIcon {
+        margin-top: 10px;
+    }
+</style>

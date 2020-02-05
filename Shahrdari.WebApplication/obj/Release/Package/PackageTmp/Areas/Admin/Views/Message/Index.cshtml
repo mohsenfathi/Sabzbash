@@ -1,0 +1,29 @@
+﻿
+@{
+    ViewBag.Title = "لیست پیامها";
+    Layout = "~/Areas/Admin/Views/Shared/Layout/_master.cshtml";
+}
+
+<div class="ContentSection" mf-slice='1' id="divAddRole">
+    <div class="ContentSectionHeader">
+        پیامها<span>پیامهای ثبت شده در سیستم</span>
+    </div>
+    <input type="button" value="افزودن پیام جدید" class="btnSection btnFormBlue" onclick="window.location = '@Url.Action("Add", "Message")'" />
+    <table class="tbList">
+        <tr class="tbListHeader">
+            <td>شناسه</td>
+            <td>عنوان</td>
+            <td>عملیات</td>
+        </tr>
+        <tbody>
+            @foreach (var li in Model)
+            {
+                <tr>
+                    <td>@li.Id</td>
+                    <td>@li.title</td>
+                    <td><img class="tbListModifyIcon" src="~/Areas/Admin/Images/editIcon.png" onclick="window.location = '@Url.Action("Edit", "Message", new { Id = li.Id })';" /></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

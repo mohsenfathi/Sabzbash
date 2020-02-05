@@ -1,0 +1,504 @@
+﻿@model Shahrdari.ViewModels.V_ServicesRequests
+@{
+    ViewBag.Title = "مشاهده جزئیات درخواست";
+    Layout = "~/Areas/Admin/Views/Shared/Layout/_master.cshtml";
+}
+@using Shahrdari.BussinessLayer
+
+<input type="button" value="لیست درخواست ها" class="btnSection btnFormOrange" onclick="window.location = '@Url.Action("Index", "ServicesRequests")'" style="margin-right:10px;" />
+<input type="button" value="مشاهده روی نقشه" class="btnSection btnFormBlue" onclick="showGoogleMap();" style="margin-right:10px;" />
+
+@if (Model.Status != Shahrdari.Enums.E_PublicCategory.REQUEST_STATUS.CLOSED)
+{
+    <input type="button" value="ویرایش" class="btnSection btnFormBlue" onclick="window.location = '@Url.Action("Modify", "ServicesRequests", new { Id = Model.Id })'" style="margin-right:10px;" />
+}
+@if (Model.Status == Shahrdari.Enums.E_PublicCategory.REQUEST_STATUS.NEW_REQUEST)
+{
+    <input type="button" value="ارجا به کاربر" class="btnSection btnFormBlue" onclick="showDriver()" style="margin-right:10px;" />
+}
+else if (Model.Status == Shahrdari.Enums.E_PublicCategory.REQUEST_STATUS.APPROVED_AND_REFERENCED || Model.Status == Shahrdari.Enums.E_PublicCategory.REQUEST_STATUS.WAIT_FOR_GET)
+{
+    <input type="button" value="تغییر کاربر انجام دهنده" class="btnSection btnFormBlue" onclick="showDriver()" style="margin-right:10px;" />
+    <input type="button" value="اتمام و انجام درخواست" class="btnSection btnFormGreen" onclick="DoneRequest()" style="margin-right:10px;" />
+}
+
+<div class="ContentSection" mf-slice='1'>
+    <table class="tblDetails" style="margin-top:20px;">
+        <tr>
+            @if (Model.Status == Shahrdari.Enums.E_PublicCategory.REQUEST_STATUS.NEW_REQUEST)
+            {
+                <td style="color:#ff6a00">این درخواست جدید میباشد و برای انجام ارجا داده نشده</td>
+            }
+            else
+            {
+                <td>
+                    این درخواست در تاریخ <b>@Model.ToDoDate.Value.ConvertMiladiToShamsi()</b>
+                    و ساعت <b>@Model.ToDoDate.Value.Second : @Model.ToDoDate.Value.Minute : @Model.ToDoDate.Value.Hour</b>
+                    برای انجام به <b>@Model.ResponsiblePersonel.FirstName @Model.ResponsiblePersonel.LastName</b> با تلفن <b>@Model.ResponsiblePersonel.MobileNumber</b> ارجاع داده شده است
+                </td>
+            }
+        </tr>
+        <tr>
+            @if (Model.Status == Shahrdari.Enums.E_PublicCategory.REQUEST_STATUS.CLOSED)
+            {
+                <td style="color:#fff;background:#36bd26;">این درخواست با موفقیت به اتمام رسیده است</td>
+            }
+        </tr>
+    </table>
+</div>
+
+<div class="ContentSection" mf-slice='2'>
+    <div class="ContentSectionHeader">
+        مشخصات درخواست
+    </div>
+    <table class="tblDetails">
+        <tr>
+            <td>وضعیت درخواست : </td>
+            <td>@Model.RequetsStatus</td>
+        </tr>
+        <tr>
+            <td>تاریخ ایجاد : </td>
+            <td>@Model.CreateDate.ConvertMiladiToShamsi() ساعت @Model.CreateDate.Second : @Model.CreateDate.Minute : @Model.CreateDate.Hour</td>
+        </tr>
+        <tr>
+            <td>تاریخ ویرایش : </td>
+            <td>@(Model.UpdateDate.HasValue ? Model.UpdateDate.Value.ConvertMiladiToShamsi() + " ساعت " + Model.UpdateDate.Value.Second + " : " + Model.UpdateDate.Value.Minute + " : " + Model.UpdateDate.Value.Hour : "---")</td>
+        </tr>
+        <tr>
+            <td>درخواست آنی : </td>
+            <td>@(Model.ImmediatelyRequest ? "بلی" : "خیر")</td>
+        </tr>
+        <tr>
+            <td>تاریخ انجام کار : </td>
+            <td>@Model.ReferralDate.ConvertMiladiToShamsi() ساعت @Model.ReferralDate.Second : @Model.ReferralDate.Minute : @Model.ReferralDate.Hour</td>
+        </tr>
+        <tr>
+            <td>آدرس : </td>
+            <td>@Model.Address</td>
+        </tr>
+        <tr>
+            <td>پلاک : </td>
+            <td>@Model.PlaqueNumber</td>
+        </tr>
+        <tr>
+            <td>واحد : </td>
+            <td>@Model.UnitNumber</td>
+        </tr>
+        <tr>
+            <td>توضیحات : </td>
+            <td>@Model.Description</td>
+        </tr>
+        <tr>
+            <td>تاریخ اتمام کار : </td>
+            <td>@(Model.FinishDate.HasValue ? Model.FinishDate.Value.ConvertMiladiToShamsi() + " ساعت " + Model.FinishDate.Value.Second + " : " + Model.FinishDate.Value.Minute + " : " + Model.FinishDate.Value.Hour : "---")</td>
+        </tr>
+        <tr>
+            <td>امتیاز کاربر : </td>
+            <td>@(Model.Rate.HasValue ? Model.Rate.ToString() : "---")</td>
+        </tr>
+        <tr>
+            <td>توضیحات کاربر برای اتمام کار : </td>
+            <td>@Model.FinishComment</td>
+        </tr>
+    </table>
+</div>
+
+<div class="ContentSection" mf-slice='2'>
+    <div class="ContentSectionHeader">
+        مشخصات کاربر
+    </div>
+    <table class="tblDetails">
+        <tr>
+            <td colspan="2" style="text-align:center;"><img src="~/Areas/Admin/Images/Profile/@Model.User.ImageName" style="width:130px;height:130px;margin:10px;border-radius:50%;" /></td>
+        </tr>
+        <tr>
+            <td>نام : </td>
+            <td>@Model.User.FirstName</td>
+        </tr>
+        <tr>
+            <td>نام خانوادگی : </td>
+            <td>@Model.User.LastName</td>
+        </tr>
+        <tr>
+            <td>تاریخ تولد : </td>
+            <td>@(Model.User.BirthDate.HasValue ? Model.User.BirthDate.Value.ConvertMiladiToShamsi() : "---")</td>
+        </tr>
+        <tr>
+            <td>شماره تلفن : </td>
+            <td>@Model.User.MobileNumber</td>
+        </tr>
+        <tr>
+            <td>تاریخ ثبت نام : </td>
+            <td>@Model.User.RegisterDate.ConvertMiladiToShamsi() ساعت @Model.User.RegisterDate.Second : @Model.User.RegisterDate.Minute : @Model.User.RegisterDate.Hour</td>
+        </tr>
+    </table>
+</div>
+
+@if (Model.Status != Shahrdari.Enums.E_PublicCategory.REQUEST_STATUS.NEW_REQUEST)
+{
+    <div class="ContentSection" mf-slice='2'>
+        <div class="ContentSectionHeader">
+            مشخصات راننده
+        </div>
+        <table class="tblDetails">
+            <tr>
+                <td colspan="2" style="text-align:center;"><img src="~/Areas/Admin/Images/Profile/@Model.ResponsiblePersonel.ImageName" style="width:130px;height:130px;margin:10px;border-radius:50%;" /></td>
+            </tr>
+            <tr>
+                <td>نام : </td>
+                <td>@Model.ResponsiblePersonel.FirstName</td>
+            </tr>
+            <tr>
+                <td>نام خانوادگی : </td>
+                <td>@Model.ResponsiblePersonel.LastName</td>
+            </tr>
+            <tr>
+                <td>تاریخ ارجا : </td>
+                <td>@Model.ToDoDate.Value.ConvertMiladiToShamsi()</td>
+            </tr>
+            <tr>
+                <td>ساعت ارجا : </td>
+                <td>@Model.ToDoDate.Value.Second : @Model.ToDoDate.Value.Minute : @Model.ToDoDate.Value.Hour</td>
+            </tr>
+            <tr>
+                <td>شماره تلفن : </td>
+                <td>@Model.ResponsiblePersonel.MobileNumber</td>
+            </tr>
+        </table>
+    </div>
+}
+
+<div style="float:right;width:100%;height:1px;"></div>
+
+<div class="ContentSection" mf-slice='2'>
+    <div class="ContentSectionHeader">
+        لیست اعلامی کاربر
+    </div>
+    <table class="tbList">
+        <tr class="tbListHeader">
+            <td>نام</td>
+            <td>مقدار</td>
+        </tr>
+        <tbody>
+            @foreach (var li in ViewBag.UserList)
+            {
+                <tr>
+                    <td>@li.Title</td>
+                    <td>@li.Value @li.Unit</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+<div class="ContentSection" mf-slice='2'>
+    <div class="ContentSectionHeader">
+        لیست اعلامی راننده
+    </div>
+    <table class="tbList">
+        <tr class="tbListHeader">
+            <td>نام</td>
+            <td>مقدار</td>
+        </tr>
+        <tbody>
+            @foreach (var li in ViewBag.PersonelList)
+            {
+                <tr>
+                    <td>@li.Title</td>
+                    <td>@li.Value @li.Unit</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@section EndOfPage
+{
+    <div class="AllCLightBox" id="divAllSelectParent">
+        <div class="AllCLightBoxContetn" id="divAllSelectParentContetn">
+            <div class="AllCLightBoxHeader">
+                <span>نقشه</span>
+                <img src="/Areas/Admin/Images/LightBoxCloseIcon.png" width="30" onclick="hideParentSelectLightBox();" />
+            </div>
+            <div class="AllCLightBoxContent">
+                <div id="divGoogleMap" style="float:right;width:100%;height:calc(80vh - 110px);height:-o-calc(80vh - 110px);height:-ms-calc(80vh - 110px);height:-moz-calc(80vh - 110px);height:-webkit-calc(80vh - 110px);"></div>
+            </div>
+            <div class="AllCLightBoxFooter">
+                <input type="button" value="تایید" class="btnForm btnFormGreen" onclick="hideParentSelectLightBox();" />
+            </div>
+        </div>
+    </div>
+
+    <div class="AllCLightBox" id="divAllSelectDriver">
+        <div class="AllCLightBoxContetn" id="divAllSelectDriverContent">
+            <div class="AllCLightBoxHeader">
+                <span>ارجا به راننده</span>
+                <img src="/Areas/Admin/Images/LightBoxCloseIcon.png" width="30" onclick="hideParentSelectLightBox();" />
+            </div>
+            <div class="AllCLightBoxContent">
+
+                <table class="tbList">
+                    <tr class="tbListHeader">
+                        <td>نام</td>
+                        <td>نام خانوادگی</td>
+                        <td>نام کاربری</td>
+                        <td>تاریخ تولد</td>
+                        <td>وضعیت</td>
+                        <td>عملیات</td>
+                    </tr>
+                    <tbody>
+                        @foreach (var li in (List<Shahrdari.Models.M_Personels>)ViewBag.DriverList)
+                        {
+                            <tr style="background:#FFF;">
+                                <td>@li.FirstName</td>
+                                <td>@li.LastName</td>
+                                <td>@li.UserName</td>
+                                <td>@li.BirthDate.ConvertMiladiToShamsi()</td>
+                                <td>@(li.IsActive ? Html.Raw("<span style='color:#1bb394;'>فعال</span>") : Html.Raw("<span style='color:#ed5666;'>غیر فعال</span>"))</td>
+                                <td>
+                                    <input type="button" value="انتخاب" class="btnForm btnFormGreen" onclick="ChangeToDriver(@li.Id);" />
+                                </td>
+                            </tr>
+                        }
+                        @if (ViewBag.DriverList.Count == 0)
+                        {
+                            <tr style="background:#FFF;">
+                                <td colspan="6">هیچ راننده ای یافت نشد</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+            </div>
+            <div class="AllCLightBoxFooter">
+                <input type="button" value="تایید" class="btnForm btnFormGreen" onclick="hideParentSelectLightBox();" />
+            </div>
+        </div>
+    </div>
+
+    <div class="AllCLightBox" id="divAllFactorShow">
+        <div class="AllCLightBoxContetn" id="divAllFactorShowContetn">
+            <div class="AllCLightBoxHeader">
+                <span>نقشه</span>
+                <img src="/Areas/Admin/Images/LightBoxCloseIcon.png" width="30" onclick="hideParentSelectLightBox();" />
+            </div>
+            <div class="AllCLightBoxContent">
+                <div id="divFactor">
+                    <div class="ContentSection" mf-slice='2'>
+                        <div class="ContentSectionHeader">
+                            مشخصات کاربر
+                        </div>
+                        <table class="tblDetails">
+                            <tr>
+                                <td style="text-align:center;"><img src="~/Areas/Admin/Images/Profile/@Model.User.ImageName" style="width:130px;height:130px;margin:10px;border-radius:50%;" /></td>
+                                <td>
+                                    <table style="width:100%;float:right;">
+                                        <tr>
+                                            <td style="background:#fff;border:none;">نام : </td>
+                                            <td style="background:#fff;border:none;">@Model.User.FirstName</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="background:#fff;border:none;">نام خانوادگی : </td>
+                                            <td style="background:#fff;border:none;">@Model.User.LastName</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="background:#fff;border:none;">شماره تلفن : </td>
+                                            <td style="background:#fff;border:none;">@Model.User.MobileNumber</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div class="ContentSection" mf-slice='2'>
+                        <div class="ContentSectionHeader">
+                            مشخصات راننده
+                        </div>
+                        @if (Model.ResponsiblePersonel != null)
+                        {
+                            <table class="tblDetails">
+                                <tr>
+                                    <td style="text-align:center;"><img src="~/Areas/Admin/Images/Profile/@Model.ResponsiblePersonel.ImageName" style="width:130px;height:130px;margin:5px;border-radius:50%;" /></td>
+                                    <td>
+                                        <table style="width:100%;float:right;">
+                                            <tr>
+                                                <td style="background:#fff;border:none;">نام : </td>
+                                                <td style="background:#fff;border:none;">@Model.ResponsiblePersonel.FirstName</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="background:#fff;border:none;">نام خانوادگی : </td>
+                                                <td style="background:#fff;border:none;">@Model.ResponsiblePersonel.LastName</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="background:#fff;border:none;">شماره تلفن : </td>
+                                                <td style="background:#fff;border:none;">@Model.ResponsiblePersonel.MobileNumber</td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+                        }
+                    </div>
+
+                    <div class="ContentSection" mf-slice='1'>
+                        <table class="tblDetails" style="margin-top:0px;">
+                            <tr>
+                                @if (Model.Status == Shahrdari.Enums.E_PublicCategory.REQUEST_STATUS.NEW_REQUEST)
+                                {
+                                    <td style="color:#ff6a00">این درخواست جدید میباشد و برای انجام ارجا داده نشده</td>
+                                }
+                                else
+                                {
+                                    <td>
+                                        این درخواست در تاریخ <b>@Model.ToDoDate.Value.ConvertMiladiToShamsi()</b>
+                                        و ساعت <b>@Model.ToDoDate.Value.Second : @Model.ToDoDate.Value.Minute : @Model.ToDoDate.Value.Hour</b>
+                                        برای انجام در تاریخ <b>@Model.ReferralDate.ConvertMiladiToShamsi()</b>
+                                        و ساعت <b>@Model.ReferralDate.Second : @Model.ReferralDate.Minute : @Model.ReferralDate.Hour</b>
+                                        ارجاع داده شده است و وضعیت آن <b> @Model.RequetsStatus </b>میباشد .
+                                    </td>
+                                }
+                            </tr>
+                        </table>
+                        @if (Model.Status != Shahrdari.Enums.E_PublicCategory.REQUEST_STATUS.NEW_REQUEST)
+                        {
+                            <table class="tblDetails" id="tblDiscountUsedStatus" style="margin-top:0px;display:none;">
+                                <tr>
+                                    <td id="tdDiscountUsedStatus"></td>
+                                </tr>
+                            </table>
+                        }
+                    </div>
+                    <div class="ContentSection" mf-slice='1' id="divFactorDetailsLightBox">
+                        <div class="ContentSectionHeader">
+                            فاکتور
+                        </div>
+                        <table class="tbList">
+                            <tr class="tbListHeader">
+                                <td>عنوان</td>
+                                <td>نوع</td>
+                                <td>تعداد</td>
+                                <td>قیمت</td>
+                            </tr>
+                            <tbody id="tbdFactorData"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="AllCLightBoxFooter">
+                <input type="button" value="تایید" class="btnForm btnFormGreen" onclick="hideParentSelectLightBox();" />
+            </div>
+        </div>
+    </div>
+
+    <!--
+    <script src="~/ckeditor/ckeditor.js"></script>
+    <script src="~/ckeditor/adapters/jquery.js"></script>
+    -->
+
+    <script>
+        var haveLoad = false;
+
+        $(document).ready(function () {
+            if (haveLoad == true)
+                return;
+            haveLoad = true;
+
+            /*CKEDITOR.replace('txtComment', {
+                uiColor: '#cccccc',
+                toolbar: CKEditorToolbars
+            });*/
+        });
+
+        function hideParentSelectLightBox() {
+            $("#divAllSelectParentContetn").removeClass("AllLightBoxContetnShow");
+            $("#divAllSelectParent").fadeOut(150);
+            $("#divAllFactorShowContetn").removeClass("AllLightBoxContetnShow");
+            $("#divAllFactorShow").fadeOut(150);
+            $("#divAllSelectDriverContent").removeClass("AllLightBoxContetnShow");
+            $("#divAllSelectDriver").fadeOut(150);
+        }
+
+        var isLoadMap = false;
+        function showGoogleMap() {
+            $("#divAllSelectParentContetn").addClass("AllLightBoxContetnShow");
+            $("#divAllSelectParent").fadeIn(150, function () {
+
+                if (isLoadMap == true)
+                    return;
+                isLoadMap = true;
+
+                var tileJSONUrl = 'https://api.cedarmaps.com/v1/tiles/cedarmaps.streets.json?access_token=' + L.cedarmaps.accessToken;
+
+                var map = L.cedarmaps.map('divGoogleMap', tileJSONUrl, {
+                    scrollWheelZoom: true
+                }).setView([@Model.GeographicalCoordinates.Split(',')[0].Trim(), @Model.GeographicalCoordinates.Split(',')[1].Trim()], 11);
+
+
+                var markers = [
+                    { 'popupContent': 'موقعیت مکانی درخواست', 'center': { 'lat': @Model.GeographicalCoordinates.Split(',')[0].Trim(), 'lng': @Model.GeographicalCoordinates.Split(',')[1].Trim() }, 'iconOpts': { 'iconUrl': '/Areas/Admin/Images/MapMarkerOther.png', 'iconRetinaUrl': '/Areas/Admin/Images/MapMarkerOther.png', 'iconSize': [30, 38] } }
+                ];
+                var markersLeaflet = [];
+                var _marker = null;
+
+
+                if (markers.length === 0) return;
+                markers.map(function (marker) {
+                    var iconOpts = {
+                        iconUrl: marker.iconOpts.iconUrl,
+                        iconRetinaUrl: marker.iconOpts.iconRetinaUrl,
+                        iconSize: marker.iconOpts.iconSize,
+                        popupAnchor: [0, -49]
+                    };
+
+                    const markerIcon = {
+                        icon: window.L.icon(iconOpts)
+                    };
+
+                    _marker = new window.L.marker(marker.center, markerIcon);
+                    markersLeaflet.push(_marker);
+                    if (marker.popupContent) {
+                        _marker.bindPopup(marker.popupContent);
+                    }
+                    _marker.addTo(map);
+                });
+            });
+        }
+
+        function showDriver()
+        {
+            $("#divAllSelectDriverContent").addClass("AllLightBoxContetnShow");
+            $("#divAllSelectDriver").fadeIn(150);
+        }
+
+        function ChangeToDriver(DriverId)
+        {
+            ShowConfirm("توجه", "از ارجا به این راننده مطمئن هستید ؟", MessageType.Information, function () {
+                CallMethod('@Url.Action("ReferRequest", "ServicesRequests")', "{ Id : @Model.Id , DriverId : " + DriverId+" }", "divAllSelectDriverContent", function (response) {
+                    ShowMessage("توجه", "عملیات با موفقیت انجام شد", MessageType.Succes, function () {
+                        setTimeout(function () {
+                            ShowMessage("توجه", "برای اعمل تغییرات صفحه به روز رسانی میشود", MessageType.Information, function () {
+                                window.location.reload()
+                            });
+                        }, 500);
+                    });
+                });
+            });
+        }
+
+        function DoneRequest()
+        {
+            ShowConfirm("توجه", "از ااتمام کار این درخواست مطمئن هستید ؟", MessageType.Information, function () {
+                CallMethod('@Url.Action("DoneRequest", "ServicesRequests")', "{ Id : @Model.Id }", "AllMain", function (response) {
+                    ShowMessage("توجه", "عملیات با موفقیت انجام شد", MessageType.Succes, function () {
+                        setTimeout(function () {
+                            ShowMessage("توجه", "برای اعمل تغییرات صفحه به روز رسانی میشود", MessageType.Information, function () {
+                                window.location.reload()
+                            });
+                        }, 500);
+                    });
+                });
+            });
+        }
+
+    </script>
+}

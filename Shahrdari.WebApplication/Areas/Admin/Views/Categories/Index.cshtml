@@ -1,0 +1,35 @@
+﻿@model List<Shahrdari.Models.M_ServicesCategories>
+@{
+    ViewBag.Title = "دسته بندی افزوده شده";
+    Layout = "~/Areas/Admin/Views/Shared/Layout/_master.cshtml";
+}
+
+
+<div class="ContentSection" mf-slice='1' id="divAddRole">
+    <div class="ContentSectionHeader">
+        دسته بندی<span>همه ی دسته بندی های اضافه شده</span>
+    </div>
+    <input type="button" value="افزودن دسته بندی جدید" class="btnSection btnFormBlue" onclick="window.location = '@Url.Action("Add", "Categories")'" />
+    <table class="tbList">
+        <tr class="tbListHeader">
+            <td>عنوان</td>
+            <td>توضیحات</td>
+            <td>وضعیت</td>
+            <td>مسیر</td>
+            <td>عملیات</td>
+        </tr>
+        <tbody>
+            @foreach (var li in Model)
+            {
+                <tr>
+                    <td>@li.Title</td>
+                    <td>@li.Description</td>
+                    <td>@(li.IsActive ? Html.Raw("<span style='color:#1bb394;'>فعال</span>") : Html.Raw("<span style='color:#ed5666;'>غیر فعال</span>"))</td>
+                    <td>@li.Route</td>
+                    <td><img class="tbListModifyIcon" src="~/Areas/Admin/Images/editIcon.png" onclick="window.location = '@Url.Action("Modify", "Categories", new { Id = li.Id })';" /></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+

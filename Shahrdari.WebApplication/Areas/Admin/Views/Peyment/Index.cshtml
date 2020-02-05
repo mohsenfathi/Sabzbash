@@ -1,0 +1,272 @@
+﻿
+@{
+    ViewBag.Title = "لیست درخواست های تسویه";
+    Layout = "~/Areas/Admin/Views/Shared/Layout/_master.cshtml";
+}
+
+<div class="ContentSection" mf-slice='1' id="divAllPersonel">
+    <div class="ContentSectionHeader">
+        درخواست های تسویه<span> جستجوی درخواست های تسویه</span>
+    </div>
+    <table class="tbForm">
+        <tr>
+            <td>
+                <select class="txtForm drpForm" id="drpStatus">
+                    <option value="0">همه وضعیت ها</option>
+                    @foreach (Shahrdari.Models.M_PublicCategory li in ViewBag.PayTypes)
+                    {
+                        <option value="@li.Id">@li.Title</option>
+                    }
+                </select>
+                <div class="altForm">وضعیت درخواست را انتخاب کنید</div>
+            </td>
+            <td>
+                <select class="txtForm drpForm" id="drpType">
+                    <option value="0">همه انواع</option>
+                    @foreach (Shahrdari.Models.M_PublicCategory li in ViewBag.PayStatus)
+                    {
+                        <option value="@li.Id">@li.Title</option>
+                    }
+                </select>
+                <div class="altForm">نوع درخواست را انتخاب کنید</div>
+            </td>
+            <td>
+                <input type="button" value="جستجو" class="btnSection btnFormBlue" onclick="GetDatas(0);" style="float:right;margin-right:10px;" />
+            </td>
+        </tr>
+    </table>
+</div>
+
+<div class="ContentSection" mf-slice='1' id="divAddRole">
+    <div class="ContentSectionHeader">
+        درخواست تسویه<span> همه ی درخواست های تسویه ثبت شده در سیستم</span>
+    </div>
+    <table class="tbList">
+        <tr class="tbListHeader">
+            <td>عنوان</td>
+            <td>تاریخ ایجاد</td>
+            <td>وضعیت</td>
+            <td>امتیاز</td>
+            <td>عملیات</td>
+        </tr>
+        <tbody id="TbodyData"></tbody>
+    </table>
+</div>
+<input type="button" value="بارگذاری بیشتر ..." class="btnSection btnFormBlue" id="btnUserLoad" onclick="getDatas(1);" style="float:right;margin-bottom:35px;margin-top:0px;display:none;" />
+
+@section EndOfPage
+{
+    <div class="AllCLightBox" id="divAllSelectParent">
+        <div class="AllCLightBoxContetn" id="divAllSelectParentContetn">
+            <div class="AllCLightBoxHeader">
+                <span>درخواست تسویه</span>
+                <img src="/Areas/Admin/Images/LightBoxCloseIcon.png" width="30" onclick="hideParentSelectLightBox();" />
+            </div>
+            <div class="AllCLightBoxContent" style="overflow:auto">
+
+                <div class="ContentSection" mf-slice='1'>
+                    <div class="ContentSectionHeader">
+                        مشخصات هویتی
+                    </div>
+                    <table class="tblDetails">
+                        <tr>
+                            <td style="text-align:center;"><img id="imgPointDetails" src="~/Areas/Admin/Images/Profile/Default.jpg" style="width:130px;height:130px;margin:10px;border-radius:50%;" /></td>
+                            <td>
+                                <table style="width:100%;float:right;">
+                                    <tr>
+                                        <td style="background:#fff;border:none;">نام : </td>
+                                        <td style="background:#fff;border:none;" id="tdPointName"></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="background:#fff;border:none;">تاریخ عضویت : </td>
+                                        <td style="background:#fff;border:none;" id="tdPointRegisterDate"></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="background:#fff;border:none;">تلفن : </td>
+                                        <td style="background:#fff;border:none;" id="tdPointTell"></td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="ContentSection" mf-slice='2'>
+                    <div class="ContentSectionHeader">
+                        اطلاعات تسویه
+                    </div>
+                    <table class="tblDetails">
+                        <tr>
+                            <td>
+                                <table style="width:100%;float:right;">
+                                    <tr>
+                                        <td style="background:#fff;border:none;">امتیاز خرج شده : </td>
+                                        <td style="background:#fff;border:none;" id="tdLightBoxPoint"></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="background:#fff;border:none;">تاریخ ایجاد : </td>
+                                        <td style="background:#fff;border:none;" id="tdLightBoxCreateDate"></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="background:#fff;border:none;">تاریخ ویرایش : </td>
+                                        <td style="background:#fff;border:none;" id="tdPointTotalEditDate"></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="background:#fff;border:none;">وضعیت : </td>
+                                        <td style="background:#fff;border:none;" id="tdPointTotalStatus"></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="background:#fff;border:none;">پیام : </td>
+                                        <td style="background:#fff;border:none;" id="tdPointTotalMessage"></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="background:#fff;border:none;">نوع : </td>
+                                        <td style="background:#fff;border:none;" id="tdPointTotalType"></td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="ContentSection" mf-slice='2'>
+                    <div class="ContentSectionHeader">
+                        اطلاعات حساب
+                    </div>
+                    <table class="tblDetails">
+                        <tr>
+                            <td>
+                                <table style="width:100%;float:right;">
+                                    <tr>
+                                        <td style="background:#fff;border:none;">شماره شبا : </td>
+                                        <td style="background:#fff;border:none;" id="tdLightBoxShaba"></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="background:#fff;border:none;">دارنده حساب : </td>
+                                        <td style="background:#fff;border:none;" id="tdPointPayAccountOwner"></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="background:#fff;border:none;">نام بانک : </td>
+                                        <td style="background:#fff;border:none;" id="tdPointTotalBankName"></td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+
+            </div>
+            <div class="AllCLightBoxFooter">
+                <input type="button" value="تایید" class="btnForm btnFormBlue" onclick="hideParentSelectLightBox();" />
+                &emsp;&emsp;|&emsp;&emsp;
+                <input id="btnDone" type="button" value="انجام شده" class="btnForm btnFormGreen" onclick="ChangeStatus(@((int)Shahrdari.Enums.E_PublicCategory.PAYMENT_STATUS.SUCCESS));" />
+                <input id="btnPendding" type="button" value="در حال بررسی" class="btnForm btnFormOrange" onclick="ChangeStatus(@((int)Shahrdari.Enums.E_PublicCategory.PAYMENT_STATUS.PENDING));" />
+                <input id="btnFaild" type="button" value="لغو درخواست" class="btnForm btnFormRed" onclick="ChangeStatus(@((int)Shahrdari.Enums.E_PublicCategory.PAYMENT_STATUS.FAILED));" />
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var pageNumber = 1;
+        var lastDialogPayId = 0;
+
+        $(document).ready(function () {
+            GetDatas(0);
+        });
+
+        function GetDatas(haveReset) {
+            if (haveReset == 0)
+                pageNumber = 1;
+            else
+                pageNumber++;
+
+            var param = {};
+            param["PageNumber"] = pageNumber;
+            param["Type"] = $("#drpType").val() == 0 ? null : $("#drpType").val();
+            param["Status"] = $("#drpStatus").val() == 0 ? null : $("#drpStatus").val();
+
+            CallMethod("@Url.Action("GetPayments", "Peyment")", JSON.stringify(param), "divAddRole", function (response) {
+                var counter = 0;
+                if (haveReset == 0)
+                    $("#TbodyData").html("");
+                $(response).each(function () {
+                    counter++;
+                    var status = "<span style='color:red;'>درخواست جدید</span>";
+                    if (this["StatusCode"] != @((int)Shahrdari.Enums.E_PublicCategory.PAYMENT_STATUS.NEW))
+                        status = this.Status;
+                    $("#TbodyData").append(
+                        "<tr>"
+                        + "<td>" + this["Title"] + "</td>"
+                        + "<td>" + this["CreateDate"] + "</td>"
+                        + "<td>" + status + "</td>"
+                        + "<td>" + this["Score"] + "</td>"
+                        + "<td>"
+                        + "<img class='tbListModifyIcon' src='/Areas/Admin/Images/ShowDetails.png' onclick='ShowDetails(" + this["Id"] + ")' />"
+                        + "</td></tr>"
+                    );
+                });
+                if (counter < 30)
+                    $("#btnUserLoad").hide(250);
+                else
+                    $("#btnUserLoad").show(250);
+            });
+        }
+
+        function ShowDetails(PayId)
+        {
+            lastDialogPayId = PayId;
+            $("#btnDone").hide();
+            $("#btnPendding").hide();
+            $("#btnFaild").hide();
+
+            $("#divAllSelectParentContetn").addClass("AllLightBoxContetnShow");
+            $("#divAllSelectParent").fadeIn(150, function () {
+                CallMethod('@Url.Action("GetPeymentDetails", "Peyment")', "{PayId:" + PayId + "}", "divAllSelectParentContetn", function (response) {
+
+                    $("#tdPointName").html(response.User.Name);
+                    $("#tdPointRegisterDate").html(response.User.RegisterDate);
+                    $("#tdPointTell").html(response.User.Tell);
+                    $("#imgPointDetails").attr("src", "/Areas/Admin/Images/Profile/" + response.User.Image);
+
+                    $("#tdLightBoxPoint").html(response.Payment.Point);
+                    $("#tdLightBoxCreateDate").html(response.Payment.CreateDate);
+                    $("#tdPointTotalEditDate").html(response.Payment.EditDate);
+                    $("#tdPointTotalStatus").html(response.Payment.Status);
+                    $("#tdPointTotalMessage").html(response.Payment.Message);
+                    $("#tdPointTotalType").html(response.Payment.Type);
+
+                    $("#tdLightBoxShaba").html(response.AccountInfo.Shaba);
+                    $("#tdPointPayAccountOwner").html(response.AccountInfo.PayAccountOwner);
+                    $("#tdPointTotalBankName").html(response.AccountInfo.BankName);
+
+                    if (response.Payment.StatusCode == @((int)Shahrdari.Enums.E_PublicCategory.PAYMENT_STATUS.NEW) || response.Payment.StatusCode == @((int)Shahrdari.Enums.E_PublicCategory.PAYMENT_STATUS.PENDING))
+                    {
+                        $("#btnDone").show();
+                        $("#btnPendding").show();
+                        $("#btnFaild").show();
+                    }
+                    else
+                    {
+                        $("#btnDone").hide();
+                        $("#btnPendding").hide();
+                        $("#btnFaild").hide();
+                    }
+                });
+            });
+        }
+
+        function hideParentSelectLightBox() {
+            $("#divAllSelectParentContetn").removeClass("AllLightBoxContetnShow");
+            $("#divAllSelectParent").fadeOut(150);
+        }
+
+        function ChangeStatus(status) {
+            CallMethod('@Url.Action("ChangeState", "Peyment")', "{Status: " + status + ",PayId:" + lastDialogPayId + "}", "divAllSelectParentContetn", function (response) {
+                $("#divAllSelectParentContetn").removeClass("AllLightBoxContetnShow");
+                $("#divAllSelectParent").fadeOut(150, function () {
+                    ShowMessage("توجه", "عملیات با موفقیت انجام شد", MessageType.Succes, function () { GetDatas(0) });
+                });
+            });
+        }
+    </script>
+}

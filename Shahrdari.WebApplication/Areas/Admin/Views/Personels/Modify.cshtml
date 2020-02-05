@@ -1,0 +1,462 @@
+﻿@model Shahrdari.Models.M_Personels
+@{
+    ViewBag.Title = "ویرایش و حذف کارمند";
+    Layout = "~/Areas/Admin/Views/Shared/Layout/_master.cshtml";
+    var boothInfo = ViewBag.Booth == null ? null : (Shahrdari.Models.M_BoothInfo)ViewBag.Booth;
+    var carInfo = ViewBag.Car == null ? null : (Shahrdari.Models.M_CarInfo)ViewBag.Car;
+}
+@using Shahrdari.BussinessLayer
+
+<div class="ContentSection" mf-slice='1' id="divAllPersonel">
+    <div class="ContentSectionHeader">
+        کارمند ها<span> افزودن افزودن کارمند جدید</span>
+        <input type="button" style="float:left;" value="بازگشت" class="btnForm btnFormOrange" onclick="window.location = '@Url.Action("Index", "Personels")'" />
+    </div>
+    <table class="tbForm">
+        <tr>
+            <td>
+                <input type="text" class="txtForm" id="txtName" placeholder="نام" mf-required maxlength="50" value="@Model.FirstName" />
+                <div class="altForm">نام را وارد کنید</div>
+            </td>
+            <td>
+                <input type="text" class="txtForm" id="txtFamily" placeholder="نام خانوادگی" mf-required maxlength="50" value="@Model.LastName" />
+                <div class="altForm">نام خانوادگی را وارد کنید</div>
+            </td>
+            <td>
+                <input type="text" class="txtForm txtDate" id="txtBirthDate" placeholder="تاریخ تولد" mf-required readonly value="@Model.BirthDate.ConvertMiladiToShamsi()" />
+                <div class="altForm">تاریخ تولد را وارد کنید</div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <input type="text" class="txtForm" id="txtUserName" placeholder="نام کاربری" mf-required maxlength="50" value="@Model.UserName" />
+                <div class="altForm">نام کاربری را وارد کنید</div>
+            </td>
+            <td>
+                <input type="password" class="txtForm" id="txtPassword" placeholder="گذرواژه" mf-required maxlength="50" value="@Model.Password" />
+                <div class="altForm">گذرواژه را وارد کنید</div>
+            </td>
+            <td>
+                <input type="text" mf-type='IntNumber' class="txtForm" id="txtMobile" placeholder="تلفن همراه" mf-required maxlength="11" value="@Model.MobileNumber" />
+                <div class="altForm">تلفن همراه را وارد کنید</div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <select class="txtForm drpForm" id="drpRole">
+                    @foreach (Shahrdari.Models.M_PersonelRoles li in ViewBag.Roles)
+                    {
+                        <option value="@li.Id" @(li.Id == Model.PersonelRoleId ? "selected" : "")>@li.Title</option>
+                    }
+                </select>
+                <div class="altForm">نقش کاربر را انتخاب کنید</div>
+            </td>
+            <td>
+                <span class="FormInputTitle">وضعیت :</span>
+                <label class="control control--radio">
+                    <input type="radio" name="PersonelStatus" @(Model.IsActive ? "checked" : "") value="true" />
+                    <div class="control__indicator"></div><span>فعال</span>
+                </label>
+                <label class="control control--radio">
+                    <input type="radio" name="PersonelStatus" value="false" @(!Model.IsActive ? "checked" : "") />
+                    <div class="control__indicator"></div><span>غیر فعال</span>
+                </label>
+            </td>
+            <td>
+                <span class="FormInputTitle">جنسیت :</span>
+                <label class="control control--radio">
+                    <input type="radio" value="@((decimal)Shahrdari.Enums.E_PublicCategory.GENDER.MAN)" @(Model.Gender == Shahrdari.Enums.E_PublicCategory.GENDER.MAN ? "checked" : "") name="Gender" />
+                    <div class="control__indicator"></div><span>مرد</span>
+                </label>
+                <label class="control control--radio">
+                    <input type="radio" value="@((decimal)Shahrdari.Enums.E_PublicCategory.GENDER.WOMAN)" @(Model.Gender == Shahrdari.Enums.E_PublicCategory.GENDER.WOMAN ? "checked" : "") name="Gender" />
+                    <div class="control__indicator"></div><span>زن</span>
+                </label>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="3">
+                <span class="fileUploadTitle">تصویر کاربر : </span>
+                <div class="fileUpload">&nbsp;&nbsp;انتخاب فایل<input id="uplProfileImage" type="file" accept=".jpg" class="upload" mf-upload-role="UserImage" mf-accept="jpg" onchange="UploadChangeEvent(this,true,'@Model.ImageName','imgProfilePreview');" /></div>
+                <div class="fileUploadAddress" mf-upload-role="UserImage">فایلی انتخاب نشده</div>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="3">
+                <span class="FormInputTitle">پیش نمایش :</span>
+                <img src="~/Areas/Admin/Images/Profile/@Model.ImageName" style="border-radius:50%;" width="100" height="100" alt="پیش نمایش" id="imgProfilePreview" />
+            </td>
+        </tr>
+    </table>
+    <div class="ContentSectionHeader">
+        اطلاعات تکمیلی<span>اطلاعات تکمیلی پرسنل</span>
+    </div>
+    <table class="tbForm">
+        <tr>
+            <td>
+                <label class="control control--radio">
+                    <input type="radio" @(Model.PersonelType == Shahrdari.Enums.E_PublicCategory.PERSONEL_TYPE.ONLY_PORTAL_USER ? "checked" : "") name="PersonelType" value="@((decimal)Shahrdari.Enums.E_PublicCategory.PERSONEL_TYPE.ONLY_PORTAL_USER)" onchange="changePersonelType();" />
+                    <div class="control__indicator"></div><span>فقط کاربر پرتال</span>
+                </label>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label class="control control--radio">
+                    <input type="radio" @(Model.PersonelType == Shahrdari.Enums.E_PublicCategory.PERSONEL_TYPE.DRIVER ? "checked" : "") name="PersonelType" value="@((decimal)Shahrdari.Enums.E_PublicCategory.PERSONEL_TYPE.DRIVER)" onchange="changePersonelType();" />
+                    <div class="control__indicator"></div><span>راننده</span>
+                </label>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <select class="txtForm drpForm" disabled id="drpVichleType">
+                    @{
+                        foreach (var li in (List<Shahrdari.Models.M_PublicCategory>)ViewBag.VehicleType)
+                        {
+                            <option @(carInfo != null ? ((int)carInfo.Type == li.Id ? "checked" : "") : "") value="@li.Id">@li.Title</option>
+                        }
+                    }
+                </select>
+                <div class="altForm">نوع وسیله نقلیه را انتخاب کنید</div>
+            </td>
+            <td>
+                <input type="text" value="@(carInfo != null ? carInfo.TagFirst.ToString() : "")" class="txtForm" disabled id="txtVichlePlaqFirtNum" placeholder="2 رقم اول پلاک وسیله نقلیه" mf-required />
+                <div class="altForm">2 رقم اول پلاک وسیله نقلیه را وارد کنید</div>
+            </td>
+            <td>
+                <input type="text" value="@(carInfo != null ? carInfo.TagMiddle : "")" class="txtForm" disabled id="txtVichlePlaqWord" placeholder="حرف پلاک وسیله نقلیه" />
+                <div class="altForm">حرف پلاک وسیله نقلیه را وارد کنید</div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <input type="text" value="@(carInfo != null ? carInfo.TagLast.ToString() : "")" class="txtForm" disabled id="txtVichlePlaqLastNum" placeholder="3 رقم پلاک وسیله نقلیه" />
+                <div class="altForm">3 رقم پلاک وسیله نقلیه را وارد کنید</div>
+            </td>
+            <td>
+                <input type="text" value="@(carInfo != null ? carInfo.TagNational.ToString() : "")" class="txtForm" disabled id="txtVichleNationalId" placeholder="شناسه ملی پلاک وسیله نقلیه" />
+                <div class="altForm">شناسه ملی پلاک وسیله نقلیه را وارد کنید</div>
+            </td>
+            <td>
+                <select class="txtForm drpForm" disabled id="drpVichlePlaqColor">
+                    @{
+                        foreach (var li in (List<Shahrdari.Models.M_PublicCategory>)ViewBag.PlaqColor)
+                        {
+                            <option @(carInfo != null ? ((int)carInfo.TagColor == li.Id ? "checked" : "") : "") value="@li.Id">@li.Title</option>
+                        }
+                    }
+                </select>
+                <div class="altForm">رنگ پلاک وسیله نقلیه را انتخاب کنید</div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <input type="text" value="@(carInfo != null ? carInfo.Name : "")" class="txtForm" disabled id="txtVichleName" placeholder="نام وسیله نقلیه" />
+                <div class="altForm">نام وسیله نقلیه</div>
+            </td>
+            <td>
+                <input type="text" value="@(carInfo != null ? carInfo.Color : "")" class="txtForm" disabled id="txtVichleColor" placeholder="رنگ وسیله نقلیه" />
+                <div class="altForm">رنگ وسیله نقلیه را وارد کنید</div>
+            </td>
+            <td>
+                <input type="text" mf-type='IntNumber' value="@(carInfo != null ? carInfo.Capacity.ToString() : "")" disabled class="txtForm" id="txtVichleCapacity" placeholder="ظرفیت وسیله نقلیه" />
+                <div class="altForm">ظرفیت وسیله نقلیه را وارد کنید</div>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="3">
+                <span class="fileUploadTitle">تصویر : </span>
+                <div class="fileUpload">&nbsp;&nbsp;انتخاب فایل<input type="file" accept=".jpg" class="upload" mf-upload-role="CarImage" mf-accept="jpg" mf-max-lenght="3" onchange="UploadFileCar(true, this)" /></div>
+                <div class="fileUploadAddress" mf-upload-role="CarImage">فایلی انتخاب نشده</div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label class="control control--radio">
+                    <input type="radio" @(Model.PersonelType == Shahrdari.Enums.E_PublicCategory.PERSONEL_TYPE.INTEGRATION_CENTER ? "checked" : "") name="PersonelType" value="@((decimal)Shahrdari.Enums.E_PublicCategory.PERSONEL_TYPE.INTEGRATION_CENTER)" onchange="changePersonelType();" />
+                    <div class="control__indicator"></div><span>مرگز تجمیع</span>
+                </label>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label class="control control--radio">
+                    <input type="radio" name="PersonelType" @(Model.PersonelType == Shahrdari.Enums.E_PublicCategory.PERSONEL_TYPE.SUM_CENER ? "checked" : "") value="@((decimal)Shahrdari.Enums.E_PublicCategory.PERSONEL_TYPE.SUM_CENER)" onchange="changePersonelType();" />
+                    <div class="control__indicator"></div><span>غرفه</span>
+                </label>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <input type="text" value="@(boothInfo != null ? boothInfo.Name : "")" class="txtForm" maxlength="50" disabled id="txtCenterName" placeholder="نام مرکز" mf-required />
+                <div class="altForm">نام مرکز را وارد کنید</div>
+            </td>
+            <td>
+                <input type="text" value="@(boothInfo != null ? boothInfo.Address : "")" class="txtForm" maxlength="200" disabled id="txtCenterAddress" placeholder="آدرس مرکز" mf-required />
+                <div class="altForm">آدرس مرکز را وارد کنید</div>
+            </td>
+            <td>
+                <input type="text" value="@(boothInfo != null ? boothInfo.Description : "")" class="txtForm" maxlength="500" disabled id="txtCenterDesc" placeholder="توضیحات مرکز" mf-required />
+                <div class="altForm">توضیحات مرکز را وارد کنید</div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <input type="text" value="@(boothInfo != null ? boothInfo.Lat + "," + boothInfo.Lng : "")" readonly disabled class="txtForm" style="width:calc(100% - 107px)" maxlength="50" id="txtCenterLocation" placeholder="مختصات جغرافیایی" mf-required />
+                <input type="button" value="انتخاب" style="margin-top:9px" class="btnForm btnFormGreen" onclick="showMaps();" />
+                <div class="altForm">مختصات جغرافیایی را وارد کنید</div>
+            </td>
+            <td>
+                <input type="text" value="@(boothInfo != null ? boothInfo.Capacity.ToString() : "")" mf-type='IntNumber' disabled class="txtForm" id="txtCenterCapacity" placeholder="ظرفیت وسیله نقلیه" />
+                <div class="altForm">ظرفیت مرکز را وارد کنید</div>
+            </td>
+            <td>
+                <span class="fileUploadTitle">تصویر : </span>
+                <div class="fileUpload">&nbsp;&nbsp;انتخاب فایل<input type="file" accept=".jpg" class="upload" mf-upload-role="BoothImage" mf-accept="jpg" mf-max-lenght="3" onchange="UploadFileCar(false, this)" /></div>
+                <div class="fileUploadAddress" mf-upload-role="BoothImage">فایلی انتخاب نشده</div>
+            </td>
+        </tr>
+    </table>
+    <div class="ContentSectionFooter">
+        <input type="button" value="ویرایش" class="btnForm btnFormGreen" onclick="submitForm();" />
+        <input type="button" value="حذف" class="btnForm btnFormRed" onclick="deleteUser();" />
+        <input type="button" value="انصراف" class="btnForm btnFormOrange" onclick="window.location = '@Url.Action("Index", "Personels")'" />
+    </div>
+</div>
+
+@section EndOfPage
+{
+    <div class="AllCLightBox" id="divAllSelectParent">
+        <div class="AllCLightBoxContetn" id="divAllSelectParentContetn">
+            <div class="AllCLightBoxHeader">
+                <span>نقشه</span>
+                <img src="/Areas/Admin/Images/LightBoxCloseIcon.png" width="30" onclick="hideParentSelectLightBox();" />
+            </div>
+            <div class="AllCLightBoxContent">
+                <div id="divMap" style="float:right;width:100%;height:calc(80vh - 110px);"></div>
+            </div>
+            <div class="AllCLightBoxFooter">
+                <input type="button" value="تایید" class="btnForm btnFormGreen" onclick="hideParentSelectLightBox(true);" />
+                <input type="button" value="انصراف" class="btnForm btnFormRed" onclick="hideParentSelectLightBox();" />
+            </div>
+        </div>
+    </div>
+    <script>
+
+        var CarImage =  '@(carInfo != null ? carInfo.Image : "")', BoothInfoImage =  '@(boothInfo != null ? boothInfo.ImageName : "")';
+        var geoLocation =  '@(boothInfo != null ? boothInfo.Lat + "," + boothInfo.Lng : "")';
+        var haveLoadMap = false;
+
+        changePersonelType();
+
+        function submitForm() {
+            if (validateForm() == false)
+                return;
+            if (!IsValidShamsiDate($("#txtBirthDate").val())) {
+                ShowMessage("توجه", "تاریخ تولد صحیح نیست", MessageType.Warning);
+                return;
+            }
+
+
+            var param = {};
+            var personelType = $("input[name=PersonelType]:checked").val()
+            var strBirth = $("#txtBirthDate").val().split("/");
+            param["Personel"] = {
+                Id : @Model.Id,
+                FirstName : $("#txtName").val(),
+                LastName : $("#txtFamily").val(),
+                UserName : $("#txtUserName").val(),
+                Password : $("#txtPassword").val(),
+                BirthDate : ConverShamsiToMiladi(strBirth[0], strBirth[1], strBirth[2]),
+                MobileNumber : $("#txtMobile").val(),
+                Gender : $("input[name=Gender]:checked").val(),
+                IsActive : $("input[name=PersonelStatus]:checked").val(),
+                PersonelRoleId : $("#drpRole").val(),
+                PersonelType: personelType,
+                VehicleType: $("#drpVichleType").val(),
+                VehiclePlaq: "No",
+                VehicleDesc: "No",
+                SumCenterAddress: "No",
+                SumCenterTell: "No"
+            }
+
+            param["CareInfo"] = null;
+            param["BoothInfo"] = null;
+
+            if (personelType == @((decimal)Shahrdari.Enums.E_PublicCategory.PERSONEL_TYPE.DRIVER))
+            {
+                param["CareInfo"] = {
+                    Id : @(carInfo != null ? carInfo.Id : 0),
+                    Name: $("#txtVichleName").val(),
+                    TagFirst: $("#txtVichlePlaqFirtNum").val(),
+                    TagMiddle: $("#txtVichlePlaqWord").val(),
+                    TagLast: $("#txtVichlePlaqLastNum").val(),
+                    TagNational: $("#txtVichleNationalId").val(),
+                    TagColor: $("#drpVichlePlaqColor").val(),
+                    Image: CarImage,
+                    Color: $("#txtVichleColor").val(),
+                    Type: $("#drpVichleType").val(),
+                    Capacity: $("#txtVichleCapacity").val()
+                }
+            }
+            else if (personelType == @((decimal)Shahrdari.Enums.E_PublicCategory.PERSONEL_TYPE.SUM_CENER) || personelType == @((decimal)Shahrdari.Enums.E_PublicCategory.PERSONEL_TYPE.INTEGRATION_CENTER))
+            {
+                param["BoothInfo"] = {
+                    Id : @(boothInfo != null ? boothInfo.Id : 0),
+                    Name: $("#txtCenterName").val(),
+                    Address: $("#txtCenterAddress").val(),
+                    Lat: $("#txtCenterLocation").val().split(",")[0].trim(),
+                    Lng: $("#txtCenterLocation").val().split(",")[1].trim(),
+                    Description: $("#txtCenterDesc").val(),
+                    ImageName: BoothInfoImage,
+                    Capacity: $("#txtCenterCapacity").val()
+                }
+            }
+            
+            if (document.getElementById("uplProfileImage").files.length > 0) {
+                UploadFile('@Url.Action("UploadProfileImage", "Personels")', document.getElementById("uplProfileImage"), "divAllPersonel", function (response) {
+                    param.Personel.ImageName = response.replace(/"/g, '');
+                    CallMethod('@Url.Action("Modify", "Personels")', JSON.stringify(param), "divAllPersonel", function (response) {
+                        ShowMessage("توجه", "عملیات با موفقیت انجام شد", MessageType.Succes);
+                    });
+                });
+            }
+            else {
+                param["ImageName"] = "@Model.ImageName";
+                CallMethod('@Url.Action("Modify", "Personels")', JSON.stringify(param), "divAllPersonel", function (response) {
+                    ShowMessage("توجه", "عملیات با موفقیت انجام شد", MessageType.Succes );
+                });
+            }
+        }
+
+        function deleteUser()
+        {
+            ShowConfirm("توجه", "از حذف کاربر اطمینان دارید ؟", MessageType.Information, function () {
+                CallMethod('@Url.Action("Delete", "Personels")', "{ Id : @Model.Id }", "divAllPersonel", function (response) {
+                    ShowMessage("توجه", "عملیات با موفقیت انجام شد", MessageType.Succes, function () { window.location = "@Url.Action("Index", "Personels")" }, function () { window.location = "@Url.Action("Index", "Personels")" });
+                });
+            });
+        }
+
+        function changePersonelType() {
+            var personelType = $("input[name=PersonelType]:checked").val();
+            $("#drpVichleType").attr("disabled", "true");
+            $("#txtVichlePlaqFirtNum").attr("disabled", "true");
+            $("#txtVichlePlaqWord").attr("disabled", "true");
+            $("#txtVichlePlaqLastNum").attr("disabled", "true");
+            $("#txtVichleNationalId").attr("disabled", "true");
+            $("#drpVichlePlaqColor").attr("disabled", "true");
+            $("#txtVichleName").attr("disabled", "true");
+            $("#txtVichleColor").attr("disabled", "true");
+            $("#txtVichleCapacity").attr("disabled", "true");
+            $("#txtCenterName").attr("disabled", "true");
+            $("#txtCenterAddress").attr("disabled", "true");
+            $("#txtCenterDesc").attr("disabled", "true");
+            $("#txtCenterLocation").attr("disabled", "true");
+            $("#txtCenterCapacity").attr("disabled", "true");
+            if (personelType == @((decimal)Shahrdari.Enums.E_PublicCategory.PERSONEL_TYPE.DRIVER))
+            {
+                $("#drpVichleType").removeAttr("disabled");
+                $("#txtVichlePlaqFirtNum").removeAttr("disabled");
+                $("#txtVichlePlaqWord").removeAttr("disabled");
+                $("#txtVichlePlaqLastNum").removeAttr("disabled");
+                $("#txtVichleNationalId").removeAttr("disabled");
+                $("#drpVichlePlaqColor").removeAttr("disabled");
+                $("#txtVichleName").removeAttr("disabled");
+                $("#txtVichleColor").removeAttr("disabled");
+                $("#txtVichleCapacity").removeAttr("disabled");
+            }
+            else if (personelType == @((decimal)Shahrdari.Enums.E_PublicCategory.PERSONEL_TYPE.SUM_CENER) || personelType == @((decimal)Shahrdari.Enums.E_PublicCategory.PERSONEL_TYPE.INTEGRATION_CENTER))
+            {
+                $("#txtCenterName").removeAttr("disabled");
+                $("#txtCenterAddress").removeAttr("disabled");
+                $("#txtCenterDesc").removeAttr("disabled");
+                $("#txtCenterLocation").removeAttr("disabled");
+                $("#txtCenterCapacity").removeAttr("disabled");
+            }
+        }
+
+        function UploadFileCar(IsCar, thisEl)
+        {
+            if (thisEl.files.length == 0)
+                return;
+            UploadFileWithHeader('@Url.Action("UploadImage", "Personels")', thisEl, "divAllPersonel", function (response) {
+                if (IsCar) {
+                    $('div[mf-upload-role="CarImage"]').html("تصویر با موفقیت اپلود شد");
+                    CarImage = response.replace(/"/g, '');
+                }
+                else {
+                    $('div[mf-upload-role="BoothImage"]').html("تصویر با موفقیت اپلود شد");
+                    BoothInfoImage = response.replace(/"/g, '');
+                }
+                ShowMessage("توجه", "فایل با موفقیت اپلود شد", MessageType.Succes, function () { });
+            }, [{ Key: "IsCar", Value: IsCar }]);
+        }
+
+        function hideParentSelectLightBox(haveSaveLocation) {
+            if (haveSaveLocation)
+                $("#txtCenterLocation").val(geoLocation);
+            $("#divAllSelectParentContetn").removeClass("AllLightBoxContetnShow");
+            $("#divAllSelectParent").fadeOut(150);
+        }
+
+        function showMaps() {
+            $("#divAllSelectParentContetn").addClass("AllLightBoxContetnShow");
+            $("#divAllSelectParent").fadeIn(150, function () {
+
+                if (haveLoadMap)
+                    return;
+                haveLoadMap = true;
+
+                geoLocation = [@(boothInfo != null ? boothInfo.Lat + ", " + boothInfo.Lng : "35.714889, 51.344333")];
+
+                var tileJSONUrl = 'https://api.cedarmaps.com/v1/tiles/cedarmaps.streets.json?access_token=' + L.cedarmaps.accessToken;
+
+                var map = L.cedarmaps.map('divMap', tileJSONUrl, {
+                    scrollWheelZoom: true
+                }).setView([geoLocation[0], geoLocation[1]], 11);
+
+                var markers = [
+                    { 'center': { 'lat': geoLocation[0], 'lng': geoLocation[1] }, 'iconOpts': { 'iconUrl': '/Areas/Admin/Images/MapMarkerOther.png', 'iconRetinaUrl': '/Areas/Admin/Images/MapMarkerOther.png', 'iconSize': [30, 38] } }
+                ];
+                var _marker = null;
+
+                markers.map(function (marker) {
+                    var iconOpts = {
+                        iconUrl: marker.iconOpts.iconUrl,
+                        iconRetinaUrl: marker.iconOpts.iconRetinaUrl,
+                        iconSize: marker.iconOpts.iconSize
+                    };
+
+                    const markerIcon = {
+                        icon: window.L.icon(iconOpts)
+                    };
+
+                    _marker = new window.L.marker(marker.center, markerIcon);
+                    _marker.addTo(map);
+                });
+
+                map.on('click', function (e) {
+                    _marker.remove();
+
+                    markers.map(function (marker) {
+                        var iconOpts = {
+                            iconUrl: marker.iconOpts.iconUrl,
+                            iconRetinaUrl: marker.iconOpts.iconRetinaUrl,
+                            iconSize: marker.iconOpts.iconSize
+                        };
+                        const markerIcon = {
+                            icon: window.L.icon(iconOpts)
+                        };
+                        geoLocation = e.latlng.lat + "," + e.latlng.lng;
+                        _marker = new window.L.marker({ 'lat': e.latlng.lat, 'lng': e.latlng.lng }, markerIcon);
+                        _marker.addTo(map);
+
+                    });
+                });
+
+            });
+        }
+    </script>
+}

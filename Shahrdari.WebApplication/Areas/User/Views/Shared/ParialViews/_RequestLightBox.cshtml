@@ -1,0 +1,255 @@
+﻿<div Class="AllLDialogBox" id="AllRequestDialogBox">
+    <div class="AllLDialogBoxContetn" id="AllRequestDialogBoxContetn">
+        <img src="~/Areas/User/Images/BackButton.png" width="35" class="BackButton" onclick="CloseRequestDialog();" />
+        <div class="AllLDialogBoxContetnContainer">
+            <div class="RegularText" style="width:100%;text-align:center;font-size:16px;">پسماندهای خود را با توجه به دسته بندی اضافه کنید</div>
+
+            <div class="AllDialogCategoryItem">
+
+                <div class="DialogCategoryItem" score="@this.ViewData["ElecScore"]">
+                    <div class="DialogCategoryItemCircle" category-id="2" id="ElectronicCounter">0</div>
+                    <div class="DialogCategoryItemContent">
+                        <div class="DialogCategoryItemContentCircle">
+                            <div class="DialogCategoryItemContentCircleImage" style="background-position-x:60px"></div>
+                            <div class="DialogCategoryItemContentCircleText">الکترونیکی</div>
+                        </div>
+                        <div class="DialogCategoryItemContentBtnContainer">
+                            <img src="~/Areas/User/Images/PlusIcon.png" class="DialogCategoryItemContentPlus" onclick="AddService(this)" />
+                            <img src="~/Areas/User/Images/NegIcon.png" class="DialogCategoryItemContentPlus" onclick="RemoveService(this)" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="DialogCategoryItem" score="@this.ViewData["MetalScore"]">
+                    <div class="DialogCategoryItemCircle" category-id="3" id="MetalCounter">0</div>
+                    <div class="DialogCategoryItemContent">
+                        <div class="DialogCategoryItemContentCircle">
+                            <div class="DialogCategoryItemContentCircleImage" style="background-position-x:120px"></div>
+                            <div class="DialogCategoryItemContentCircleText">فلزی</div>
+                        </div>
+                        <div class="DialogCategoryItemContentBtnContainer">
+                            <img src="~/Areas/User/Images/PlusIcon.png" class="DialogCategoryItemContentPlus" onclick="AddService(this)" />
+                            <img src="~/Areas/User/Images/NegIcon.png" class="DialogCategoryItemContentPlus" onclick="RemoveService(this)" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="DialogCategoryItem" score="@this.ViewData["NonMetalScore"]">
+                    <div class="DialogCategoryItemCircle" category-id="8" id="NoneMetalCounter">0</div>
+                    <div class="DialogCategoryItemContent">
+                        <div class="DialogCategoryItemContentCircle">
+                            <div class="DialogCategoryItemContentCircleImage" style="background-position-x:180px"></div>
+                            <div class="DialogCategoryItemContentCircleText">غیر فلزی</div>
+                        </div>
+                        <div class="DialogCategoryItemContentBtnContainer">
+                            <img src="~/Areas/User/Images/PlusIcon.png" class="DialogCategoryItemContentPlus" onclick="AddService(this)" />
+                            <img src="~/Areas/User/Images/NegIcon.png" class="DialogCategoryItemContentPlus" onclick="RemoveService(this)" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="DialogCategoryItem" score="@this.ViewData["RandomScore"]">
+                    <div class="DialogCategoryItemCircle" category-id="9" id="MixCounter">0</div>
+                    <div class="DialogCategoryItemContent">
+                        <div class="DialogCategoryItemContentCircle">
+                            <div class="DialogCategoryItemContentCircleImage"></div>
+                            <div class="DialogCategoryItemContentCircleText">مخلوط</div>
+                        </div>
+                        <div class="DialogCategoryItemContentBtnContainer">
+                            <img src="~/Areas/User/Images/PlusIcon.png" class="DialogCategoryItemContentPlus" onclick="AddService(this)" />
+                            <img src="~/Areas/User/Images/NegIcon.png" class="DialogCategoryItemContentPlus" onclick="RemoveService(this)" />
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <table style="margin-top:20px;width:100%;text-align:center;float:left;">
+                @{
+                    if ((bool)this.ViewData["forRider"] == true)
+                    {
+                        <tr>
+                            <td>
+                                <textarea id="txtAreaAddress" class="TextInput TextArea" placeholder="آدرس را وارد کنید" style="min-width:80%;max-width:80%;min-height:80px;max-height:80px;text-align:center;"></textarea>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="number" min="0" step="1" pattern="\d*" oninput="this.value = this.value.replace(/[^0-9.]/g, ''); this.value = this.value.replace(/(\..*)\./g, '$1');" id="txtPlaque" class="TextInput" placeholder="پلاک را وارد کنید" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="number" min="0" step="1" pattern="\d*" oninput="this.value = this.value.replace(/[^0-9.]/g, ''); this.value = this.value.replace(/(\..*)\./g, '$1');" id="txtUnit" class="TextInput" placeholder="واحد را وارد کنید" />
+                            </td>
+                        </tr>
+                    }
+                    <tr>
+                        <td>
+                            <select class="TextInput" id="ComboRequestDate" onchange="fillTimeCombo();">
+                                <option value="0">روز را انتخاب کنید</option>
+                                @{
+                                    foreach (var li in (List<Shahrdari.Models.Area_User.M_ComboBox>)this.ViewData["Date"])
+                                    {
+                                        <option value="@li.Value">@li.Title</option>
+                                    }
+                                }
+                            </select>
+                        </td>
+                    </tr>
+                        <tr>
+                            <td>
+                                <select class="TextInput" id="ComboRequestTime">
+                                    <option value="0">ساعت را انتخاب کنید</option>
+                                </select>
+                            </td>
+                        </tr>
+                }
+                <tr>
+                    <td>
+                        <textarea id="AreaDescription" class="TextInput TextArea" placeholder="توضیحات" style="min-width:80%;max-width:80%;"></textarea>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="RegularText" style="width:100%;text-align:center;font-size:20px;margin-top:15px;">مجموع امتیاز شما در این مرحله :</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div id="Point" class="RegularText" style="width:100%;text-align:center;font-size:24px;color:#72bf44">0</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <input class="btn btnGreen" onclick="AddRequest();" value="درخواست" type="button" style="margin:15px 0;" />
+                    </td>
+                </tr>
+            </table>
+
+            <!--<input class="btn btnYellow" value="زمان تحویل ؟" type="button" style="margin-top:35px;width:80%;" />-->
+        </div>
+    </div>
+</div>
+
+<!-- Electronic details -->
+
+<div class="AllLDialogBox" id="AllElectronicDLB">
+    <div class="AllLDialogBoxContetn AllLightBoxContetnShow" id="AllElectronicDLBContent">
+        <div id="ElectronicDLBContentContainer">
+            <div id="ElectronicDLBHeader">
+                <div id="ElectronicDLBHeaderLogo">
+                    <div class="DialogCategoryItemContentCircleImage" style="background-position-x:50px;background-size:cover;width:50px;height:50px;margin-top:0 !important;"></div>
+                    <span class="SmallText">اقلام الکترونیکی</span>
+                </div>
+                <span class="RegularText">جزئیات بازیافت را وارد کنید :</span>
+                <img src="~/Areas/User/Images/BackButton.png" onclick="" style="cursor:pointer;width:45px;"/>
+            </div>
+            <div id="ElectronicDLBContent">
+                <div id="ElectronicDLBItem">
+                    <div id="ElectronicDLBItemFirstHalf"></div>
+                    <div id="ElectronicDLBItemSecondHalf"></div>
+                    
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function (e) {
+        $("#AllElectronicDLB").hide();
+        $("#AllRequestDialogBox").fadeOut(0);
+        $("#AllRequestDialogBox").click(function (e) {
+            if (e.target !== this)
+                return;
+            CloseRequestDialog();
+        });
+    });
+
+    function OpenRequestDialog() {
+        $("#AllContent").addClass("AllContentBlur");
+        $("#AllRequestDialogBoxContetn").addClass("AllLightBoxContetnShow");
+        $("#txtAreaAddress").val($("#MapAddress").html());
+        $("#AllRequestDialogBox").fadeIn(150);
+    }
+
+    function CloseRequestDialog() {
+        $("#AllContent").removeClass("AllContentBlur");
+        $("#AllRequestDialogBoxContetn").removeClass("AllLightBoxContetnShow");
+        $("#AllRequestDialogBox").fadeOut(150);
+    }
+
+
+
+    function AddRequest() {
+        var param = {
+            PlaqueNumber: $("#txtPlaque") != null ? $("#txtPlaque").val() : "",
+            UnitNumber: $("#txtUnit") != null ? $("#txtUnit").val() : "",
+            Address: $("#txtAreaAddress") != null ? $("#txtAreaAddress").val() : "",
+            Description: $("#AreaDescription").val(),
+            DayId: $("#ComboRequestDate") != null ? $("#ComboRequestDate").val() : "0",
+            TimeId: $("#ComboRequestTime") != null ? $("#ComboRequestTime").val() : "0",
+            UserId: '@(ViewBag.UserId == "" ? "0" : ViewBag.UserId )',
+            BoothId: stationId,
+            Lat: lat,//
+            Lng: lng,//
+            RequestItems: [
+                { Id: $("#ElectronicCounter").attr("category-id"), Value: $("#ElectronicCounter").html() },
+                { Id: $("#MetalCounter").attr("category-id"), Value: $("#MetalCounter").html() },
+                { Id: $("#NoneMetalCounter").attr("category-id"), Value: $("#NoneMetalCounter").html() },
+                { Id: $("#MixCounter").attr("category-id"), Value: $("#MixCounter").html() },
+            ]
+        };
+        var isRider = '@this.ViewData["forRider"]';
+
+        if (isRider == "True")
+            CallMethod("/User/Home/AddRequestCar", JSON.stringify(param), function () {
+                ShowMessage("توجه", "عملیات با موفقیت انجام شد", MessageType.Succes, function () { window.location = '@Url.Action("RideModeProceed", "Home")' });
+            });
+        else
+            CallMethod("/User/Home/AddRequestStation", JSON.stringify(param), function () {
+                ShowMessage("توجه", "عملیات با موفقیت انجام شد", MessageType.Succes, function () { window.location = '@Url.Action("StationModeProceed", "Home")' });
+            });
+    }
+
+    function fillTimeCombo() {
+        var dateId = $("#ComboRequestDate").val();
+        if (dateId == 0) {
+            $("#ComboRequestTime").html("<option value='0'>ساعت را انتخاب کنید</option>");
+            return;
+        }
+        var param = {
+            DateId: dateId
+        };
+        CallMethod("/User/Home/GetTime", JSON.stringify(param), function (response) {
+            var res = "";
+            $(response).each(function () {
+                if (this["IsActive"] != false) {
+                    res = res + "<option value=" + this["Id"] + ">" + this["Hour"] + "</option>";
+                }
+            });
+            $("#ComboRequestTime").html(res);
+        });
+    }
+
+    function AddService(element)
+    {
+        var point = $("#Point").html();
+        var parent = $(element).closest(".DialogCategoryItem");
+        $(".DialogCategoryItemCircle", parent).html(parseInt($(".DialogCategoryItemCircle", parent).html()) + 1);
+        point = parseInt(parent.attr("score")) + parseInt(point);
+        $("#Point").html(point);
+    }
+
+    function RemoveService(element) {
+        var point = $("#Point").html();
+        var parent = $(element).closest(".DialogCategoryItem");
+        if (parseInt($(".DialogCategoryItemCircle", parent).html()) != 0) {
+            $(".DialogCategoryItemCircle", parent).html(parseInt($(".DialogCategoryItemCircle", parent).html()) - 1);
+            point = parseInt(parseInt(point) - parent.attr("score"));
+            $("#Point").html(point);
+        }
+    }
+
+</script>

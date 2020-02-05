@@ -1,0 +1,352 @@
+﻿
+@{
+    ViewBag.Title = "ارسال به مرکز";
+    Layout = "~/Areas/User/Views/Shared/Layout/_master.cshtml";
+}
+
+<div class="AllHomeMain">
+    <div class="SideBar" id="SideBar" style="height:auto;width:240px">
+        <div id="StationModeSideBarHead">
+            <span class="RegularText" style="font-size:25px;">نزدیک ترین مراکز دریافت پسماند به شما</span>
+        </div>
+        <div id="Stations" style="float:right;width:100%;height:auto;overflow:auto;"></div>
+        @*<div id="SideBarStationBtnContainer">
+            <input type="button" onclick="OpenRequestDialog();" class="btn btnTransparent" value="وارد کردن جزئیات" />
+        </div>*@
+    </div>
+
+    <div class="AllMainWithSideBar">
+        <div id="HeaderContainerStation">
+            <div class="UserMenuButtonContainer UserMenuButtonWithSearchBar">
+                <img src="~/Areas/User/Images/Icons/UserIcon.png" class="UserMenuButton" onclick="OpenMenu();" />
+            </div>
+            <div class="SearchBar">
+                <input id="SearchField" type="text" class="SearchBarInput" style="color:white;" placeholder="جستجو" />
+                <div onclick="SearchOnMap();" class="SearchBarIcon"></div>
+                <div id="Suggestion"></div>
+            </div>
+            <a href="@Url.Action("Index", "Home")" style="margin-right:5px;">
+                <img src="~/Areas/User/Images/BackButton.png" width="50" id="BackButton" />
+            </a>
+        </div>
+        <div class="AllMainWithSideBarContent">
+            <div class="SabzBashMap" id="SabzBashMap"></div>
+            <div id="SabzBashMapCurrentLocation" onclick="GetCurrentLocation();"></div>
+            <div id="MapAddress"></div>
+        </div>
+    </div>
+</div>
+
+<style>
+
+    #Suggestion {
+        float: right;
+        width: 100%;
+        min-width: 300px;
+        height: 200px;
+        background: #FFF;
+        position: absolute;
+        margin-top: 128px;
+        z-index: 999;
+        border-radius: 15px;
+        overflow: auto;
+    }
+
+    .SuggestionDetails {
+        float: right;
+        width: 96%;
+        height: 50px;
+        position: relative;
+        margin-top: 3px;
+        margin-right:2%;
+        border-radius: 15px;
+        border:solid 1px #808080;
+        cursor:pointer;
+    }
+
+
+    .AllMainWithSideBarContent {
+        position: relative;
+    }
+
+    #SabzBashMapCurrentLocation {
+        width: 50px;
+        height: 50px;
+        position: absolute;
+        top: 25px;
+        right: 10px;
+        background: url(/Areas/User/Images/CurrentLocation.png);
+        background-size: cover;
+        cursor: pointer;
+        transition: all 300ms ease-in-out 0s;
+        -o-transition: all 300ms ease-in-out 0s;
+        -ms-transition: all 300ms ease-in-out 0s;
+        -moz-transition: all 300ms ease-in-out 0s;
+        -webkit-transition: all 300ms ease-in-out 0s;
+    }
+
+        #SabzBashMapCurrentLocation:hover {
+            transform: scale(1.2);
+            -o-transform: scale(1.2);
+            -ms-transform: scale(1.2);
+            -moz-transform: scale(1.2);
+            -webkit-transform: scale(1.2);
+        }
+
+    #MapAddress {
+        position: absolute;
+        bottom: 25px;
+        left: 20px;
+        width: calc(100% - 60px);
+        width: -o-calc(100% - 60px);
+        width: -ms-calc(100% - 60px);
+        width: -moz-calc(100% - 60px);
+        width: -webkit-calc(100% - 60px);
+        border-radius: 500px;
+        background: rgba(0,0,0,0.5);
+        padding: 10px;
+        z-index: 1001;
+        text-align: center;
+        color: #FFF;
+    }
+
+    @@media screen and (max-width:999px) {
+        .AllHomeMain {
+            flex-direction: column-reverse;
+        }
+
+        .SideBar {
+            display: flex;
+            width: 90% !important;
+        }
+
+        #SideBarStationBtnContainer {
+            display: flex;
+            flex-direction: column-reverse;
+            justify-content: center;
+        }
+    }
+</style>
+
+@Html.Partial("~/Areas/User/Views/Shared/ParialViews/_Menu.cshtml")
+
+@section EndOfPage
+{
+    @Html.Partial("~/Areas/User/Views/Shared/ParialViews/_PostHistoryLightBox.cshtml")
+    @Html.Partial("~/Areas/User/Views/Shared/ParialViews/_RequestLightBox.cshtml", null, new ViewDataDictionary { { "forRider", false }, { "Date", ViewBag.Date },
+        { "ElecScore",ViewBag.ElecScore },
+        { "MetalScore",ViewBag.MetalScore },
+        { "NonMetalScore",ViewBag.NonMetalScore },
+        { "RandomScore",ViewBag.RandomScore }, })
+}
+
+<script>
+
+    var markerAdded = [];
+
+    $(document).ready(function () {
+        $("#Suggestion").hide();
+        prepareMap(null);
+        //handlePermission();
+    });
+
+    var stationId = 0;
+    var lat = 35.69410994928452, lng = 51.38031005859376;
+
+    function SelectStation(StationId) {
+        stationId = StationId;
+
+        var station = [];
+        var center = {};
+
+        for (var i = 0; i < markerAdded.length; i++) {
+            if (StationId == markerAdded[i].StationId) {
+                center = { Lat: markerAdded[i]._latlng.lat, Lng: markerAdded[i]._latlng.lng };
+                lat = markerAdded[i]._latlng.lat;
+                lng = markerAdded[i]._latlng.lng;
+                //var s = JSON.parse(JSON.stringify(markerAdded));
+                //station.push(s[i]);
+                //station[0].iconOpts.iconUrl = '/Areas/User/Images/CenterMarker.png';
+                //station[0].iconOpts.iconSize = [30, 41];
+                //station[0].popupContent = '<table class="tbList"><tr style="background:#FFF;text-align: center;"><td><input type="button" class="btn btnRed" onclick="DeSelectStation();" value="بازگشت"/></td></tr></table>';
+
+                break;
+            }
+        }
+        prepareMap(center, true);
+        OpenRequestDialog();
+    }
+
+    function DeSelectStation() {
+        stationId = 0;
+        lat = 35.69410994928452;
+        lng = 51.38031005859376;
+        prepareMap(null);
+    }
+
+    function prepareMap(position, haveSelectedStation) {
+
+        $("#SabzBashMap").replaceWith('<div class="SabzBashMap" id="SabzBashMap"></div>');
+
+        var tileJSONUrl = 'https://api.cedarmaps.com/v1/tiles/cedarmaps.streets.json?access_token=' + L.cedarmaps.accessToken;
+
+        var map = L.cedarmaps.map('SabzBashMap', tileJSONUrl, {
+            scrollWheelZoom: true
+        }).setView(
+            position == null ? [lat, lng] : [position.Lat, position.Lng]
+            , 13);
+        if (position == null)
+            var markerSelected = setMarker(map, lat, lng, haveSelectedStation);
+        else
+            var markerSelected = setMarker(map, position.Lat, position.Lng, haveSelectedStation);
+        if (haveSelectedStation == null) {
+            setStationMarkers(map, lat, lng);
+            map.on('click', function (e) {
+                if (markerSelected != null)
+                    markerSelected.remove();
+                setStationMarkers(map, e.latlng.lat, e.latlng.lng);
+                markerSelected = setMarker(map, e.latlng.lat, e.latlng.lng);
+            });
+        }
+
+    }
+
+    function setMarker(map, l, n, haveSelectedStation) {
+        if (haveSelectedStation != null) {
+            var iconOpts = {
+                'iconUrl': '/Areas/User/Images/CenterMarker.png',
+                'iconRetinaUrl': '/Areas/User/Images/CenterMarker.png',
+                'iconSize': [30, 40]
+            };
+        }
+        else
+            var iconOpts = {
+                'iconUrl': '/Areas/User/Images/LocationIcon.png',
+                'iconRetinaUrl': '/Areas/User/Images/LocationIcon.png',
+                'iconSize': [30, 40]
+            };
+
+        var markerSelected = null;
+
+        const markerIcon = {
+            icon: window.L.icon(iconOpts)
+        };
+
+        lat = l;
+        lng = n;
+
+        var popup = '<table class="tbList"><tr style="background:#FFF;text-align: center;"><td><input type="button" onclick="OpenRequestDialog();" class="btn btnTransparent" value="وارد کردن جزئیات" /></td></tr><tr style="background:#FFF;text-align: center;"><td><input type="button" class="btn btnRed" onclick="DeSelectStation();" value="بازگشت"/></td></tr></table>';
+
+        markerSelected = new window.L.marker({ 'lat': l, 'lng': n }, markerIcon);
+        if (haveSelectedStation != null) {
+            markerSelected.bindPopup(popup);
+        }
+        markerSelected.addTo(map);
+
+        return markerSelected;
+    }
+
+    function setStationMarkers(map, l, n) {
+        CallMethod("/User/Home/GetNearStations", JSON.stringify({ "Lat": l, "Lng": n }), function (response) {
+            var addressObj = JSON.parse(response["Address"]);
+            var address = "استان " + addressObj.result.province + " , " + addressObj.result.city + " , " + addressObj.result.district + " , " + addressObj.result.locality + " , " + (addressObj.result.place == "" ? addressObj.result.address : addressObj.result.place);
+
+            $("#MapAddress").html(address);
+            for (var i = 0; i < markerAdded.length; i++) {
+                markerAdded[i].remove();
+            }
+            markerAdded = [];
+            response["markers"].map(function (marker) {
+                var _marker = null;
+                var iconOpts = {
+                    iconUrl: marker.iconOpts.iconUrl,
+                    iconRetinaUrl: marker.iconOpts.iconRetinaUrl,
+                    iconSize: marker.iconOpts.iconSize,
+                    popupAnchor: [0, -49]
+                };
+
+                const markerIcon = {
+                    icon: window.L.icon(iconOpts)
+                };
+
+                _marker = new window.L.marker(marker.center, markerIcon);
+                _marker.StationId = marker.StationId;
+                if (marker.popupContent) {
+                    _marker.bindPopup(marker.popupContent);
+                }
+                _marker.addTo(map);
+                markerAdded.push(_marker);
+            });
+            var res = "";
+            $(response["markers"]).each(function () {
+                res += "<div class='SideBarStationPageItem' onClick='SelectStation(" + this["StationId"] + ");' Lat='" + this["center"].lat + "' Lng='" + this["center"].lng + "'>";
+                res += "<div id='SideBarStationPageIcon'></div >";
+                res += "<span class='RegularText' id='SideBarStationPageText'>" + this["Title"] + "</span></div>";
+            });
+            $("#Stations").html(res);
+        });
+    }
+
+    function GetCurrentLocation() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function (location) {
+                if (location.coords.latitude == 0) {
+                    ShowMessage("توجه", "سرویس موقعیت مکانی در دسترس نمیباشد", MessageType.Error)
+                    return;
+                }
+                lat = location.coords.latitude;
+                lng = location.coords.longitude;
+
+                prepareMap({ Lat: lat, Lng: lng, Acc: location.coords.accuracy }, stations);
+            }, function (error) { ShowMessage("توجه", "سرویس موقعیت مکانی در دسترس نمیباشد", MessageType.Error) });
+        }
+    }
+
+    function SearchOnMap() {
+        var param = {
+            Lat: lat,
+            Lng: lng,
+            SearchText: $("#SearchField").val()
+        };
+        CallMethod("/User/Home/SearchOnMap", JSON.stringify(param), function (response) {
+            var temp = JSON.parse(response);
+            var res = "";
+            $(temp.results).each(function () {
+                var loc = this.location.center.split(",");
+                res += "<div class='SuggestionDetails' onClick='showSug({ Lat: " + loc[0] + ", Lng: " + loc[1] + " });'>";
+                res += "<div style='float:right;width:10%;height:50px;display:flex;justify-content:center;align-items:center;'><img src='/Areas/User/Images/LocationIcon.png' style='width:30px;' /></div >";
+                res += "<div style='float:right;width:90%;height:30px;font-size:18px;display:flex;justify-content:center;align-items:center;'>" + this.name + " (" + getSugType(this.type) + ")" + "</div>";
+                res += "<div style='float:right;width:90%;height:20px;font-size:12px;display:flex;justify-content:center;align-items:center;'>" + this.components.city + " - " + this.address + "</div></div >";
+            });
+            $("#Suggestion").html(res);
+            $("#Suggestion").show(300);
+        });
+    }
+
+    function showSug(position)
+    {
+        $("#Suggestion").hide(300);
+        $("#SearchField").val("");
+        prepareMap(position);
+    }
+
+    function getSugType(type)
+    {
+        if (type == "locality")
+            return "محله";
+        if (type == "roundabout")
+            return "میدان";
+        if (type == "street")
+            return "خیابان";
+        if (type == "freeway")
+            return "آزادراه";
+        if (type == "expressway")
+            return "بزرگراه";
+        if (type == "boulevard")
+            return "بلوار";
+        if (type == "city")
+            return "شهر";
+        if (type == "state")
+            return "استان";
+    }
+</script>

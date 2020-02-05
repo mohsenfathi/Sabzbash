@@ -1,0 +1,5 @@
+D:\Projects\Sabzbash Projects\Sabzbash\Sabzbash\JavanMode.Settings\bin\Release\JavanMode.Settings.dll
+D:\Projects\Sabzbash Projects\Sabzbash\Sabzbash\JavanMode.Settings\bin\Release\JavanMode.Settings.pdb
+D:\Projects\Sabzbash Projects\Sabzbash\Sabzbash\JavanMode.Settings\obj\Release\JavanMode.Settings.dll
+D:\Projects\Sabzbash Projects\Sabzbash\Sabzbash\JavanMode.Settings\obj\Release\JavanMode.Settings.pdb
+D:\Projects\Sabzbash Projects\Sabzbash\Sabzbash\JavanMode.Settings\obj\Release\Shahrdari.Settings.csprojResolveAssemblyReference.cache

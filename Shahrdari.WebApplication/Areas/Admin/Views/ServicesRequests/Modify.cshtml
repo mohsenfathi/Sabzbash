@@ -1,0 +1,339 @@
+﻿@model Shahrdari.Models.M_ServicesRequests
+@{
+    ViewBag.Title = "ویرایش درخواست";
+    Layout = "~/Areas/Admin/Views/Shared/Layout/_master.cshtml";
+}
+@using Shahrdari.BussinessLayer
+
+<div class="ContentSection" mf-slice='1'>
+    <div class="ContentSectionHeader">
+        لیست اعلامی کاربر
+    </div>
+    <table class="tbList">
+        <tr class="tbListHeader">
+            <td>نام</td>
+            <td>مقدار</td>
+            <td>عملیات</td>
+        </tr>
+        <tbody id="tbdUserItems">
+            @foreach (var li in ViewBag.ServiceRequestItems)
+            {
+                <tr mf-val-id="@li.Id" category-id="@li.CategoryId">
+                    <td>@li.Title (@li.Unit)</td>
+                    <td><input type="text" mf-required mf-type=IntNumber class="txtForm" placeholder="مقدار به @li.Unit" value="@li.Value" style="margin-top:0px;" /></td>
+                    <td><input type="button" value="حذف" class="btnForm btnFormRed" onclick="deleteRow(this);" /></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <div class="ContentSectionFooter">
+        <input type="button" value="افزودن مورد جدید" class="btnForm btnFormGreen" onclick="selectParent(true);" />
+    </div>
+</div>
+@*<div class="ContentSection" mf-slice='2'>
+        <div class="ContentSectionHeader">
+            لیست اعلامی راننده
+        </div>
+        <table class="tbList">
+            <tr class="tbListHeader">
+                <td>نام</td>
+                <td>مقدار</td>
+                <td>عملیات</td>
+            </tr>
+            <tbody id="tbdDriverItems">
+                @foreach (var li in ViewBag.ServiceRequestItems)
+                {
+                    <tr mf-val-id="@li.Id" category-id="@li.CategoryId">
+                        <td>@li.Title (@li.Unit)</td>
+                        <td><input type="text" mf-required mf-type=IntNumber class="txtForm" placeholder="مقدار به @li.Unit" value="@li.Value" style="margin-top:0px;" /></td>
+                        <td><input type="button" value="حذف" class="btnForm btnFormRed" onclick="deleteRow(this);" /></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <div class="ContentSectionFooter">
+            <input type="button" value="افزودن مورد جدید" class="btnForm btnFormGreen" onclick="selectParent(false);" />
+        </div>
+    </div>*@
+
+<div class="ContentSection" mf-slice='1' id="divAllPersonel">
+    <div class="ContentSectionHeader">
+        ویرایش درخواست<span> ویرایش درخواست ثبت شده در سیستم</span>
+    </div>
+    <table class="tbForm">
+        <tr>
+            <td>
+                <select class="txtForm drpForm" id="drpReferDate" onchange="changeDrpTime();"></select>
+                <div class="altForm">تاریخ مراجعه</div>
+            </td>
+            <td>
+                <select class="txtForm drpForm" id="drpReferTime"></select>
+                <div class="altForm">ساعت مراجعه</div>
+            </td>
+            <td>
+                <input type="text" class="txtForm" id="txtDescription" placeholder="توضیحات" maxlength="500" value="@Model.Description" />
+                <div class="altForm">توضیحات را وارد کنید</div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <input type="text" class="txtForm" id="txtPlaq" placeholder="پلاک" maxlength="4" mf-required mf-type=IntNumber value="@Model.PlaqueNumber.Trim()" />
+                <div class="altForm">پلاک را وارد کنید</div>
+            </td>
+            <td>
+                <input type="text" class="txtForm" id="txtUnit" placeholder="واحد" maxlength="4" mf-type=IntNumber value="@Model.UnitNumber.Trim()" />
+                <div class="altForm">واحد را وارد کنید</div>
+            </td>
+            <td>
+                <input type="text" class="txtForm" id="txtAddress" placeholder="آدرس" mf-required maxlength="255" value="@Model.Address" />
+                <div class="altForm">آدرس را وارد کنید</div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label class="control control--checkbox">
+                    <input type="checkbox" id="chkIsImmediately" @(Model.ImmediatelyRequest ? "checked" : "") />
+                    <div class="control__indicator"></div>
+                    <span>درخوسات آنی</span>
+                </label>
+            </td>
+        </tr>
+    </table>
+</div>
+<div style="float:right;width:100%;">
+    <input type="button" value="ویرایش" class="btnForm btnFormGreen" onclick="submitForm();" />
+    <input type="button" value="حذف" class="btnForm btnFormRed" onclick="deleteRequest();" />
+    <input type="button" value="انصراف" class="btnForm btnFormOrange" onclick="window.location = '@Url.Action("Index", "ServicesRequests")'" />
+</div>
+
+@section EndOfPage
+{
+    <div class="AllCLightBox" id="divAllSelectParent">
+        <div class="AllCLightBoxContetn" id="divAllSelectParentContetn">
+            <div class="AllCLightBoxHeader">
+                <span>انتخاب دسته بندی</span>
+                <img src="/Areas/Admin/Images/LightBoxCloseIcon.png" width="30" onclick="hideParentSelectLightBox();" />
+            </div>
+            <div class="AllCLightBoxContent">
+
+                <div class="ContentSection" mf-slice='1' id="divAllSelectParentRoute">
+                    <div class="ContentSectionHeader">
+                        دسته بندی درخواست را اینجا انتخاب کنید
+                    </div>
+                    <table class="tbForm">
+                        <tr>
+                            <td style="overflow:hidden;">
+                                <div class="ThreeNode" mf-val-id="0">
+                                    <div class="ThreeNodeTitle" onclick="NodeUpdate(this);" id="divHomeSelectParent">صفحه اول</div>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+
+            </div>
+            <div class="AllCLightBoxFooter">
+                <input type="button" value="تایید" class="btnForm btnFormGreen" onclick="submitParentSelectLightBox();" />
+                <input type="button" value="انصراف" class="btnForm btnFormRed" style="margin-right:5px;" onclick="hideParentSelectLightBox();" />
+            </div>
+        </div>
+    </div>
+}
+
+<script>
+
+    var referTimes = JSON.parse('@Html.Raw(Json.Encode(ViewBag.Times))').Data;
+    var addItemForUser = true;
+
+    $(document).ready(function () {
+        $("#drpReferDate").html("");
+        var dateId = @(Model.Pouriya_DateId.HasValue ? Model.Pouriya_DateId.Value.ToString() : "0");
+        var timeId = @(Model.Pouriya_TimeId.HasValue ? Model.Pouriya_TimeId.Value.ToString() : "0");
+        $(referTimes).each(function () {
+            $("#drpReferDate").append("<option " + (dateId == this["Id"] ? "selected" : "") + " value='" + this["Id"] + "'>" + this["Title"] + "</option>");
+        });
+        changeDrpTime(timeId);
+    });
+
+    function changeDrpTime(timeId)
+    {
+        $("#drpReferTime").html("");
+        var id = $("#drpReferDate").val();
+        $(referTimes).each(function () {
+            if (this["Id"] == id) {
+                $(this["Hours"]).each(function () {
+                    if (this["IsActive"] == true)
+                    {
+                        $("#drpReferTime").append("<option  " + (timeId == this["Id"] ? "selected" : "") + " value='" + this["Id"] + "'>" + this["Hour"] + "</option>");
+                    }
+                });
+            }
+        });
+    }
+
+    function submitForm()
+    {
+        if (validateForm() == false)
+            return;
+        var param = {};
+        param["Id"] = @Model.Id;
+        //param["ServicesCategoryId"] = $("#txtRoute").attr("mf-val-id");
+        param["ImmediatelyRequest"] = $("#chkIsImmediately").is(":checked");
+        //var strReferralDate = $("#txtReferDate").val().split("/");
+        param["Pouriya_TimeId"] = $("#drpReferDate").val();
+        param["Pouriya_DateId"] = $("#drpReferTime").val();
+        param["ReferHuor"] = $("#drpReferHoure").val();
+        param["ReferMinute"] = $("#drpReferMinute").val();
+        param["Description"] = $("#txtDescription").val();
+        param["PlaqueNumber"] = $("#txtPlaq").val();
+        param["UnitNumber"] = $("#txtUnit").val();
+        param["Address"] = $("#txtAddress").val();
+
+        var userList = [];
+        $("#tbdUserItems tr").each(function () {
+            userList.push({
+                Id: $(this).attr("mf-val-id"),
+                Value: $("input[type='text']", $(this)).val(),
+                CategoryId: $(this).attr("category-id"),
+                UserType: @((int)Shahrdari.Enums.E_PublicCategory.SYSTEM_USER_TYPE.NORMAL_USER),
+            });
+        });
+
+        @*$("#tbdDriverItems tr").each(function () {
+            userList.push({
+                Id: $(this).attr("mf-val-id"),
+                Value: $("input[type='text']", $(this)).val(),
+                CategoryId: $(this).attr("category-id"),
+                UserType: @((int)Shahrdari.Enums.E_PublicCategory.SYSTEM_USER_TYPE.PERSONEL),
+            });
+        });*@
+
+        param["RequestList"] = userList;
+
+        CallMethod('@Url.Action("Modify", "ServicesRequests")', JSON.stringify(param), "divAllPersonel", function (response) {
+            ShowMessage("توجه", "عملیات با موفقیت انجام شد", MessageType.Succes, function () { });
+        });
+    }
+
+    function deleteRequest()
+    {
+        ShowConfirm("توجه", "از حذف درخواست اطمینان دارید ؟", MessageType.Information, function () {
+            CallMethod('@Url.Action("Delete", "ServicesRequests")', "{ Id : @Model.Id }", "divAllPersonel", function (response) {
+                ShowMessage("توجه", "عملیات با موفقیت انجام شد", MessageType.Succes, function () { window.location = "@Url.Action("Index", "ServicesRequests")" }, function () { window.location = "@Url.Action("Index", "ServicesRequests")" });
+            });
+        });
+    }
+
+    function selectParent(forUser) {
+        addItemForUser = forUser;
+        $("#divAllSelectParentContetn").addClass("AllLightBoxContetnShow");
+        $("#divAllSelectParent").fadeIn(150);
+        var element = document.getElementById("divHomeSelectParent");
+        $(element).attr("mf-checked", "");
+        var parentSelectNode = $(element).closest(".ThreeNode");
+        $(parentSelectNode).html("");
+        $(parentSelectNode).append(element);
+        CallMethod("@Url.Action("GetCategory", "Categories")", "{ParentId:0}", "divAllSelectParentRoute", function (response) {
+            $(response).each(function () {
+                $(parentSelectNode).append("<div class='ThreeNode' mf-unit='" + this["Unit"] + "' mf-val-id='" + this["Id"] + "'><div class='ThreeNodeTitle' onclick='NodeUpdate(this);'>" + this["Title"] + "</div></div>");
+            });
+        });
+    }
+
+    function hideParentSelectLightBox() {
+        $("#divAllSelectParentContetn").removeClass("AllLightBoxContetnShow");
+        $("#divAllSelectParent").fadeOut(150);
+    }
+
+    function submitParentSelectLightBox()
+    {
+        var $element = $(".ThreeNodeTitle[mf-checked]");
+        if ($($element.closest(".ThreeNode")).attr("mf-val-id") == "0")
+        {
+            ShowMessage("توجه", "دسته بندی صفحه اول قابل قبول نیست", MessageType.Warning);
+            return;
+        }
+        hideParentSelectLightBox();
+
+        if (addItemForUser == true)
+        {
+            var haveAdded = false;
+            $("#tbdUserItems tr").each(function () {
+                if ($(this).attr("category-id") == $($element.closest(".ThreeNode")).attr("mf-val-id"))
+                    haveAdded = true;
+            });
+            var unit = $($element.closest(".ThreeNode")).attr("mf-unit") == undefined ? "نا مشخص" : $($element.closest(".ThreeNode")).attr("mf-unit");
+            if (!haveAdded)
+                $("#tbdUserItems").append("<tr val-id='0' category-id='" + $($element.closest(".ThreeNode")).attr("mf-val-id") + "'>"
+                    + "<td>" + $element.html() + " (" + unit + ")</td>"
+                    + "<td><input type='text' mf-required mf-type=IntNumber class='txtForm' placeholder='مقدار به " + unit + "' value='' style='margin-top:0px;' /></td>"
+                    + "<td><input type='button' value='حذف' class='btnForm btnFormRed' onclick='deleteRow(this);' /></td>"
+                    + "</tr>");
+            else
+                ShowMessage("توجه", "این آیتم قبلا اضافه شده", MessageType.Warning);
+        }
+        else
+        {
+            var haveAdded = false;
+            $("#tbdDriverItems tr").each(function () {
+                if ($(this).attr("category-id") == $($element.closest(".ThreeNode")).attr("mf-val-id"))
+                    haveAdded = true;
+            });
+            var unit = $($element.closest(".ThreeNode")).attr("mf-unit") == undefined ? "نا مشخص" : $($element.closest(".ThreeNode")).attr("mf-unit");
+            if (!haveAdded)
+                $("#tbdDriverItems").append("<tr val-id='0' category-id='" + $($element.closest(".ThreeNode")).attr("mf-val-id") + "'>"
+                    + "<td>" + $element.html() + " (" + unit + ")</td>"
+                    + "<td><input type='text' mf-required mf-type=IntNumber class='txtForm' placeholder='مقدار به " + unit + "' value='' style='margin-top:0px;' /></td>"
+                    + "<td><input type='button' value='حذف' class='btnForm btnFormRed' onclick='deleteRow(this);' /></td>"
+                    + "</tr>");
+            else
+                ShowMessage("توجه", "این آیتم قبلا اضافه شده", MessageType.Warning);
+        }
+        setNumberValidationEvent();
+    }
+
+    function NodeUpdate(element) {
+        $(".ThreeNodeTitle").removeAttr("mf-checked");
+        $(element).attr("mf-checked", "");
+        var route = [];
+        var lineageArr = [];
+        route.push($(element).html());
+        var parentSelectNode = $(element).closest(".ThreeNode");
+        var parentId = $(parentSelectNode).attr("mf-val-id");
+        lineageArr.push(parentId);
+        while ($(parentSelectNode).html() != undefined) {
+            parentSelectNode = $(".ThreeNode[mf-val-id=" + $(parentSelectNode).attr("mf-val-id") + "]").closest(".ThreeNode[mf-val-id!=" + $(parentSelectNode).attr("mf-val-id") + "]");
+            if ($(parentSelectNode).html() == undefined)
+                continue;
+            route.push($(".ThreeNodeTitle", $(parentSelectNode)).html());
+            lineageArr.push($(parentSelectNode).attr("mf-val-id"));
+        }
+        var routeResult = "";
+        var lineageResult = "";
+        for (var i = route.length - 1; i >= 0; i--) {
+            if (routeResult == "") {
+                routeResult = route[i];
+                lineageResult = lineageArr[i];
+            }
+            else {
+                routeResult += " > " + route[i];
+                lineageResult += "," + lineageArr[i];
+            }
+        }
+        parentSelectNode = $(element).closest(".ThreeNode");
+        CallMethod("@Url.Action("GetCategory", "Categories")", "{ParentId:" + parentId + "}", "divAllSelectParentRoute", function (response) {
+            $(parentSelectNode).html("");
+            $(parentSelectNode).append(element);
+            $(response).each(function () {
+                $(parentSelectNode).append("<div class='ThreeNode' mf-unit='" + this["Unit"] + "' mf-val-id='" + this["Id"] + "'><div class='ThreeNodeTitle' onclick='NodeUpdate(this);'>" + this["Title"] + "</div></div>");
+            });
+        });
+    }
+
+    function deleteRow(element) {
+        ShowConfirm("توجه", "مایل به حذف کردن سطر هستید ؟", MessageType.Information, function () {
+            $($(element).closest("tr")).remove();
+        });
+    }
+
+</script>

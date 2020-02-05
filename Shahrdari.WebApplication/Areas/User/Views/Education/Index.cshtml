@@ -1,0 +1,268 @@
+﻿@{
+    ViewBag.Title = "آموزش";
+    Layout = "~/Areas/User/Views/Shared/Layout/_master.cshtml";
+}
+
+<!--
+
+-->
+<!--
+    <video id="EducationVideoClip" controls>
+                    <source src="mov_bbb.mp4" type="video/mp4">
+                    <source src="mov_bbb.ogg" type="video/ogg">
+                    Your browser does not support HTML5 video.
+                </video>
+-->
+
+
+<div id="EducationHeaderSpace">
+</div>
+
+<div class="AllMainCommon">
+
+    <div class="CommonSideBar" style="width:450px;">
+        <div id="SideBarEducationSearchBar">
+            <div id="NewsSearchBar" class="EducationRWDSideBarSearchBar" style="width:100%;">
+                <input type="text" id="SearchField" class="SearchBarInput" style="color:white;" placeholder="جستجو" />
+                <div class="SearchBarIcon" onclick="Search();"></div>
+            </div>
+        </div>
+        <div id="EducationSideBarItemsContainer">
+
+        </div>
+    </div>
+
+    <div class="CommonContentContainer">
+        <div id="EducationContent">
+
+            <div class="CommonHeader" style="margin:0;">
+                <div id="EducationHeaderContainer">
+                    <div id="EducationHeaderLogo">
+                        <img src="~/Areas/User/Images/EducationIcon.png" width="50px" />
+                        <span class="BigText">آموزش</span>
+                    </div>
+                    <img class="BackButton" src="~/Areas/User/Images/BackButton.png" onclick="window.location='@Url.Action("index","Home")'" />
+                </div>
+            </div>
+            <span id="eduTitle" class="BigText"></span>
+
+            <div id="EducationVideoContainer">
+
+                <video id="EducationVideo" controls>
+                    Your browser does not support HTML5 video.
+                </video>
+                <div id="EducationVideoBar">
+                    <div id="EducationVideoBarItemWrap">
+
+                        <div id="EducationVideoBarItem">
+                            @*<div class="EducationVideoBarItemIcon"></div>*@
+                            @*<span class="WhiteText">اشتراک گذاری</span>*@
+
+                        </div>
+
+                        <div id="EducationVideoBarItem">
+                            @*<div class="EducationVideoBarItemIcon" id="EVBII"></div>*@
+                            @*<span class="WhiteText">ثبت نظر</span>*@
+
+                        </div>
+
+                    </div>
+
+                    <div id="">
+                        @*@Html.Partial("~/Areas/User/Views/Shared/ParialViews/_StarRating.cshtml")*@
+                    </div>
+                </div>
+            </div>
+            <div id="EducationCommentAndDescription">
+                @*<div class="EducationCommentAndDescriptionBtn" onclick="OpenCommentDialog()" id="EducationComment">نظرات</div>*@
+                <div class="EducationCommentAndDescriptionBtn" style="width:100%;border-radius:15px;" onclick="OpenDesDialog();" id="EducationDescription">توضیحات</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section EndOfPage{
+    <div class="EarDialogBoxContainer EarDialogBoxContainer1">
+        <div class="CommentsDialogBox" id="CommentsDialogBox">
+            <div id="CommentsDialogBoxHeader">
+                <img id="LBBackButton" src="~/Areas/User/Images/BackButton.png" onclick="CloseCommentDialog()" />
+                <span class="WhiteText" style="margin:0 15px; font-size:28px;">نظرات</span>
+            </div>
+            <div id="CommentsDialogBoxCommentsContainer">
+
+                <div id="CommentsDialogBoxComment">
+                    <span id="CommentUserName">علی رحمانی</span><!--  -->
+                    <div id="CommentsDialogBoxCommentText">
+                        <span class="RegularText">لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است</span>
+                    </div>
+                </div>
+
+                <div id="CommentsDialogBoxComment">
+                    <span id="CommentUserName">علی رحمانی</span><!--  -->
+                    <div id="CommentsDialogBoxCommentText">
+                        <span class="RegularText">لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است</span>
+                    </div>
+                </div>
+
+                <div id="CommentsDialogBoxComment">
+                    <span id="CommentUserName">علی رحمانی</span><!--  -->
+                    <div id="CommentsDialogBoxCommentText">
+                        <span class="RegularText">لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است</span>
+                    </div>
+                </div>
+
+                <div id="CommentsDialogBoxComment">
+                    <span id="CommentUserName">علی رحمانی</span><!--  -->
+                    <div id="CommentsDialogBoxCommentText">
+                        <span class="RegularText">لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است</span>
+                    </div>
+                </div>
+
+                <div id="CommentsDialogBoxComment">
+                    <span id="CommentUserName">علی رحمانی</span><!--  -->
+                    <div id="CommentsDialogBoxCommentText">
+                        <span class="RegularText">لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="EarDialogBoxContainer EarDialogBoxContainer2" >
+        <div class="CommentsDialogBox" id="DescriptionDialogBox" style="max-height:95vh;overflow:auto;">
+            <div id="CommentsDialogBoxHeader">
+                <img id="LBBackButton" src="~/Areas/User/Images/BackButton.png" onclick="CloseDesDialog()" />
+                <span class="WhiteText" style="margin:0 15px; font-size:28px;">توضیحات</span>
+            </div>
+            <div id="VideoDescriptions">
+                <span id="LongDesc" class="RegularText"></span>
+            </div>
+        </div>
+    </div>
+}
+
+<style>
+    .checked {
+        color: green;
+    }
+
+    #LBBackButton {
+        position: absolute;
+        left: 10px;
+        top: 5px;
+        width: 40px;
+        margin: 0;
+        cursor:pointer;
+    }
+
+    #VideoDescriptions {
+        width: 95%;
+        margin: 0 2.5%;
+        text-align: justify;
+    }
+
+</style>
+
+
+<script>
+    $(document).ready(function (e) {
+        $(".EarDialogBoxContainer").fadeOut(0);
+        $(".EarDialogBoxContainer").click(function (e) {
+            if (e.target !== this)
+                return;
+            CloseCommentDialog();
+        });
+        $(".EarDialogBoxContainer2").fadeOut(0);
+        $(".EarDialogBoxContainer2").click(function (e) {
+            if (e.target !== this)
+                return;
+            CloseDesDialog();
+        });
+        GetEducations();
+    });
+
+    function Search()
+    {
+        $("#EducationSideBarItemsContainer").html();
+        CallMethod("/User/Education/Search", "{SearchField : '" + $("#SearchField").val() + "'}", function (response) {
+            if (response != null || response != undefined) {
+                var rightItems = "";
+                $(response).each(function () {
+                    rightItems += "<div id='EducationSideBarItem' onClick='GetEducations(" + this["Id"] + ");'>" +
+                        "<div style='float:right;width:100%;height:160px;'>" +
+                        "<img src= '/Areas/Admin/Images/Learns/" + this["CoverImage"] + "' style= 'width:100%;height:160px;' />" +
+                        "</div>" +
+                        "<div id='EducationSideBarItemText'>" +
+                        "<span class='WhiteText' style='font-size:16px;'>" + this["Title"] + "</span>" +
+                        "</div>" +
+                        "</div>";
+                });
+                $("#EducationSideBarItemsContainer").html(rightItems);
+            }
+        });
+    }
+
+    function GetEducations(eduId)
+    {
+        CallMethod("/User/Education/GetEducations", null, function (response) {
+            if (eduId == null || eduId == undefined) {
+                var rightItems = "";
+                var counter = 0;
+                $(response).each(function () {
+                    if (counter == 0) {
+                        $("#eduTitle").html(this["Title"]);
+                        $("#EducationVideo").html("<source src='" + this["Video"] + "' type='video/mp4'></source>");
+                        $("#LongDesc").html(this["LongDesc"]);
+                    }
+                    rightItems += "<div id='EducationSideBarItem' onClick='GetEducations(" + this["Id"] + ");'>" +
+                        "<div style='float:right;width:100%;height:160px;'>" +
+                        "<img src= '/Areas/Admin/Images/Learns/" + this["CoverImage"] + "' style= 'width:100%;height:160px;' />" +
+                        "</div>" +
+                        "<div id='EducationSideBarItemText'>" +
+                        "<span class='WhiteText' style='font-size:16px;'>" + this["Title"] + "</span>" +
+                        "</div>" +
+                        "</div>";
+                    counter++;
+                });
+                $("#EducationSideBarItemsContainer").html(rightItems);
+                tempSearch = rightItems;
+            }
+            else {
+                $(response).each(function () {
+                    if (this["Id"] == eduId) {
+                        $("#eduTitle").html(this["Title"]);
+                        $("#EducationVideo").html("<source src='" + this["Video"] + "' type='video/mp4'></source>");
+                        $("#LongDesc").html(this["LongDesc"]);
+                    }
+                });
+            }
+        });
+    }
+
+    function OpenCommentDialog() {
+        $(".EarDialogBoxContainer1").fadeIn(150);
+        $("#CommentsDialogBox").addClass("AllLightBoxContetnShow");
+        $("#AllContent").addClass("AllContentBlur");
+    }
+
+    function CloseCommentDialog() {
+        $(".EarDialogBoxContainer1").fadeOut(150);
+        $("#CommentsDialogBox").removeClass("AllLightBoxContetnShow");
+        $("#AllContent").removeClass("AllContentBlur");
+    }
+
+    function OpenDesDialog() {
+        $(".EarDialogBoxContainer2").fadeIn(150);
+        $("#DescriptionDialogBox").addClass("AllLightBoxContetnShow");
+        $("#AllContent").addClass("AllContentBlur");
+    }
+
+    function CloseDesDialog() {
+        $(".EarDialogBoxContainer2").fadeOut(150);
+        $("#DescriptionDialogBox").removeClass("AllLightBoxContetnShow");
+        $("#AllContent").removeClass("AllContentBlur");
+    }
+
+</script>

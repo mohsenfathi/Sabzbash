@@ -1,0 +1,83 @@
+﻿@model Shahrdari.Models.M_PersonelRoles
+@{
+    ViewBag.Title = "ویرایش و حذف نقش";
+    Layout = "~/Areas/Admin/Views/Shared/Layout/_master.cshtml";
+    List<Shahrdari.Models.M_PersonelRoleValues> roleValues = (List<Shahrdari.Models.M_PersonelRoleValues>)ViewBag.RoleValue;
+}
+
+<div class="ContentSection" mf-slice='1' id="divAddRole">
+    <div class="ContentSectionHeader">
+        نقش ها<span> افزودن نقش جدید</span>
+        <input type="button" style="float:left;" value="بازگشت" class="btnForm btnFormOrange" onclick="window.location = '@Url.Action("Roles", "Personels")'" />
+    </div>
+    <table class="tbForm">
+        <tr>
+            <td colspan="3">
+                <input type="text" class="txtForm" id="txtRoleName" placeholder="عنوان نقش" mf-required value="@Model.Title" />
+                <div class="altForm">عنوان نقش را وارد کنید</div>
+            </td>
+        </tr>
+        <tr><td><label class="lblForm">دسترسی ها : </label></td></tr>
+        <tr>
+            <td>
+                @{
+                    foreach (Tuple<string, string> li in ViewBag.Actions)
+                    {
+                        <label class="control control--checkbox">
+                            <input type="checkbox" @(roleValues.Where(c => c.AccessName == li.Item2).Count() > 0 ? "checked" : "") @(Model.HasFullControl ? "disabled" : "") mf-permission mf-value="@li.Item2" />
+                            <div class="control__indicator"></div>
+                            <span>@li.Item1</span>
+                        </label>
+                    }
+                }
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <br />
+                <label class="control control--checkbox">
+                    <input type="checkbox" mf-value="HasFullControl" id="chkHasFullControl" @(Model.HasFullControl ? "checked" : "") onclick='$("*[mf-permission]").prop("disabled", $(this).is(":checked"));' />
+                    <div class="control__indicator"></div>
+                    <span>این نقش دسترسی کامل دارد</span>
+                </label>
+            </td>
+        </tr>
+    </table>
+    <div class="ContentSectionFooter">
+        <input type="button" value="ویرایش نقش" class="btnForm btnFormGreen" onclick="submitForm();" />
+        <input type="button" value="حذف نقش" class="btnForm btnFormRed" onclick="deleteRole();" />
+        <input type="button" value="انصراف" class="btnForm btnFormOrange" onclick="window.location = '@Url.Action("Roles", "Personels")'" />
+    </div>
+</div>
+
+<script>
+    function submitForm()
+    {
+        if (validateForm() == false)
+            return;
+        var role = {};
+        role["Title"] = $("#txtRoleName").val();
+        role["Id"] = @Model.Id;
+        role["HasFullControl"] = $("#chkHasFullControl").is(":checked");
+        var permission = [];
+        $("input[type='checkbox'][mf-permission]").each(function () {
+            if ($(this).is(":checked"))
+                permission.push($(this).attr("mf-value"));
+        });
+        var param = {};
+        param["Role"] = role;
+        param["Permissions"] = permission;
+        CallMethod('@Url.Action("ModifyRole", "Personels")', JSON.stringify(param), "divAddRole", function (response) {
+            ShowMessage("توجه", "عملیات با موفقیت انجام شد", MessageType.Succes);
+        });
+    }
+    function deleteRole()
+    {
+        ShowConfirm("توجه", "از حذف نقش اطمینان دارید ؟", MessageType.Information, function () {
+            CallMethod('@Url.Action("DeleteRole", "Personels")', "{ Id : @Model.Id }", "divAddRole", function (response) {
+                ShowMessage("توجه", "عملیات با موفقیت انجام شد", MessageType.Succes, function () { window.location = "@Url.Action("Roles", "Personels")" }, function () { window.location = "@Url.Action("Roles", "Personels")" });
+            });
+        });
+    }
+</script>
+

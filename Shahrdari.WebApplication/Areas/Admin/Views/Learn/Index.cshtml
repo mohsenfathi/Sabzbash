@@ -1,0 +1,29 @@
+﻿
+@{
+    ViewBag.Title = "لیست آموزش ها";
+    Layout = "~/Areas/Admin/Views/Shared/Layout/_master.cshtml";
+}
+
+<div class="ContentSection" mf-slice='1' id="divAddRole">
+    <div class="ContentSectionHeader">
+        آموزش<span>آموزش های ثبت شده در سیستم</span>
+    </div>
+    <input type="button" value="افزودن آموزش جدید" class="btnSection btnFormBlue" onclick="window.location = '@Url.Action("Add", "Learn")'" />
+    <table class="tbList">
+        <tr class="tbListHeader">
+            <td>شناسه</td>
+            <td>عنوان</td>
+            <td>عملیات</td>
+        </tr>
+        <tbody>
+            @foreach (var li in Model)
+            {
+                <tr>
+                    <td>@li.Id</td>
+                    <td>@li.Title</td>
+                    <td><img class="tbListModifyIcon" src="~/Areas/Admin/Images/editIcon.png" onclick="window.location = '@Url.Action("Edit", "Learn", new { Id = li.Id })';" /></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

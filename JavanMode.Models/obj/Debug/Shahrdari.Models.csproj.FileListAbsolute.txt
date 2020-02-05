@@ -1,0 +1,9 @@
+D:\Projects\Sabzbash Projects\Sabzbash\Sabzbash\JavanMode.Models\bin\Debug\JavanMode.Models.dll
+D:\Projects\Sabzbash Projects\Sabzbash\Sabzbash\JavanMode.Models\bin\Debug\JavanMode.Models.pdb
+D:\Projects\Sabzbash Projects\Sabzbash\Sabzbash\JavanMode.Models\bin\Debug\JavanMode.Settings.dll
+D:\Projects\Sabzbash Projects\Sabzbash\Sabzbash\JavanMode.Models\bin\Debug\Shahrdari.Enums.dll
+D:\Projects\Sabzbash Projects\Sabzbash\Sabzbash\JavanMode.Models\bin\Debug\JavanMode.Settings.pdb
+D:\Projects\Sabzbash Projects\Sabzbash\Sabzbash\JavanMode.Models\bin\Debug\Shahrdari.Enums.pdb
+D:\Projects\Sabzbash Projects\Sabzbash\Sabzbash\JavanMode.Models\obj\Debug\Shahrdari.Models.csprojResolveAssemblyReference.cache
+D:\Projects\Sabzbash Projects\Sabzbash\Sabzbash\JavanMode.Models\obj\Debug\JavanMode.Models.dll
+D:\Projects\Sabzbash Projects\Sabzbash\Sabzbash\JavanMode.Models\obj\Debug\JavanMode.Models.pdb

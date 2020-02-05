@@ -1,0 +1,30 @@
+﻿@model List<Shahrdari.Models.M_ListenEar>
+@{
+    ViewBag.Title = "لیست انتقادات و پیشنهادات";
+    Layout = "~/Areas/Admin/Views/Shared/Layout/_master.cshtml";
+}
+
+
+<div class="ContentSection" mf-slice='1' id="divAddRole">
+    <div class="ContentSectionHeader">
+        پیشنهادات و انتقادات<span> پیشنهادات و انتقادات ثبت شده در سیستم</span>
+    </div>
+    <table class="tbList">
+        <tr class="tbListHeader">
+            ر
+            <td>تاریخ ایجاد</td>
+            <td>وضعیت</td>
+            <td>متن انتقاد و پیشنهاد</td>
+        </tr>
+        <tbody>
+            @foreach (var li in Model)
+            {
+                <tr>
+                    <td>@(Shahrdari.BussinessLayer.B_PublicFunctions.ConvertToPesianDateName(li.CreationDate, true))</td>
+                    <td>@(li.IsRead == true ? "خوانده شده" : "خوانده نشده")</td>
+                    <td>@li.Description.Substring(0, (li.Description.Length >= 71 ? 70 : li.Description.Length - 1)) @(li.Description.Length >= 71 ? " ..." : "")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

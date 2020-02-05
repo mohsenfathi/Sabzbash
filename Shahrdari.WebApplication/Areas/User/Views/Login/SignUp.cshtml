@@ -1,0 +1,95 @@
+﻿
+@{
+    ViewBag.Title = "ثبت نام";
+    Layout = "~/Areas/User/Views/Shared/Layout/_master.cshtml";
+}
+
+<img src="~/Areas/User/Images/CapLogo.png" width="180" style="margin-top:20px;" />
+<h1>سلام!</h1>
+<span class="GrayText">برای ثبت نام مشخصات خود را وارد کنید:</span>
+<table style="width:100%;text-align:center;">
+    <tr>
+        <td>
+            <input type="text" mf-required id="txtName" class="TextInput" placeholder="نام" />
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <input type="text" mf-required id="txtFamily" class="TextInput" placeholder="نام خانوادگی" />
+        </td>
+    </tr>
+    <tr>
+        <td id="SignUpIconContainer">
+            <div class="rdoUserType SignUpIconContainerSelected" ippv-value="@((int)Shahrdari.Enums.E_PublicCategory.INSTITUTE_TYPE.HOME)">
+                <div class="IconSignup"></div>
+                <p class="RegularText" style="font-size:16px;padding:0;">مسکونی</p>
+            </div>
+            <div class="rdoUserType" ippv-value="@((int)Shahrdari.Enums.E_PublicCategory.INSTITUTE_TYPE.OFFICIAL)">
+                <div class="IconSignup" id="IconSignup2"></div>
+                <p class="RegularText" style="font-size:16px;padding:0;">اداره</p>
+            </div>
+            <div class="rdoUserType" ippv-value="@((int)Shahrdari.Enums.E_PublicCategory.INSTITUTE_TYPE.COMMERCIAL)">
+                <div class="IconSignup" id="IconSignup3"></div>
+                <p class="RegularText" style="font-size:16px;padding:0;">تجاری</p>
+            </div>
+            <div class="rdoUserType" ippv-value="@((int)Shahrdari.Enums.E_PublicCategory.INSTITUTE_TYPE.FACTORY)">
+                <div class="IconSignup" id="IconSignup4"></div>
+                <p class="RegularText" style="font-size:16px;padding:0;">کارخانه</p>
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <input type="text" mf-required id="txtTell" class="TextInput" placeholder="شماره تلفن همراه" />
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <input type="text" mf-required id="txtPassword" class="TextInput" placeholder="گذرواژه" />
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <input type="text" id="txtAsignCode" class="TextInput" placeholder="کد معرف" />
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <input type="button" onclick="Register();" class="btn btnGreen" style="padding-top:0; width:150px;height:45px;font-size:25px;" value="ثبت نام" />
+        </td>
+    </tr>
+</table>
+
+<a href="@Url.Action("Index", "Login")" style="margin-right:5px;">
+    <img src="~/Areas/User/Images/BackButton.png" width="50" class="BackButton" />
+</a>
+
+<script>
+    $(document).ready(function () {
+        $(".rdoUserType").click(function () {
+            $(".rdoUserType").removeClass("SignUpIconContainerSelected");
+            var paretnDiv = this;
+            setTimeout(function () {
+                $(paretnDiv).addClass("SignUpIconContainerSelected");
+            }, 2);
+        });
+    });
+
+    function Register()
+    {
+        if (validateForm() == false)
+            return;
+        var param = {
+            Name: $("#txtName").val(),
+            Family: $("#txtFamily").val(),
+            InstituteType: $(".SignUpIconContainerSelected").attr("ippv-value"),
+            MobileNumber: $("#txtTell").val(),
+            AsignCode: $("#txtAsignCode").val(),
+            Password: $("#txtPassword").val()
+        };
+        CallMethod("/User/Login/Register", JSON.stringify(param), function (response) {
+            ShowMessage("توجه", "کاربر با موفقیت ثبت شد", MessageType.Succes, function () { window.location = "/User/Login/Sms?FromAddress=SignUp&Id=" + response; })
+        });
+    }
+
+</script>

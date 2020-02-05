@@ -1,0 +1,254 @@
+﻿@model List<Shahrdari.ViewModels.V_Users>
+@{
+    ViewBag.Title = "لیست کاربران";
+    Layout = "~/Areas/Admin/Views/Shared/Layout/_master.cshtml";
+}@using Shahrdari.BussinessLayer
+
+<input type="button" value="افزودن کاربر جدید" class="btnSection btnFormBlue" onclick="window.location = '@Url.Action("Add", "Users")'" />
+<input type="button" value="کاربران حذف شده" class="btnSection btnFormOrange" onclick="window.location = '@Url.Action("Deleted", "Users")'" style="margin-right:10px;" />
+
+<div class="ContentSection" mf-slice='1' id="divAllPersonel">
+    <div class="ContentSectionHeader">
+        کاربر ها<span>جستجوی کاربران سیستم</span>
+    </div>
+    <table class="tbForm">
+        <tr>
+            <td>
+                <input type="text" class="txtForm" id="txtName" placeholder="نام" maxlength="50" />
+                <div class="altForm">نام را وارد کنید</div>
+            </td>
+            <td>
+                <input type="text" class="txtForm" id="txtFamily" placeholder="نام خانوادگی" maxlength="50" />
+                <div class="altForm">نام خانوادگی را وارد کنید</div>
+            </td>
+            <td>
+                <input type="text" mf-type='IntNumber' class="txtForm" id="txtMobile" placeholder="تلفن همراه" maxlength="11" />
+                <div class="altForm">تلفن همراه را وارد کنید</div>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="3">
+                <input type="button" value="جستجو" class="btnSection btnFormBlue" onclick="GetDatas(true);" style="float:right;margin-right:10px;" />
+            </td>
+        </tr>
+    </table>
+</div>
+
+<div class="ContentSectionContent" id="ContentSectionContentUserList" style="text-align:center;">
+
+    @foreach (var li in Model)
+    {
+        <div class="UserListItem" style="text-align:center;">
+            <div class="UserListItemRight">
+                <img class="UserListItemImage" src="~/Areas/Admin/Images/Profile/@li.ImageName" />
+                <span class="UserListItemRole">کاربر معمولی</span>
+            </div>
+            <span class="UserListItemText" style="font-size:16px;font-weight:bold;margin-top:5px;">@li.FirstName @li.LastName</span>
+            <span class="UserListItemText" style="margin-top:10px;">عضویت : @li.RegisterDate.ConvertMiladiToShamsi()</span>
+            <span class="UserListItemText">تلفن : @li.MobileNumber</span>
+            <span class="UserListItemText">آخرین آنلاین : @li.LastOnline.ConvertMiladiToShamsi()</span>
+            <span class="UserListItemText">ساعت آنلاین : @li.LastOnline.Hour:@li.LastOnline.Minute:@li.LastOnline.Second</span>
+            <span class="UserListItemText">آخرین درخواست : @(li.LastRequest.HasValue == false ? "بدون درخواست" : li.LastRequest.Value.ConvertMiladiToShamsi())</span>
+            <span class="UserListItemText">وضعیت : @(li.IsActive ? "فعال" : "غیر فعال")</span>
+            @*<span class="UserListItemNewText">@(li.AdminSee ? "" : "جدید")</span>*@
+            <div class="UserListItemHover">
+                <div class="UserListItemHoverItem" onclick="window.location='@Url.Action("Modify", "Users", new { Id = li.Id })'">ویرایش</div>
+                <div class='UserListItemHoverItem' onclick="ShowScore(@li.Id,'@li.ImageName')">امتیاز ها</div>
+                <div class="UserListItemHoverItem" onclick="DeleteUser(this);" mf-valid="@li.Id">حذف</div>
+            </div>
+        </div>
+    }
+
+</div>
+
+@if (Model.Count >= 30)
+{
+    <input type="button" value="بارگذاری بیشتر ..." class="btnSection btnFormBlue" id="btnUserLoad" onclick="GetDatas();" style="float:right;margin-bottom:35px;margin-top:0px;" />
+}
+
+@section EndOfPage
+{
+
+    <div class="AllCLightBox" id="divAllSelectParent">
+        <div class="AllCLightBoxContetn" id="divAllSelectParentContetn">
+            <div class="AllCLightBoxHeader">
+                <span>امتیاز ها</span>
+                <img src="/Areas/Admin/Images/LightBoxCloseIcon.png" width="30" onclick="hideParentSelectLightBox();" />
+            </div>
+            <div class="AllCLightBoxContent" style="overflow:auto">
+
+                <div class="ContentSection" mf-slice='2'>
+                    <div class="ContentSectionHeader">
+                        مشخصات هویتی
+                    </div>
+                    <table class="tblDetails">
+                        <tr>
+                            <td style="text-align:center;"><img id="imgPointDetails" src="~/Areas/Admin/Images/Profile/Default.jpg" style="width:130px;height:130px;margin:10px;border-radius:50%;" /></td>
+                            <td>
+                                <table style="width:100%;float:right;">
+                                    <tr>
+                                        <td style="background:#fff;border:none;">نام : </td>
+                                        <td style="background:#fff;border:none;" id="tdPointName"></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="background:#fff;border:none;">تاریخ عضویت : </td>
+                                        <td style="background:#fff;border:none;" id="tdPointRegisterDate"></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="background:#fff;border:none;">تلفن : </td>
+                                        <td style="background:#fff;border:none;" id="tdPointTell"></td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="ContentSection" mf-slice='2'>
+                    <div class="ContentSectionHeader">
+                        وضعیت کلی امتیاز ها
+                    </div>
+                    <table class="tblDetails">
+                        <tr>
+                            <td>
+                                <table style="width:100%;float:right;">
+                                    <tr>
+                                        <td style="background:#fff;border:none;">کل امتیاز کسب شده : </td>
+                                        <td style="background:#fff;border:none;" id="tdPointGetPoint"></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="background:#fff;border:none;">کل امتیاز خرج شده : </td>
+                                        <td style="background:#fff;border:none;" id="tdPointPayPoint"></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="background:#fff;border:none;">امتیاز فعلی : </td>
+                                        <td style="background:#fff;border:none;" id="tdPointTotalPoint"></td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="ContentSection" mf-slice='1'>
+                    <div class="ContentSectionHeader">
+                        جزئیات امتیاز ها
+                    </div>
+                    <table class="tbList">
+                        <tr class="tbListHeader">
+                            <td>عنوان</td>
+                            <td>تاریخ</td>
+                            <td>ساعت</td>
+                            <td>امتیاز</td>
+                            <td>وضعیت</td>
+                        </tr>
+                        <tbody id="PointHistoryTBody" style="background:#FFF"></tbody>
+                    </table>
+                </div>
+
+            </div>
+            <div class="AllCLightBoxFooter">
+                <input type="button" value="تایید" class="btnForm btnFormGreen" onclick="hideParentSelectLightBox();" />
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var pageNumber = 1;
+        function GetDatas(haveEmpty) {
+            pageNumber++;
+
+            if (haveEmpty == true)
+                pageNumber = 1;
+
+            CallMethod('@Url.Action("GetUser", "Users")', "{PageNumber:" + pageNumber + ",Name:'" + $("#txtName").val() + "',Family:'" + $("#txtFamily").val() + "',Mobile:'" + $("#txtMobile").val() + "'}", "AllMain",
+                function (response) {
+                if (response.length < 30)
+                        $("#btnUserLoad").hide(200);
+                if (haveEmpty)
+                    $("#ContentSectionContentUserList").html("");
+                $(response).each(function () {
+                    var regDate = ToJavaScriptDate(this["RegisterDate"]).split('/');
+                    regDate = ConverMiladiToShamsi(regDate[0], regDate[1], regDate[2]);
+                    var lastOnline = ToJavaScriptDate(this["LastOnline"]).split('/');
+                    lastOnline = ConverMiladiToShamsi(lastOnline[0], lastOnline[1], lastOnline[2]);
+                    
+                    var lastRequestDate = "بدون درخواست";
+                    if (this["LastRequest"] == null)
+                    {
+                        lastRequestDate = ToJavaScriptDate(this["LastRequest"]).split('/');
+                        lastRequestDate = ConverMiladiToShamsi(lastRequestDate[0], lastRequestDate[1], lastRequestDate[2]);
+                    }
+
+                    $("#ContentSectionContentUserList").html($("#ContentSectionContentUserList").html()
+                        +  "<div class='UserListItem' style='text-align:center;'>"
+                        + "<div class='UserListItemRight'>"
+                        + "<img class='UserListItemImage' src='/Areas/Admin/Images/Profile/" + this["ImageName"] + "' />"
+                        +"<span class='UserListItemRole'>کاربر معمولی</span>"
+                        + "</div>"
+                        + "<span class='UserListItemText' style='font-size:16px;font-weight:bold;margin-top:5px;'>" + this["FirstName"] + " " + this["LastName"] + "</span>"
+                        + "<span class='UserListItemText' style='margin-top:10px;'>عضویت : " + regDate+"</span>"
+                        + "<span class='UserListItemText'>تلفن : " + this["MobileNumber"] + "</span>"
+                        + "<span class='UserListItemText'>آخرین آنلاین : " + lastOnline + "</span>"
+                        + "<span class='UserListItemText'>ساعت آنلاین : " + ToJavaScriptTime(this["LastOnline"]) + "</span>"
+                        + "<span class='UserListItemText'>وضعیت : " + (this["IsActive"] ? 'فعال' : 'غیر فعال') + "</span>"
+                        + "<span class='UserListItemText'>آخرین درخواست : " + lastRequestDate + "</span>"
+                        /*+ "<span class='UserListItemNewText'>" + (this["AdminSee"]?"":"جدید") + "</span>"*/
+                        + "<div class='UserListItemHover'>"
+                        + "<div class='UserListItemHoverItem' onclick='window.location=\"/Admin/Users/Modify/" + this["Id"] + "\"'>ویرایش</div>"
+                        + "<div class='UserListItemHoverItem' onclick='ShowScore(" + this["Id"] + ",'" + this["ImageName"] + "')'>امتیاز ها</div>"
+                        + "<div class='UserListItemHoverItem' onclick='DeleteUser(this);' mf-valid='" + this["Id"] + "'>حذف</div>"
+                        +"</div>"
+                        +"</div>"
+                    );
+                });
+            });
+        }
+
+        function DeleteUser(element)
+        {
+            var id = $(element).attr("mf-valid");
+            ShowConfirm("توجه", "از حذف کاربر اطمینان دارید ؟", MessageType.Information, function () {
+                CallMethod('@Url.Action("Delete", "Users")', "{ Id : " + id + " }", "AllMain", function (response) {
+                    ShowMessage("توجه", "عملیات با موفقیت انجام شد", MessageType.Succes, function () {
+                        $($(element).closest(".UserListItem")).fadeOut(400);
+                    });
+                });
+            });
+        }
+
+        function ShowScore(userId, imageAddress)
+        {
+            $("#divAllSelectParentContetn").addClass("AllLightBoxContetnShow");
+            $("#divAllSelectParent").fadeIn(150, function () {
+                CallMethod('@Url.Action("GetUserPointDetails", "Users")', "{UserId:" + userId + "}", "divAllSelectParentContetn", function (response) {
+                    $("#PointHistoryTBody").html("");
+                    $("#tdPointName").html(response.User.Name);
+                    $("#tdPointRegisterDate").html(response.User.RegisterDate);
+                    $("#tdPointTell").html(response.User.Tell);
+                    $("#tdPointGetPoint").html(response.PointSummery.PointRecive);
+                    $("#tdPointPayPoint").html(response.PointSummery.PointPay);
+                    $("#tdPointTotalPoint").html(response.PointSummery.PointTotal);
+                    $("#imgPointDetails").attr("src", "/Areas/Admin/Images/Profile/" + imageAddress);
+                    $(response.PointDetails).each(function () {
+                        $("#PointHistoryTBody").html($("#PointHistoryTBody").html() +
+                            "<tr><td>" + this["Title"] + "</td>" +
+                            "<td>" + this["Date"] + "</td>" +
+                            "<td>" + this["Time"] + "</td>" +
+                            "<td style='color:" + (this["Score"] > 0 ? "#1bb394" : "#ed5666") + "'>" + this["Score"] + "</td>" +
+                            "<td>" + this["Status"] + "</td>"
+                        );
+                    });
+                });
+            });
+        }
+
+        function hideParentSelectLightBox() {
+            $("#divAllSelectParentContetn").removeClass("AllLightBoxContetnShow");
+            $("#divAllSelectParent").fadeOut(150);
+            $("#divAllFactorShowContetn").removeClass("AllLightBoxContetnShow");
+            $("#divAllFactorShow").fadeOut(150);
+        }
+    </script>
+}
+

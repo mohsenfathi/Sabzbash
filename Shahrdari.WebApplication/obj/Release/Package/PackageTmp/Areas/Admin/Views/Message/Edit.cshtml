@@ -1,0 +1,58 @@
+﻿
+@{
+    ViewBag.Title = "ویرایش پیام جدید";
+    Layout = "~/Areas/Admin/Views/Shared/Layout/_master.cshtml";
+}
+
+<div class="ContentSection" mf-slice='1' id="divAddRole">
+    <div class="ContentSectionHeader">
+        پیامها<span> ویرایش پیام</span>
+        <input type="button" style="float:left;" value="بازگشت" class="btnForm btnFormOrange" onclick="window.location = '@Url.Action("Index", "Message")'" />
+    </div>
+    <table class="tbForm">
+        <tr>
+            <td>
+                <input type="text" class="txtForm" value="@Model.title" id="txtTitle" placeholder="عنوان" mf-required maxlength="50" />
+                <div class="altForm">عنوان را وارد کنید</div>
+            </td>
+            <td>
+                <input type="text" class="txtForm" value="@Model.messages" id="txtMessage" placeholder="متن پیام" mf-required maxlength="200" />
+                <div class="altForm">متن پیام را وارد کنید</div>
+            </td>
+        </tr>
+    </table>
+
+    <input type="button" value="ویرایش" class="btnForm btnFormGreen" onclick="submitForm();" />
+    <input type="button" value="حذف" class="btnForm btnFormRed" onclick="deleteLearn();" />
+    <input type="button" value="انصراف" class="btnForm btnFormOrange" onclick="window.location = '@Url.Action("Index", "Message")'" />
+</div>
+
+
+<script>
+    var haveLoad = false;
+
+    $(document).ready(function () {
+        if (haveLoad == true)
+            return;
+        haveLoad = true;
+    });
+
+    function submitForm() {
+        var param = {};
+        param["Id"] = @Model.Id;
+        param["title"] = $("#txtTitle").val();
+        param["messages"] = $("#txtMessage").val();
+        CallMethod('@Url.Action("Edit", "Message")', JSON.stringify(param), "divAddRole", function (response) {
+            ShowMessage("توجه", "عملیات با موفقیت انجام شد", MessageType.Succes, function () { });
+        });
+    }
+
+    function deleteLearn()
+    {
+        ShowConfirm("توجه", "از حذف پیام اطمینان دارید ؟", MessageType.Information, function () {
+            CallMethod('@Url.Action("Delete", "Message")', "{ Id : @Model.Id }", "divAddRole", function (response) {
+                ShowMessage("توجه", "عملیات با موفقیت انجام شد", MessageType.Succes, function () { window.location = "@Url.Action("Index", "Message")" }, function () { window.location = "@Url.Action("Index", "Learn")" });
+            });
+        });
+    }
+</script>

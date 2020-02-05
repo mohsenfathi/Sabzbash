@@ -1,0 +1,72 @@
+﻿
+@{
+    ViewBag.Title = "افزودن نقش";
+    Layout = "~/Areas/Admin/Views/Shared/Layout/_master.cshtml";
+}
+
+<div class="ContentSection" mf-slice='1' id="divAddRole">
+    <div class="ContentSectionHeader">
+        نقش ها<span> افزودن نقش جدید</span>
+        <input type="button" style="float:left;" value="بازگشت" class="btnForm btnFormOrange" onclick="window.location = '@Url.Action("Roles", "Personels")'" />
+    </div>
+    <table class="tbForm">
+        <tr>
+            <td colspan="3">
+                <input type="text" class="txtForm" id="txtRoleName" placeholder="عنوان نقش" mf-required />
+                <div class="altForm">عنوان نقش را وارد کنید</div>
+            </td>
+        </tr>
+        <tr><td><label class="lblForm">دسترسی ها : </label></td></tr>
+        <tr>
+            <td>
+                @{
+                    foreach (Tuple<string, string> li in ViewBag.Actions)
+                    {
+                        <label class="control control--checkbox">
+                            <input type="checkbox" mf-permission mf-value="@li.Item2" />
+                            <div class="control__indicator"></div>
+                            <span>@li.Item1</span>
+                        </label>
+                    }
+                }
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <br />
+                <label class="control control--checkbox">
+                    <input type="checkbox" mf-value="HasFullControl" id="chkHasFullControl" onclick='$("*[mf-permission]").prop("disabled", $(this).is(":checked"));' />
+                    <div class="control__indicator"></div>
+                    <span>این نقش دسترسی کامل دارد</span>
+                </label>
+            </td>
+        </tr>
+    </table>
+    <div class="ContentSectionFooter">
+        <input type="button" value="ثبت نقش" class="btnForm btnFormGreen" onclick="submitForm();" />
+        <input type="button" value="انصراف" class="btnForm btnFormOrange" onclick="window.location = '@Url.Action("Roles", "Personels")'" />
+    </div>
+</div>
+
+<script>
+    function submitForm()
+    {
+        if (validateForm() == false)
+            return;
+        var role = {};
+        role["Title"] = $("#txtRoleName").val();
+        role["HasFullControl"] = $("#chkHasFullControl").is(":checked");
+        var permission = [];
+        $("input[type='checkbox'][mf-permission]").each(function () {
+            if ($(this).is(":checked"))
+                permission.push($(this).attr("mf-value"));
+        });
+        var param = {};
+        param["Role"] = role;
+        param["Permissions"] = permission;
+        CallMethod('@Url.Action("AddRole", "Personels")', JSON.stringify(param), "divAddRole", function (response) {
+            ShowMessage("توجه", "عملیات با موفقیت انجام شد", MessageType.Succes, function () { window.location = '@Url.Action("Roles", "Personels")' });
+        });
+    }
+</script>
+

@@ -1,0 +1,330 @@
+﻿
+@{
+    ViewBag.Title = "داشبورد";
+    Layout = "~/Areas/Admin/Views/Shared/Layout/_master.cshtml";
+}
+
+<div class="AllDashboardUsersStatisticts">
+    <div class="DashboardUsersStatisticts">
+        <p>@ViewBag.UserCount.Item1</p>
+        <p>کاربر</p>
+    </div>
+
+    <div class="DashboardUsersStatisticts">
+        <p>@ViewBag.UserCount.Item2</p>
+        <p>راننده</p>
+    </div>
+
+    <div class="DashboardUsersStatisticts">
+        <p>@ViewBag.UserCount.Item3</p>
+        <p>مرکز تجمیع</p>
+    </div>
+
+    <div class="DashboardUsersStatisticts">
+        <p>@ViewBag.BoothCount</p>
+        <p>غرفه بازیافت</p>
+    </div>
+</div>
+
+<div class="ContentSection" mf-slice='1'>
+    <div id="RequestPerMonthChart"></div>
+</div>
+
+<div class="ContentSection" mf-slice='3'>
+    <div class="TileChart" id="TileChart1"></div>
+</div>
+
+<div class="ContentSection" mf-slice='3'>
+    <div class="TileChart" id="TileChart2"></div>
+</div>
+
+<div class="ContentSection" mf-slice='3'>
+    <div class="TileChart" id="TileChart3"></div>
+</div>
+
+<div class="ContentSection" mf-slice='1'>
+    <div id="DashboardMap"></div>
+</div>
+
+<style>
+    #RequestPerMonthChart *, .TileChart * {
+        direction: ltr;
+    }
+
+    #RequestPerMonthChart {
+        display: inline-block;
+        direction: ltr;
+        width: 100%;
+        margin-top: 20px;
+        border: solid 1px #009688;
+        background: rgba(255,255,255,0.1);
+    }
+
+    .TileChart {
+        display: inline-block;
+        width: 100%;
+        border: solid 1px #009688;
+        margin-top: 30px;
+    }
+
+    #DashboardMap {
+        float: right;
+        width: 100%;
+        height: 600px;
+        margin-top: 30px;
+        border: solid 1px #009688;
+    }
+</style>
+
+<script src="~/Areas/Admin/Scripts/highcharts.js"></script>
+<script src="~/Areas/Admin/Scripts/exporting.js"></script>
+<script>
+
+    $(document).ready(function () {
+        prepareMap();
+    });
+
+    function prepareMap() {
+
+        var tileJSONUrl = 'https://api.cedarmaps.com/v1/tiles/cedarmaps.streets.json?access_token=' + L.cedarmaps.accessToken;
+
+        var map = L.cedarmaps.map('DashboardMap', tileJSONUrl, {
+            scrollWheelZoom: true
+        }).setView([35.69410994928452, 51.38031005859376], 11);
+
+
+        var markers = [
+            @Html.Raw(ViewBag.LastestRequest)
+        ];
+        var markersLeaflet = [];
+        var _marker = null;
+
+
+        if (markers.length === 0) return;
+        markers.map(function (marker) {
+            var iconOpts = {
+                iconUrl: marker.iconOpts.iconUrl,
+                iconRetinaUrl: marker.iconOpts.iconRetinaUrl,
+                iconSize: marker.iconOpts.iconSize,
+                popupAnchor: [0, -49]
+            };
+
+            const markerIcon = {
+                icon: window.L.icon(iconOpts)
+            };
+
+            _marker = new window.L.marker(marker.center, markerIcon);
+            markersLeaflet.push(_marker);
+            if (marker.popupContent) {
+                _marker.bindPopup(marker.popupContent);
+            }
+            _marker.addTo(map);
+        });
+    }
+
+    SetSeeChart();
+
+    function SetSeeChart () {
+        $('#RequestPerMonthChart').highcharts({
+            chart: {
+                type: 'areaspline'
+            },
+            title: {
+                text: 'آمار درخواست ها' ,
+                style: {
+                    color: "#000"
+                }
+            },
+            subtitle: {
+                text: 'آمار درخواست های یک ماهه اخیر' ,
+                style: {
+                    color: "#ccc"
+                }
+            },
+            xAxis: {
+                categories: [@Html.Raw(ViewBag.ReqCategory)],
+                tickmarkPlacement: 'on',
+                title: {
+                    enabled: false
+                } ,
+                labels: {
+                    style: {
+                        color: "#000"
+                    }
+                } ,
+            },
+            yAxis: {
+                title: {
+                    text: 'میزان درخواست ها' ,
+                    style: {
+                        color: "#000"
+                    }
+                },
+                labels: {
+                    formatter: function () {
+                        return this.value;
+                    } ,
+                    style: {
+                        color: "#000"
+                    }
+                }
+            },
+            tooltip: {
+                shared: true,
+                useHTML: true,
+                crosshairs: [true],
+                headerFormat: '<small>{point.key}</small><table>',
+                pointFormat: '<tr><td style="text-align: right"><b>{point.y}</b></td>' +
+                    '<td style="color: {series.color}"> : {series.name}</td></tr>',
+                footerFormat: '</table>'
+            },
+            plotOptions: {
+                area: {
+                    stacking: 'normal',
+                    lineColor: '#666666',
+                    lineWidth: 1,
+                    marker: {
+                        lineWidth: 1,
+                        lineColor: '#666666'
+                    }
+                }
+            },
+            series: [{
+                name: 'درخواست',
+                data: [@ViewBag.ReqData]
+            }]
+        });
+
+        $('#TileChart1').highcharts({
+            chart: {
+                plotBackgroundColor: null,
+                plotBorderWidth: 0,
+                plotShadow: false
+            },
+            title: {
+                text: 'تراکم وضعیت درخواست ها',
+                align: 'center',
+                verticalAlign: 'middle',
+                y: 60
+            },
+            tooltip: {
+                shared: true,
+                useHTML: true,
+                crosshairs: [true],
+                headerFormat: '<small>{point.key}</small><table>',
+                pointFormat: '<tr><td style="text-align: right"><b>{point.y}</b></td>' +
+                '<td style="color: {series.color}"> : {series.name}</td></tr>',
+                footerFormat: '</table>'
+            },
+            plotOptions: {
+                pie: {
+                    dataLabels: {
+                        enabled: true,
+                        distance: -50,
+                        style: {
+                            fontWeight: 'bold',
+                            color: 'white',
+                            textShadow: 'none'
+                        }
+                    },
+                    startAngle: -90,
+                    endAngle: 90,
+                    center: ['50%', '75%'],
+                    size: '110%',
+                    showInLegend: true
+                }
+            },
+            series: [{
+                type: 'pie',
+                name: 'درخواست ها',
+                innerSize: '50%',
+                data: [
+                    @Html.Raw(ViewBag.ForChartType)
+                ]
+            }]
+        });
+
+        $('#TileChart2').highcharts({
+            chart: {
+                plotBackgroundColor: null,
+                plotBorderWidth: null,
+                plotShadow: false,
+                type: 'pie'
+            },
+            title: {
+                text: 'نوع درخوات های تسویه'
+            },
+            tooltip: {
+                shared: true,
+                useHTML: true,
+                crosshairs: [true],
+                headerFormat: '<small>{point.key}</small><table>',
+                pointFormat: '<tr><td style="text-align: right"><b>{point.y}</b></td>' +
+                '<td style="color: {series.color}"> : {series.name}</td></tr>',
+                footerFormat: '</table>'
+            },
+            plotOptions: {
+                pie: {
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    showInLegend: true
+                }
+            },
+            series: [{
+                name: 'تعداد',
+                colorByPoint: true,
+                data: [
+                    @Html.Raw(ViewBag.ForChartPayType)
+                ]
+            }]
+        });
+
+        $('#TileChart3').highcharts({
+            chart: {
+                plotBackgroundColor: null,
+                plotBorderWidth: 0,
+                plotShadow: false
+            },
+            title: {
+                text: 'وضعیت درخوات های تسویه',
+                align: 'center',
+                verticalAlign: 'middle',
+                y: 60
+            },
+            tooltip: {
+                shared: true,
+                useHTML: true,
+                crosshairs: [true],
+                headerFormat: '<small>{point.key}</small><table>',
+                pointFormat: '<tr><td style="text-align: right"><b>{point.y}</b></td>' +
+                '<td style="color: {series.color}"> : {series.name}</td></tr>',
+                footerFormat: '</table>'
+            },
+            plotOptions: {
+                pie: {
+                    dataLabels: {
+                        enabled: true,
+                        distance: -50,
+                        style: {
+                            fontWeight: 'bold',
+                            color: 'white'
+                        }
+                    },
+                    startAngle: -90,
+                    endAngle: 90,
+                    center: ['50%', '75%'],
+                    size: '110%',
+                    showInLegend: true
+                }
+            },
+            series: [{
+                type: 'pie',
+                name: 'تعداد',
+                innerSize: '50%',
+                data: [
+                    @Html.Raw(ViewBag.ForChartPayStatus)
+                ]
+            }]
+        });
+    }
+</script>

@@ -1,0 +1,234 @@
+﻿<div class="AllLDialogBoxSatisfaction">
+    <div class="SatisfactionDialogBox" id="SatisfactionDialogBoxContent">
+        <div class="SatisFactionDialogBoxContent" >
+            <div class="SatisFactionDialogBoxContentFirstHalf">
+                <div id="UserSettingProfileContainer"><img id="ProfileImage" src="~/Images/HeaderLogo.png" style="width:100%;"></div>
+                <div id="PersonelName" class="WhiteText"></div>
+                <div id="PersonelCode" class="WhiteText" style="font-size:20px"></div>
+            </div>
+            <div class="SatisFactionDialogBoxContentSecondHalf">
+                <div class="rating">
+                    <input type="radio" value="5" name="rating" id="rating-5">
+                    <label for="rating-5"></label>
+                    <input type="radio" value="4" name="rating" id="rating-4">
+                    <label for="rating-4"></label>
+                    <input type="radio" value="3" name="rating" id="rating-3">
+                    <label for="rating-3"></label>
+                    <input type="radio" value="2" name="rating" id="rating-2">
+                    <label for="rating-2"></label>
+                    <input type="radio" value="1" name="rating" id="rating-1">
+                    <label for="rating-1"></label>
+                </div>
+                <span class="GrayText" style="color:#777">نقاط قوت</span>
+                <div id="SatisfationCheckBoxContainer">
+                    <label class="lblCheckBox">
+                        <input type="checkbox" name="chk" pm-id="@((int)Shahrdari.Enums.E_PublicCategory.FEEDBACK.RESPECTFUL_BEHAVIOR)" />
+                        <span class="RegularText" style="color:#666">رفتار محترمانه</span>
+                    </label>
+
+                    <label id="ArriveOnTime" class="lblCheckBox" style="margin-top:10px;">
+                        <input type="checkbox" name="chk" pm-id="@((int)Shahrdari.Enums.E_PublicCategory.FEEDBACK.ARRIVE_ON_TIME)" />
+                        <span class="RegularText" style="color:#666">به موقع رسیدن</span>
+                    </label>
+
+                    <label class="lblCheckBox" style="margin-top:10px;">
+                        <input type="checkbox" name="chk" pm-id="@((int)Shahrdari.Enums.E_PublicCategory.FEEDBACK.SPEED_OF_SERVICE)" />
+                        <span class="RegularText" style="color:#666">سرعت در سرویس دهی</span>
+                    </label>
+                </div>
+                <textarea class="TextArea" id="TextArea" style="font-size:20px;margin-top:10px;padding:5px;" placeholder="توضیحات"></textarea>
+                <div class="btn btnGreen" onclick="Submit();">ثبت امتیاز</div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<style>
+    .SatisfactionDialogBox {
+        background: unset !important;
+        border-radius: 20px;
+    }
+
+    .WhiteText {
+        font-size: 25px;
+        color: #fff;
+    }
+
+    .rating {
+        display: flex;
+        justify-content: center;
+        overflow: hidden;
+        flex-direction: row-reverse;
+        position: relative;
+        margin: 10px 0;
+    }
+
+    .rating-0 {
+        filter: grayscale(100%);
+    }
+
+    .rating > input {
+        display: none;
+    }
+
+    .rating > label {
+        cursor: pointer;
+        width: 50px;
+        height: 50px;
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='126.729' height='126.73'%3e%3cpath fill='%23e3e3e3' d='M121.215 44.212l-34.899-3.3c-2.2-.2-4.101-1.6-5-3.7l-12.5-30.3c-2-5-9.101-5-11.101 0l-12.4 30.3c-.8 2.1-2.8 3.5-5 3.7l-34.9 3.3c-5.2.5-7.3 7-3.4 10.5l26.3 23.1c1.7 1.5 2.4 3.7 1.9 5.9l-7.9 32.399c-1.2 5.101 4.3 9.3 8.9 6.601l29.1-17.101c1.9-1.1 4.2-1.1 6.1 0l29.101 17.101c4.6 2.699 10.1-1.4 8.899-6.601l-7.8-32.399c-.5-2.2.2-4.4 1.9-5.9l26.3-23.1c3.8-3.5 1.6-10-3.6-10.5z'/%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: cover;
+        margin: 0 5px;
+        transition: .3s;
+        -webkit-transition: .3s;
+        -o-transition: .3s;
+        -ms-transition: .3s;
+        -moz-transition: .3s;
+    }
+
+    .rating > input:checked ~ label,
+    .rating > input:checked ~ label ~ label {
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='126.729' height='126.73'%3e%3cpath fill='%23fcd93a' d='M121.215 44.212l-34.899-3.3c-2.2-.2-4.101-1.6-5-3.7l-12.5-30.3c-2-5-9.101-5-11.101 0l-12.4 30.3c-.8 2.1-2.8 3.5-5 3.7l-34.9 3.3c-5.2.5-7.3 7-3.4 10.5l26.3 23.1c1.7 1.5 2.4 3.7 1.9 5.9l-7.9 32.399c-1.2 5.101 4.3 9.3 8.9 6.601l29.1-17.101c1.9-1.1 4.2-1.1 6.1 0l29.101 17.101c4.6 2.699 10.1-1.4 8.899-6.601l-7.8-32.399c-.5-2.2.2-4.4 1.9-5.9l26.3-23.1c3.8-3.5 1.6-10-3.6-10.5z'/%3e%3c/svg%3e");
+    }
+
+
+    .rating > input:not(:checked) ~ label:hover,
+    .rating > input:not(:checked) ~ label:hover ~ label {
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='126.729' height='126.73'%3e%3cpath fill='%23d8b11e' d='M121.215 44.212l-34.899-3.3c-2.2-.2-4.101-1.6-5-3.7l-12.5-30.3c-2-5-9.101-5-11.101 0l-12.4 30.3c-.8 2.1-2.8 3.5-5 3.7l-34.9 3.3c-5.2.5-7.3 7-3.4 10.5l26.3 23.1c1.7 1.5 2.4 3.7 1.9 5.9l-7.9 32.399c-1.2 5.101 4.3 9.3 8.9 6.601l29.1-17.101c1.9-1.1 4.2-1.1 6.1 0l29.101 17.101c4.6 2.699 10.1-1.4 8.899-6.601l-7.8-32.399c-.5-2.2.2-4.4 1.9-5.9l26.3-23.1c3.8-3.5 1.6-10-3.6-10.5z'/%3e%3c/svg%3e");
+    }
+
+    .lblCheckBox {
+        float: right;
+    }
+
+        .lblCheckBox input {
+            width: 0px;
+            height: 0px;
+            float: right;
+        }
+
+            .lblCheckBox input::before {
+                content: '';
+                width: 30px;
+                height: 30px;
+                float: left;
+                background: #CCC;
+                ;
+            }
+
+            .lblCheckBox input::after {
+                content: '';
+                width: 30px;
+                height: 30px;
+                float: left;
+                background: #72BF44;
+                display: none;
+            }
+
+            .lblCheckBox input:checked::before {
+                display: none;
+            }
+
+            .lblCheckBox input:checked::after {
+                display: block;
+            }
+
+        .lblCheckBox span {
+            float: right;
+            margin-right: 5px;
+        }
+
+            .lblCheckBox span::after {
+                content: '';
+                width: 7px;
+                height: 15px;
+                float: right;
+                margin-top: 2.5px;
+                margin-right: -26px;
+                border: solid 2px #FFF;
+                border-width: 0px 4px 4px 0px;
+                transform: rotate(45deg);
+                display: none;
+            }
+
+        .lblCheckBox input:checked ~ span::after {
+            display: block;
+        }
+
+    #TextArea {
+        width: 95%;
+        min-height: 100px !important;
+    }
+
+    @@media screen and (max-height:610px){
+        .SatisFactionDialogBoxContent {
+            max-height: 95vh;
+            overflow: auto;
+        }
+    }
+
+</style>
+
+<script>
+    $(document).ready(function (e) {
+        $('.AllLDialogBoxSatisfaction').fadeOut(150);
+        $('.AllLDialogBoxSatisfaction').click(function (e) {
+            if (e.target != $(this)) {
+                return
+            };
+            CloseSatisfactionDialogBox();
+        })
+    })
+
+    function BindData()
+    {
+        $("#ProfileImage").attr("src", "/Areas/Admin/Images/Personels/" + lastRequest["Personel"].ImageName);
+        $("#PersonelName").html(lastRequest["Personel"].FirstName + " " + lastRequest["Personel"].LastName);
+        $("#PersonelCode").html("کد راننده: " + lastRequest["Personel"].Id);
+        if (lastRequest["Pouriya_Type"] == "CAR")
+            $("#ArriveOnTime").show();
+        else if (lastRequest["Pouriya_Type"] == "BOOTH") 
+            $("#ArriveOnTime").hide();
+    }
+
+    function Submit()
+    {
+
+        var MessageIds = [];
+
+        $('input[name="chk"]:checked').each(function () {
+            MessageIds.push($(this).attr("pm-id"));
+        });
+
+        if ($('input[name="rating"]:checked').eq($('input[name="rating"]:checked').length - 1).val() == undefined)
+        {
+            ShowMessage("توجه", "با انتخاب یکی از ستاره ها ما را در خدمات رسانی بهتر یاری بفرمایید", MessageType.Warning, function () { return; });
+            return;
+        }
+
+        var param = {
+            RequestId: lastRequest["Request"].Id,
+            Rate: $('input[name="rating"]:checked').eq($('input[name="rating"]:checked').length - 1).val(),
+            MessageId: MessageIds,
+            Comment: $("#TextArea").val(),
+        };
+        CallMethod("/User/Home/FinishRequestFromUser", JSON.stringify(param), function () {
+            CloseSatisfactionDialogBox();
+        });
+    }
+
+    function OpenSatisfactionDialogBox() {
+        $("#AllContent").addClass("AllContentBlur");
+        $("#SatisfactionDialogBoxContent").addClass("AllLightBoxContetnShow");
+        $(".AllLDialogBoxSatisfaction").fadeIn(150);
+    }
+    
+    function CloseSatisfactionDialogBox() {
+        $("#AllContent").removeClass("AllContentBlur");
+        $("#SatisfactionDialogBoxContent").removeClass("AllLightBoxContetnShow");
+        $(".AllLDialogBoxSatisfaction").fadeOut(150);
+    }
+
+</script>

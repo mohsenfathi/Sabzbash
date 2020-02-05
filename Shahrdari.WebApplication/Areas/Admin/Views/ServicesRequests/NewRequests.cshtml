@@ -1,0 +1,125 @@
+﻿@model List<Shahrdari.ViewModels.V_ServicesRequests>
+@{
+    ViewBag.Title = "درخواست های جدید";
+    Layout = "~/Areas/Admin/Views/Shared/Layout/_master.cshtml";
+}
+@using Shahrdari.BussinessLayer
+
+<div class="ContentSection" mf-slice='1' id="divAddRole">
+    <div class="ContentSectionHeader">
+        درخواست ها<span>لیست درخواست های جدید سیستم</span>
+    </div>
+    <input type="button" value="لیست درخواست ها" class="btnSection btnFormOrange" onclick="window.location = '@Url.Action("Index", "ServicesRequests")'" />
+    <table class="tbList">
+        <tr class="tbListHeader">
+            <td>نام و نام خانوادگی</td>
+            <td>نوع درخواست</td>
+            <td>تاریخ ایجاد</td>
+            <td>درخواست آنی</td>
+            <td>تاریخ ارجاء</td>
+            <td>آدرس</td>
+            <td>عملیات</td>
+        </tr>
+        <tbody>
+            @foreach (var li in Model)
+            {
+                <tr>
+                    <td>@li.User.FirstName @li.User.LastName</td>
+                    <td>@li.CreateDate.ConvertMiladiToShamsi()</td>
+                    <td>@(li.ImmediatelyRequest ? "بلی" : "خیر")</td>
+                    <td>@li.ReferralDate.ConvertMiladiToShamsi()</td>
+                    <td>@li.Address</td>
+                    <td>
+                        <img class="tbListModifyIcon" src="~/Areas/Admin/Images/editIcon.png" onclick="window.location = '@Url.Action("Modify", "ServicesRequests", new { Id = li.Id })';" />
+                        <img class="tbListModifyIcon" src="~/Areas/Admin/Images/ShowDetails.png" onclick="window.location = '@Url.Action("ShowDetails", "ServicesRequests", new { Id = li.Id , FromNew = true })';" />
+                        <img class="tbListModifyIcon" src="~/Areas/Admin/Images/Location.png" onclick="showMaps('@li.GeographicalCoordinates','@li.User.ImageName','@li.User.FirstName @li.User.LastName','@li.User.MobileNumber','@li.Address','@li.PlaqueNumber','@li.UnitNumber')" />
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@section EndOfPage
+{
+    <div class="AllCLightBox" id="divAllSelectParent">
+        <div class="AllCLightBoxContetn" id="divAllSelectParentContetn">
+            <div class="AllCLightBoxHeader">
+                <span>نقشه</span>
+                <img src="/Areas/Admin/Images/LightBoxCloseIcon.png" width="30" onclick="hideParentSelectLightBox();" />
+            </div>
+            <div class="AllCLightBoxContent">
+                <div id="divGoogleMap" style="float:right;width:100%;height:calc(80vh - 110px);"></div>
+            </div>
+            <div class="AllCLightBoxFooter">
+                <input type="button" value="تایید" class="btnForm btnFormGreen" onclick="hideParentSelectLightBox();" />
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        function hideParentSelectLightBox() {
+            $("#divAllSelectParentContetn").removeClass("AllLightBoxContetnShow");
+            $("#divAllSelectParent").fadeOut(150);
+        }
+
+        var isLoadMap = false;
+        function showMaps(geoLocation, imageName, fullName, mobileNumber, address, plaqueNumber, unitNumber) {
+            $("#divAllSelectParentContetn").addClass("AllLightBoxContetnShow");
+            $("#divAllSelectParent").fadeIn(150, function () {
+
+                if (isLoadMap == true)
+                    return;
+                isLoadMap = true;
+
+                geoLocation = geoLocation.split(',');
+
+                var myCenter = new google.maps.LatLng(geoLocation[0], geoLocation[1]);
+                var mapProp = {
+                    center: myCenter,
+                    zoom: 15,
+                    mapTypeId: google.maps.MapTypeId.ROADMAP,
+                };
+                var map = new google.maps.Map(document.getElementById("divGoogleMap"), mapProp);
+                var marker = new google.maps.Marker({
+                    position: myCenter,
+                });
+                marker.setMap(map);
+                var infowindow = new google.maps.InfoWindow({
+                    content: "<div class='GoogleMapInfoWindow'>"
+                    + "<table class='tblDetails' style='text-align:center;border:none;'>"
+                    + "    <tr>"
+                    + "        <td colspan='2' style='text-align:center;'><img src='/Areas/Admin/Images/Profiles/" + imageName + "' style='width:100px;height:100px;margin:10px;border-radius:50%;' /></td>"
+                    + "    </tr>"
+                    + "    <tr>"
+                    + "        <td colspan='2' style='font-size:16px;font-style:bold;'>" + fullName + "</td>"
+                    + "    </tr>"
+                    + "    <tr>"
+                    + "        <td>شماره تلفن : </td>"
+                    + "        <td>" + mobileNumber + "</td>"
+                    + "    </tr>"
+                    + "    <tr>"
+                    + "        <td>آدرس : </td>"
+                    + "        <td>" + address + "</td>"
+                    + "    </tr>"
+                    + "    <tr>"
+                    + "        <td>پلاک : </td>"
+                    + "        <td>" + plaqueNumber + "</td>"
+                    + "    </tr>"
+                    + "    <tr>"
+                    + "        <td>واحد : </td>"
+                    + "        <td>" + unitNumber + "</td>"
+                    + "    </tr>"
+                    + "</table>"
+                    + "</div>"
+                });
+                infowindow.open(map, marker);
+                google.maps.event.addListener(marker, 'click', function () {
+                    infowindow.open(map, marker);
+                });
+            });
+        }
+
+    </script>
+}

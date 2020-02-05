@@ -1,0 +1,79 @@
+﻿@model Khadamati.ViewModels.V_Tariffs
+@{
+    ViewBag.Title = "ویرایش تعرفه";
+    Layout = "~/Areas/Admin/Views/Shared/Layouts/_MainAdmin.cshtml";
+}
+
+
+<div class="ContentSection" mf-slice='1' id="divAllPersonel">
+    <div class="ContentSectionHeader">
+        تعرفه ها<span>ویرایش تعرفه</span>
+    </div>
+    <table class="tbForm">
+        <tr>
+            <td>
+                <input type="text" class="txtForm" id="txtTitle" mf-required placeholder="عنوان" value="@Model.Title" maxlength="255" />
+                <div class="altForm">عنوان را وارد کنید</div>
+            </td>
+            <td>
+                <input type="text" class="txtForm txtComma" id="txtPrice" mf-required mf-type="IntNumber" value="@Model.Price" placeholder="قیمت (تومان)" maxlength="13" />
+                <div class="altForm">قیمت (تومان) را وارد کنید</div>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                @{
+                    foreach (Khadamati.Models.M_ServicesCategories li in ViewBag.Categories)
+                    {
+                        <label class="control control--checkbox">
+                            <input type="checkbox" mf-Category mf-value="@li.Id" @(Model.ServiceCategoriesTariffs.Select(c=>c.ServiceCategoriesId).Contains(li.Id) ? "checked" : "") />
+                            <div class="control__indicator"></div>
+                            <span>@li.Title</span>
+                        </label>
+                    }
+                }
+            </td>
+        </tr>
+    </table>
+    <div class="ContentSectionFooter">
+        <input type="button" value="افزودن" class="btnForm btnFormGreen" onclick="submitForm();" />
+        <input type="button" value="حذف" class="btnForm btnFormRed" onclick="deleteForm();"  />
+        <input type="button" value="انصراف" class="btnForm btnFormOrange" onclick="window.location = '@Url.Action("Tariffs", "Categories")'" />
+    </div>
+</div>
+
+<script>
+    var valId = @Model.Id;
+    function submitForm()
+    {
+        if (validateForm() == false)
+            return;
+        var tariff = {};
+        tariff["Title"] = $("#txtTitle").val();
+        tariff["Id"] = valId;
+        tariff["Price"] = $("#txtPrice").val().replace(/,/g, "");
+        var permission = [];
+        $("input[type='checkbox'][mf-Category]").each(function () {
+            if ($(this).is(":checked"))
+                permission.push($(this).attr("mf-value"));
+        });
+        var param = {};
+        param["Tariff"] = tariff;
+        param["CategoryIds"] = permission;
+        CallMethod('@Url.Action("ModityTariff", "Categories")', JSON.stringify(param), "divAllPersonel", function (response) {
+            valId = response["Id"];
+            ShowMessage("توجه", "عملیات با موفقیت انجام شد", MessageType.Succes);
+        });
+    }
+
+    function deleteForm()
+    {
+        ShowConfirm("توجه", "از حذف تعرفه اطمینان دارید ؟", MessageType.Information, function () {
+            CallMethod('@Url.Action("DeleteTariff", "Categories")', "{ Id : " + valId+" }", "divAllPersonel", function (response) {
+                ShowMessage("توجه", "عملیات با موفقیت انجام شد", MessageType.Succes, function () { window.location = "@Url.Action("Tariffs", "Categories")" }, function () { window.location = "@Url.Action("Tariffs", "Categories")" });
+            });
+        });
+    }
+
+</script>
+

@@ -1,0 +1,520 @@
+﻿@{
+    ViewBag.Title = "ارسال با راننده";
+    Layout = "~/Areas/User/Views/Shared/Layout/_master.cshtml";
+}
+
+<div class="AllHomeMain">
+    <div class="SideBar" id="SideBar" style="height:auto;width:240px">
+        <div id="StationModeSideBarHead">
+            <span class="RegularText" style="font-size:25px;">آدرس های منتخب</span>
+        </div>
+        <div id="FavoriteAddress" style="float:right;width:100%;">
+        @foreach (var li in ViewBag.Addresses)
+        {
+            <div class="SideBarStationPageItem">
+                    <div id="SideBarStationPageIcon" onClick='FavoriteAddressClick(@li.Lat,@li.Lng);'></div>
+                    <span class="RegularText" id="SideBarStationPageText" onClick='FavoriteAddressClick(@li.Lat,@li.Lng);'>@li.Title</span>
+                <div class="DeleteIcon" style="float:left;width:30px;height:30px;left:5px;position:absolute;" onclick="DeleteFavorite(@li.Id);"><img src="~/Areas/User/Images/DelLoc.png" style="width:100%;"></div>
+                <div class="DeleteIcon" style="float:left;width:30px;height:30px;left:5px;position:absolute;margin-left:25px;" onclick="EditFavoriteBind(@li.Id);"><img src="~/Areas/User/Images/EdiLoc.png" style="width:100%;"></div>
+            </div>
+        }
+        </div>
+        <div id="SideBarStationBtnContainer">
+            @*<input type="button" onclick="OpenRequestDialog();" class="btn btnTransparent" value="وارد کردن جزئیات" />
+            <input type="button" onclick="OpenAddAddressesDialog();" class="btn btnGreen" value="افزودن آدرس منتخب" />*@
+        </div>
+    </div>
+
+    <div class="AllMainWithSideBar">
+        <div id="HeaderContainerStation">
+            <div class="UserMenuButtonContainer">
+                <img src="~/Areas/User/Images/Icons/UserIcon.png" class="UserMenuButton" onclick="OpenMenu();" />
+            </div>
+            <div class="SearchBar">
+                <input id="SearchField" type="text" class="SearchBarInput" style="color:white;" placeholder="جستجو" />
+                <div onclick="SearchOnMap();" class="SearchBarIcon"></div>
+                <div id="Suggestion"></div>
+            </div>
+            <a href="@Url.Action("Index", "Home")" style="margin-right:5px;">
+                <img src="~/Areas/User/Images/BackButton.png" width="50" id="BackButton" />
+            </a>
+        </div>
+        <div class="AllMainWithSideBarContent">
+            <div class="SabzBashMap" id="SabzBashMap"></div>
+            <div id="SabzBashMapCurrentLocation" onclick="GetCurrentLocation();"></div>
+            <div id="MapAddress"></div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .AllMainWithSideBarContent
+    {
+        position:relative;
+    }
+
+    #Suggestion {
+        float: right;
+        width: 100%;
+        min-width: 300px;
+        height: 200px;
+        background: #FFF;
+        position: absolute;
+        margin-top: 128px;
+        z-index: 999;
+        border-radius: 15px;
+        overflow: auto;
+    }
+
+    .SuggestionDetails {
+        float: right;
+        width: 96%;
+        height: 50px;
+        position: relative;
+        margin-top: 3px;
+        margin-right: 2%;
+        border-radius: 15px;
+        border: solid 1px #808080;
+        cursor: pointer;
+    }
+
+    #SabzBashMapCurrentLocation {
+        width: 50px;
+        height: 50px;
+        position: absolute;
+        top: 25px;
+        right: 10px;
+        background: url(/Areas/User/Images/CurrentLocation.png);
+        background-size: cover;
+        cursor: pointer;
+        transition: all 300ms ease-in-out 0s;
+        -o-transition: all 300ms ease-in-out 0s;
+        -ms-transition: all 300ms ease-in-out 0s;
+        -moz-transition: all 300ms ease-in-out 0s;
+        -webkit-transition: all 300ms ease-in-out 0s;
+    }
+    #SabzBashMapCurrentLocation:hover
+    {
+        transform:scale(1.2);
+        -o-transform:scale(1.2);
+        -ms-transform:scale(1.2);
+        -moz-transform:scale(1.2);
+        -webkit-transform:scale(1.2);
+    }
+
+    #MapAddress {
+        position: absolute;
+        bottom: 25px;
+        left: 20px;
+        width: calc(100% - 60px);
+        width: -o-calc(100% - 60px);
+        width: -ms-calc(100% - 60px);
+        width: -moz-calc(100% - 60px);
+        width: -webkit-calc(100% - 60px);
+        border-radius: 500px;
+        background: rgba(0,0,0,0.5);
+        padding: 10px;
+        z-index: 1001;
+        text-align: center;
+        color: #FFF;
+    }
+
+    #popup {
+        width: 170px;
+        height: 82px;
+        border:solid #808080 1px;
+        border-radius:15px;
+    }
+
+    .subPopup {
+        float: right;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    } 
+    
+    .thumbBtn {
+        float: right;
+        margin: 3px;
+        padding: 3px 15px;
+        font-size: 16px;
+        outline: none;
+        border: none;
+        border-radius: 25px;
+        cursor: pointer;
+    }
+
+    @@media screen and (max-width:999px)
+    {
+        .AllHomeMain {
+            flex-direction: column-reverse;
+        }
+        .SideBar
+        {
+            display:flex;
+            width:90% !important;
+        }
+        #SideBarStationBtnContainer {
+            display:flex;
+            flex-direction: column-reverse;
+            justify-content: center;
+        }
+    }
+</style>
+
+@Html.Partial("~/Areas/User/Views/Shared/ParialViews/_Menu.cshtml")
+
+@section EndOfPage
+{
+    @Html.Partial("~/Areas/User/Views/Shared/ParialViews/_PostHistoryLightBox.cshtml")
+    @Html.Partial("~/Areas/User/Views/Shared/ParialViews/_RequestLightBox.cshtml", null
+    , new ViewDataDictionary {
+        { "forRider", true },
+        { "Date" , ViewBag.Date },
+        { "ElecScore",ViewBag.ElecScore },
+        { "MetalScore",ViewBag.MetalScore },
+        { "NonMetalScore",ViewBag.NonMetalScore },
+        { "RandomScore",ViewBag.RandomScore },
+    })
+
+<div Class="AllLDialogBox" id="AllAddAddressesDialogBox">
+    <div class="AllLDialogBoxContetn" id="AllAddAddressesDialogBoxContetn">
+        <img src="~/Areas/User/Images/BackButton.png" width="35" class="BackButton" onclick="CloseAddAddressesDialog();" />
+        <div class="AllLDialogBoxContetnContainer">
+            <div id="FavAddTitle" class="RegularText" style="width:100%;text-align:center;font-size:16px;">افزودن آدرس منتخب</div>
+
+            <table style="margin-top:20px;width:100%;text-align:center;float:left;">
+                <tr>
+                    <td>
+                        <input type="text" id="txtTitle" class="TextInput" placeholder="عنوان را وارد کنید" />
+                    </td>
+                </tr>
+                <tr>
+                    <td id="SignUpIconContainer">
+                        <div class="rdoUserType SignUpIconContainerSelected" ippv-value="@((int)Shahrdari.Enums.E_PublicCategory.INSTITUTE_TYPE.HOME)">
+                            <div class="IconSignup"></div>
+                            <p class="RegularText" style="font-size:16px;padding:0;">مسکونی</p>
+                        </div>
+                        <div class="rdoUserType" ippv-value="@((int)Shahrdari.Enums.E_PublicCategory.INSTITUTE_TYPE.OFFICIAL)">
+                            <div class="IconSignup" id="IconSignup2"></div>
+                            <p class="RegularText" style="font-size:16px;padding:0;">اداره</p>
+                        </div>
+                        <div class="rdoUserType" ippv-value="@((int)Shahrdari.Enums.E_PublicCategory.INSTITUTE_TYPE.COMMERCIAL)">
+                            <div class="IconSignup" id="IconSignup3"></div>
+                            <p class="RegularText" style="font-size:16px;padding:0;">تجاری</p>
+                        </div>
+                        <div class="rdoUserType" ippv-value="@((int)Shahrdari.Enums.E_PublicCategory.INSTITUTE_TYPE.FACTORY)">
+                            <div class="IconSignup" id="IconSignup4"></div>
+                            <p class="RegularText" style="font-size:16px;padding:0;">کارخانه</p>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <textarea id="AreaAddress" class="TextInput TextArea" placeholder="آدرس" style="min-width:80%;max-width:80%;"></textarea>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="number" min="0" step="1" pattern="\d*" oninput="this.value = this.value.replace(/[^0-9.]/g, ''); this.value = this.value.replace(/(\..*)\./g, '$1');" id="txtFavoritePlaque" class="TextInput" placeholder="پلاک را وارد کنید" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="number" min="0" step="1" pattern="\d*" oninput="this.value = this.value.replace(/[^0-9.]/g, ''); this.value = this.value.replace(/(\..*)\./g, '$1');" id="txtFavoriteUnit" class="TextInput" placeholder="واحد را وارد کنید" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <input id="btnAddAddress" class="btn btnGreen" onclick="AddAddress();" value="افزودن آدرس" type="button" style="margin:15px 0;" />
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+
+}
+
+<script>
+
+    var lat = 35.69410994928452, lng = 51.38031005859376;
+    var stationId = 0;
+    var markerAdded = [];
+
+    $(document).ready(function () {
+        $("#Suggestion").hide();
+        $("#AllAddAddressesDialogBox").click(function (e) {
+            if (e.target !== this)
+                return;
+            CloseAddAddressesDialog();
+        });
+        prepareMap(null);
+        $(".rdoUserType").click(function () {
+            $(".rdoUserType").removeClass("SignUpIconContainerSelected");
+            var paretnDiv = this;
+            setTimeout(function () {
+                $(paretnDiv).addClass("SignUpIconContainerSelected");
+            }, 2);
+        });
+    });
+
+    function EditFavoriteBind(Id) {
+        CallMethod("/User/Home/GetFavoriteAddress", "{Id : " + Id + "}", function (response) {
+            if (response != null) {
+                $("#AreaAddress").val(response["Address"]);
+                $("#txtTitle").val(response["Title"]);
+                $("#txtFavoritePlaque").val(response["Plaque"]);
+                $("#txtFavoriteUnit").val(response["Unit"]);
+                $("#btnAddAddress").attr("value", "ویرایش آدرس");
+                $("#FavAddTitle").html("ویرایش آدرس منتخب");
+                $("#btnAddAddress").attr("onclick", "EditFavoriteAddress(" + response["Id"] + ")");
+                $(".rdoUserType").removeClass("SignUpIconContainerSelected");
+                $(".rdoUserType").each(function () {
+                    if ($(this).attr("ippv-value") == response["Type"])
+                    {
+                        $(this).addClass("SignUpIconContainerSelected");
+                    }
+                });
+                OpenAddAddressesDialog(true);
+            }
+        });
+    }
+
+    function EditFavoriteAddress(Id)
+    {
+        var coords = $("#SideBarStationPageText").attr("onClick").replace("FavoriteAddressClick(", "").replace(");", "").split(',');
+        var param = {
+            Address: {
+                Id: Id,
+                Address: $("#AreaAddress").val(),
+                Title: $("#txtTitle").val(),
+                Plaque: $("#txtFavoritePlaque").val(),
+                Unit: $("#txtFavoriteUnit").val(),
+                Type: $(".SignUpIconContainerSelected").attr("ippv-value"),
+                Lat: coords[0],
+                Lng: coords[1]
+            }
+        };
+        CallMethod("/User/Home/EditFavoriteAddress", JSON.stringify(param), function (response) {
+            BindFavoriteAddress(response);
+            CloseAddAddressesDialog();
+        });
+    }
+
+    function prepareMap(position) {
+
+        $("#SabzBashMap").replaceWith('<div class="SabzBashMap" id="SabzBashMap"></div>');
+
+        var tileJSONUrl = 'https://api.cedarmaps.com/v1/tiles/cedarmaps.streets.json?access_token=' + L.cedarmaps.accessToken;
+
+        var map = L.cedarmaps.map('SabzBashMap', tileJSONUrl, {
+            scrollWheelZoom: true
+        }).setView(
+            position == null ? [lat, lng] : [position.Lat, position.Lng]
+            , 13);
+
+        var markerSelected = setMarker(map, lat, lng);
+        setStationMarkers(map, lat, lng);
+
+        map.on('click', function (e) {
+            if (markerSelected != null)
+                markerSelected.remove();
+            setStationMarkers(map, e.latlng.lat, e.latlng.lng);
+            markerSelected = setMarker(map, e.latlng.lat, e.latlng.lng);
+        });
+    }
+
+    function setMarker(map, l, n) {
+        var markerSelected = null;
+        var iconOpts = {
+            'iconUrl': '/Areas/User/Images/LocationIcon.png',
+            'iconRetinaUrl': '/Areas/User/Images/LocationIcon.png',
+            'iconSize': [30, 40]
+        };
+        const markerIcon = {
+            icon: window.L.icon(iconOpts)
+        };
+
+        lat = l;
+        lng = n;
+        var popup = "<div id='popup'>"+
+                        "<div class='subPopup'><input type= 'button' onclick= 'OpenRequestDialog();' class='thumbBtn' value= 'ثبت درخواست' /></div>"+
+                        "<div class='subPopup'><input type='button' onclick='OpenAddAddressesDialog();' class='thumbBtn' value='افزودن آدرس منتخب' /></div>"+
+                    "</div> ";
+        markerSelected = new window.L.marker({ 'lat': l, 'lng': n }, markerIcon).bindPopup(popup);
+
+        markerSelected.addTo(map);
+        setTimeout(function () { markerSelected.openPopup(); }, 2000);
+        //markerSelected.openPopup();
+
+        return markerSelected;
+    }
+
+    function setStationMarkers(map, l, n) {
+        CallMethod("/User/Home/GetNearCars", JSON.stringify({ "Lat": l, "Lng": n }), function (response) {
+            var addressObj = JSON.parse(response["Address"]);
+            var address = "استان " + addressObj.result.province + " , " + addressObj.result.city + " , " + addressObj.result.district + " , " + addressObj.result.locality + " , " + (addressObj.result.place == "" ? addressObj.result.address : addressObj.result.place);
+
+            $("#MapAddress").html(address);
+            for (var i = 0; i < markerAdded.length; i++) {
+                markerAdded[i].remove();
+            }
+            markerAdded = [];
+            response["markers"].map(function (marker) {
+                var _marker = null;
+                var iconOpts = {
+                    iconUrl: marker.iconOpts.iconUrl,
+                    iconRetinaUrl: marker.iconOpts.iconRetinaUrl,
+                    iconSize: marker.iconOpts.iconSize,
+                    popupAnchor: [0, -49]
+                };
+
+                const markerIcon = {
+                    icon: window.L.icon(iconOpts)
+                };
+
+                _marker = new window.L.marker(marker.center, markerIcon);
+                _marker.addTo(map);
+                markerAdded.push(_marker);
+            });
+        });
+    }
+
+    function GetCurrentLocation() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function (location) {
+                if (location.coords.latitude == 0)
+                {
+                    ShowMessage("توجه", "سرویس موقعیت مکانی در دسترس نمیباشد", MessageType.Error)
+                    return;
+                }
+                lat = location.coords.latitude;
+                lng = location.coords.longitude;
+
+                prepareMap({ Lat: lat, Lng: lng, Acc: location.coords.accuracy });
+            }, function (error) { ShowMessage("توجه", "سرویس موقعیت مکانی در دسترس نمیباشد", MessageType.Error) });
+        }
+    }
+
+    function OpenAddAddressesDialog(isEdit) {
+        $("#AllContent").addClass("AllContentBlur");
+        $("#AllAddAddressesDialogBoxContetn").addClass("AllLightBoxContetnShow");
+        if (isEdit == false || isEdit == null)
+            $("#AreaAddress").val($("#MapAddress").html());
+        $("#AllAddAddressesDialogBox").fadeIn(150);
+    }
+
+    function CloseAddAddressesDialog() {
+        $("#AllContent").removeClass("AllContentBlur");
+        $("#AllAddAddressesDialogBoxContetn").removeClass("AllLightBoxContetnShow");
+        $("#AllAddAddressesDialogBox").fadeOut(150);
+        $("#AreaAddress").val("");
+        $("#txtTitle").val("");
+        $("#txtFavoritePlaque").val("");
+        $("#txtFavoriteUnit").val("");
+        $("#btnAddAddress").attr("value", "افزودن آدرس");
+        $("#FavAddTitle").html("افزودن آدرس منتخب");
+        $("#btnAddAddress").attr("onclick", "AddAddress()");
+    }
+
+    function AddAddress()
+    {
+        var param = {
+            Address: {
+                Lat: lat,
+                Lng: lng,
+                Address: $("#AreaAddress").val(),
+                Title: $("#txtTitle").val(),
+                Plaque: $("#txtFavoritePlaque").val(),
+                Unit: $("#txtFavoriteUnit").val(),
+                Type: $(".SignUpIconContainerSelected").attr("ippv-value"),
+            }
+        };
+        CallMethod("/User/Home/AddFavoriteAddress", JSON.stringify(param), function (response) {
+            BindFavoriteAddress(response);
+            CloseAddAddressesDialog();
+        });
+    }
+
+    function BindFavoriteAddress(response)
+    {
+        var res = "";
+        $(response).each(function () {
+            res += "<div class='SideBarStationPageItem'>" +
+                "<div id='SideBarStationPageIcon' onClick='FavoriteAddressClick(" + this["Lat"] + "," + this["Lng"] + ");'></div >" +
+                "<span class='RegularText' id='SideBarStationPageText' onClick='FavoriteAddressClick(" + this["Lat"] + "," + this["Lng"] + ");'>" + this["Title"] + "</span>" +
+                "<div class='DeleteIcon' style='float: left; width: 30px; height: 30px; left: 5px; position: absolute;' onclick='DeleteFavorite("+this["Id"]+"); '><img src='/Areas/User/Images/DelLoc.png' style='width:100%;'></div>"+
+                "<div class='DeleteIcon' style='float:left;width:30px;height:30px;left:5px;position:absolute;margin-left:25px;' onclick='EditFavoriteBind("+this["Id"]+");'><img src='/Areas/User/Images/EdiLoc.png' style='width:100%;'></div>"+
+                "</div>";
+        });
+        $("#FavoriteAddress").html(res);
+    }
+
+    function FavoriteAddressClick(l,n)
+    {
+        lat = l;
+        lng = n;
+        var position = { Lat: l, Lng: n };
+        prepareMap(position);
+    }
+
+    function SearchOnMap() {
+        var param = {
+            Lat: lat,
+            Lng: lng,
+            SearchText: $("#SearchField").val()
+        };
+        CallMethod("/User/Home/SearchOnMap", JSON.stringify(param), function (response) {
+            var temp = JSON.parse(response);
+            var res = "";
+            $(temp.results).each(function () {
+                var loc = this.location.center.split(",");
+                res += "<div class='SuggestionDetails' onClick='showSug({ Lat: " + loc[0] + ", Lng: " + loc[1] + " });'>";
+                res += "<div style='float:right;width:10%;height:50px;display:flex;justify-content:center;align-items:center;'><img src='/Areas/User/Images/LocationIcon.png' style='width:30px;' /></div >";
+                res += "<div style='float:right;width:90%;height:30px;font-size:18px;display:flex;justify-content:center;align-items:center;'>" + this.name + " (" + getSugType(this.type) + ")" + "</div>";
+                res += "<div style='float:right;width:90%;height:20px;font-size:12px;display:flex;justify-content:center;align-items:center;'>" + this.components.city + " - " + this.address + "</div></div >";
+            });
+            $("#Suggestion").html(res);
+            $("#Suggestion").show(300);
+        });
+    }
+
+    function showSug(position) {
+        $("#Suggestion").hide(300);
+        $("#SearchField").val("");
+        lat = position.Lat;
+        lng = position.Lng;
+        prepareMap(position);
+    }
+
+    function getSugType(type) {
+        if (type == "locality")
+            return "محله";
+        if (type == "roundabout")
+            return "میدان";
+        if (type == "street")
+            return "خیابان";
+        if (type == "freeway")
+            return "آزادراه";
+        if (type == "expressway")
+            return "بزرگراه";
+        if (type == "boulevard")
+            return "بلوار";
+        if (type == "city")
+            return "شهر";
+        if (type == "state")
+            return "استان";
+    }
+
+    function DeleteFavorite(id)
+    {
+        ShowConfirm("هشدار", "آیا از حذف آدرس منتخب اطمینان دارید ؟", MessageType.Warning, function () {
+            CallMethod("/User/Home/DeleteFavoriteAddress", "{Id : " + id + "}", function (response) {
+                ShowMessage("توجه", "آدرس منتخب با موفقیت حذف شد", MessageType.Succes, BindFavoriteAddress(response));
+            });
+        }, null);
+    }
+
+</script>

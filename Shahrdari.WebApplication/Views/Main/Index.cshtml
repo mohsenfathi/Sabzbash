@@ -1,0 +1,98 @@
+﻿@{Layout = null;}<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>سبز باش</title>
+    <link rel="stylesheet" type="text/css" href="~/Style.css" />
+    <script src="~/Scripts/jquery-1.6.4.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $(".NavigationButton").click(function () {
+                $(".MenuBG").fadeToggle();
+                $(".NavigationMenu").addClass("NavigationShow");
+            });
+            $(".MenuBG").click(function () {
+                $(".MenuBG").fadeToggle();
+                $(".NavigationMenu").removeClass("NavigationShow");
+            });
+        });
+    </script>
+</head>
+
+<body>
+    <div class="MenuBG"></div>
+    <div class="BeforeHeader"></div>
+    <div class="AllHeader">
+        <img class="HeaderLogo" src="Images/HeaderLogo.png" />
+        <div class="NavigationButton"></div>
+        <div class="NavigationMenu">
+            <div class="MenuItem">خانه</div>
+            <div class="MenuItem">درباره ما</div>
+            <div class="MenuItem">فرصت های شغلی</div>
+            <div class="MenuItem">تماس با ما</div>
+        </div>
+        <img class="TopBanner" src="Images/TopBanner.png" />
+        <div class="DownloadHeader"> 
+            <!--<img src="Images/DownloadGooglePlay.png" class="DownloadHeaderItem" />
+            <img src="Images/DownloadCafebaazar.png" class="DownloadHeaderItem" />-->
+            <br /><br />
+            <span id="spnGoToApp" onclick="window.location = '/User/Login/Index?FromSite=true';">ورود به نرم افزار</span>
+        </div>
+
+    </div>
+    <div class="Target">
+        <div class="TargetText">
+            <br /> هدف ما یک چیز است
+            <br /> زمین را به کمک شما سبز نگه داریم
+        </div>
+    </div>
+    <div class="Target StepsSection">
+        <div class="TargetText">
+            به همین راحتی !
+            <br />
+            <div class="StepsItemWrap">
+                <div class="StepsItem"> <img src="Images/Icon1.png" /> <span>نصب کنید</span> </div>
+                <div class="StepsItem"> <img src="Images/Icon2.png" /> <span>آدرس مشخص کنید</span> </div>
+                <div class="StepsItem"> <img src="Images/Icon3.png" /> <span>ارسال کنید</span> </div>
+                <div class="StepsItem"> <img src="Images/Icon4.png" /> <span>درامد کسب کنید!</span> </div>
+            </div>
+        </div>
+    </div>
+    <div class="BeforeFooter"></div>
+    <div class="Footer">
+        <div class="FooterRight">
+            <div class="FooterRightItem">
+                <div class="FooterRightItemTitle">---</div>
+                <div class="FooterRightItemPhone"><span>تلفن : </span>---</div>
+                <div class="FooterRightItemAddress"> --- </div>
+            </div>
+            <div class="FooterRightItem">
+                <div class="FooterRightItemTitle">---</div>
+                <div class="FooterRightItemPhone"><span>تلفن : </span>---</div>
+                <div class="FooterRightItemAddress"> --- </div>
+            </div>
+            <div class="FooterRightItem">
+                <div class="FooterRightItemTitle">---</div>
+                <div class="FooterRightItemPhone"><span>تلفن : </span>---</div>
+                <div class="FooterRightItemAddress"> --- </div>
+            </div><img src="Images/RightFooterImage.png" style="float: right;width: 30%;margin-right: 35%;margin-top: 20px;" />
+        </div>
+        <div class="FooterLeft">
+            <div class="FooterRightItem" style="border: none;">
+                <div class="FooterRightItemTitle" style="font-size: 20px;">دفتر مرکزی</div>
+                <div class="FooterRightItemAddress" style="border: none;font-size: 20px;"> تهران میدان ارژانتین ، خ الوند ، بن بست گل پیچک</div>
+                <div class="FooterRightItemPhone" style="font-size: 20px;margin-top: -20px;"><span>تلفن : </span>88651420-021</div>
+            </div><img src="Images/FooterItem3.png" class="FooterBanner" style="margin-right: 15%;display:none;" /> <img src="Images/FooterItem2.png" class="FooterBanner" style="display:none;" /> <img src="Images/FooterItem1.png" class="FooterBanner" style="display:none;" /> <img id='jxlzwlaosizpjzpesizprgvj' class="FooterBanner" style='cursor:pointer' onclick='window.open("https://logo.samandehi.ir/Verify.aspx?id=149793&p=rfthaodspfvljyoepfvlxlao", "Popup","toolbar=no, scrollbars=no, location=no, statusbar=no, menubar=no, resizable=0, width=450, height=630, top=30")' alt='logo-samandehi' src='~/Images/samandehi.png' />
+            <div class="BottomNavigationBar">
+                <div class="MenuItem" style="margin-top: 0px">خانه</div>
+                <div class="MenuItem" style="margin-top: 0px">درباره ما</div>
+                <div class="MenuItem" style="margin-top: 0px">فرصت های شغلی</div>
+                <div class="MenuItem" style="margin-top: 0px">تماس با ما</div>
+            </div>
+            <div style="float: right;width: 100%;text-align: center;margin-top: 10px;"> © کپی رایت تمامی حقوق مادی و معنوی این سرویس (وب سایت و اپلیکیشن های موبایل) متعلق به سبز باش میباشد. </div>
+        </div>
+    </div>
+</body>
+
+</html>

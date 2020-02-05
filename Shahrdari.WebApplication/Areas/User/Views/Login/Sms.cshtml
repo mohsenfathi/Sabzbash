@@ -1,0 +1,58 @@
+﻿
+@{
+    ViewBag.Title = "صفحه پیامک";
+    Layout = "~/Areas/User/Views/Shared/Layout/_master.cshtml";
+}
+
+<img src="~/Areas/User/Images/BackButton.png" width="50" class="BackButton" onclick="back();" />
+
+<img style="margin:20px 0;" src="~/Areas/User/Images/SmsIcon.png"/>
+<span style="margin:20px 0;" class="RegularText">رمز عبور ۶ رقمی پیامک شده را وارد کنید</span>
+<input maxlength="6" style="margin:20px 0;font-size:35px;font-weight:bold;background:inherit;" id="txtCode" mf-required class="TextInput" placeholder="- - - - - -"/>
+<u>
+    <a style="margin:20px 0;cursor:pointer" class="BlackText" onclick="resendActiveCode();">
+        ارسال مجدد رمز عبور
+    </a>
+</u>
+<input style="margin:20px 0;" onclick="sendActiveCode();" type="button" class="btn btnGreen" value="ادامه" />
+
+<script>
+    var fromUrl = '@ViewBag.FromUrl';
+
+    function back()
+    {
+        if (fromUrl == "SignUp")
+            window.location = '@Url.Action("SignUp", "Login")';
+        else if (fromUrl == "Login")
+            window.location = '@Url.Action("LoginPage", "Login")';
+    }
+
+    function sendActiveCode() {
+        if (validateForm() == false)
+            return;
+        var param = {
+            Code: $("#txtCode").val(),
+            Id: '@ViewBag.Id',
+        };
+        CallMethod("/User/Login/ConfirmActivationCode", JSON.stringify(param), function () {
+            ShowMessage("توجه", "تلفن شما تایید شد", MessageType.Succes, function () {
+                if (fromUrl == "SignUp")
+                    window.location = '@Url.Action("LoginPage", "Login")';
+                else if (fromUrl == "Login")
+                    window.location = '@Url.Action("Index", "Home")';
+                else if (fromUrl == "ChangePassword")
+                    window.location = '@Url.Action("PasswordChange", "Login")' + "?Id=" + '@ViewBag.Id';
+            })
+        });
+    }
+
+    function resendActiveCode() {
+        var param = {
+            Id: '@ViewBag.Id',
+        };
+        CallMethod("/User/Login/SendActivationCode", JSON.stringify(param), function () {
+            ShowMessage("توجه", "پیامک برای شما ارسال شد", MessageType.Succes, function () { })
+        });
+    }
+
+</script>

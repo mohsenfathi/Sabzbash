@@ -1,0 +1,11 @@
+D:\Projects\Sabzbash Projects\Sabzbash\Sabzbash\Shahrdari.ViewModels\bin\Release\Shahrdari.ViewModels.dll
+D:\Projects\Sabzbash Projects\Sabzbash\Sabzbash\Shahrdari.ViewModels\bin\Release\Shahrdari.ViewModels.pdb
+D:\Projects\Sabzbash Projects\Sabzbash\Sabzbash\Shahrdari.ViewModels\bin\Release\JavanMode.Models.dll
+D:\Projects\Sabzbash Projects\Sabzbash\Sabzbash\Shahrdari.ViewModels\bin\Release\Shahrdari.Enums.dll
+D:\Projects\Sabzbash Projects\Sabzbash\Sabzbash\Shahrdari.ViewModels\bin\Release\JavanMode.Settings.dll
+D:\Projects\Sabzbash Projects\Sabzbash\Sabzbash\Shahrdari.ViewModels\bin\Release\JavanMode.Models.pdb
+D:\Projects\Sabzbash Projects\Sabzbash\Sabzbash\Shahrdari.ViewModels\bin\Release\Shahrdari.Enums.pdb
+D:\Projects\Sabzbash Projects\Sabzbash\Sabzbash\Shahrdari.ViewModels\bin\Release\JavanMode.Settings.pdb
+D:\Projects\Sabzbash Projects\Sabzbash\Sabzbash\Shahrdari.ViewModels\obj\Release\Shahrdari.ViewModels.csprojResolveAssemblyReference.cache
+D:\Projects\Sabzbash Projects\Sabzbash\Sabzbash\Shahrdari.ViewModels\obj\Release\Shahrdari.ViewModels.dll
+D:\Projects\Sabzbash Projects\Sabzbash\Sabzbash\Shahrdari.ViewModels\obj\Release\Shahrdari.ViewModels.pdb

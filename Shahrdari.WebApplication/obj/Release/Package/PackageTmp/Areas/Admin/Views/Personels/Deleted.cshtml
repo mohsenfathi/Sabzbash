@@ -1,0 +1,55 @@
+﻿@model List<Shahrdari.Models.M_Personels>
+@{
+    ViewBag.Title = "پرسنل حذف شده";
+    Layout = "~/Areas/Admin/Views/Shared/Layout/_master.cshtml";
+}
+@using Shahrdari.BussinessLayer
+
+<div class="ContentSection" mf-slice='1' id="divAllPersonelDeleted">
+    <div class="ContentSectionHeader">
+        کارکنان<span>پرسنل حذف شده</span>
+    </div>
+    <table class="tbList">
+        <tr class="tbListHeader">
+            <td>نام</td>
+            <td>نام خانوادگی</td>
+            <td>نام کاربری</td>
+            <td>تاریخ تولد</td>
+            <td>وضعیت</td>
+            <td>جنسیت</td>
+            <td>تاریخ حذف</td>
+            <td>عملیات</td>
+        </tr>
+        <tbody>
+            @foreach (var li in Model)
+            {
+                <tr>
+                    <td>@li.FirstName</td>
+                    <td>@li.LastName</td>
+                    <td>@li.UserName</td>
+                    <td>@li.BirthDate.ConvertMiladiToShamsi()</td>
+                    <td>@(li.IsActive ? Html.Raw("<span style='color:#1bb394;'>فعال</span>") : Html.Raw("<span style='color:#ed5666;'>غیر فعال</span>"))</td>
+                    <td>@(li.Gender == Shahrdari.Enums.E_PublicCategory.GENDER.MAN ? "آقا" : "خانم")</td>
+                    <td>@(li.DeletedDate.Value.ConvertMiladiToShamsi())</td>
+                    <td><img class="tbListModifyIcon" src="~/Areas/Admin/Images/EndoIcon.png" onclick="revertPesonel(@li.Id,this);" /></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <div class="ContentSectionFooter">
+        <input type="button" value="بازگشت به لیست" class="btnForm btnFormOrange" onclick="window.location = '@Url.Action("Index", "Personels")'" />
+    </div>
+</div>
+
+<script>
+    function revertPesonel(personelId,element)
+    {
+        CallMethod('@Url.Action("RevertUser", "Personels")', "{Id : " + personelId + "}", "divAllPersonelDeleted", function () {
+            ShowMessage("توجه", "کاربر با موفقیت بازگردانی شد", MessageType.Succes, function () {
+                $(element).closest("tr").replaceWith("");
+            }, function () {
+                $(element).closest("tr").replaceWith("");
+            });
+        });
+    }
+</script>

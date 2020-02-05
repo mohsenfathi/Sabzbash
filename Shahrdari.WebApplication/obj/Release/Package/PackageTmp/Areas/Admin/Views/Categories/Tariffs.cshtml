@@ -1,0 +1,75 @@
+﻿@using Khadamati.Business
+@{
+    ViewBag.Title = "لیست تعرفه ها";
+    Layout = "~/Areas/Admin/Views/Shared/Layouts/_MainAdmin.cshtml";
+}
+
+
+<input type="button" value="افزودن تعرفه جدید" class="btnSection btnFormBlue" onclick="window.location = '@Url.Action("AddTariff", "Categories")'" />
+
+<div class="ContentSection" mf-slice='1' id="divAllPersonel">
+    <div class="ContentSectionHeader">
+        جستجو
+    </div>
+    <table class="tbForm">
+        <tr>
+            <td>
+                <input type="text" class="txtForm" id="txtTitle" placeholder="عنوان" maxlength="255" />
+                <div class="altForm">عنوان را وارد کنید</div>
+            </td>
+            <td>
+                <select class="txtForm drpForm" id="drpCategories">
+                    <option value="0">همه دسته بندی ها</option>
+                    @foreach (Khadamati.Models.M_ServicesCategories li in ViewBag.Categories)
+                    {
+                        <option value="@li.Id">@li.Title</option>
+                    }
+                </select>
+                <div class="altForm">قیمت را وارد کنید</div>
+            </td>
+            <td>
+                <input type="button" value="جستجو" class="btnSection btnFormBlue" onclick="GetDatas();" style="float:right;margin-right:10px;margin-top:7px;" />
+            </td>
+        </tr>
+    </table>
+</div>
+
+<div class="ContentSection" mf-slice='1' id="divAllRequests">
+    <div class="ContentSectionHeader">
+        تعرفه ها<span>لیست تعرفه های سیستم</span>
+    </div>
+    <table class="tbList">
+        <tr class="tbListHeader">
+            <td>عنوان</td>
+            <td>قیمت</td>
+            <td>عملیات</td>
+        </tr>
+        <tbody id="tbdDatas"></tbody>
+    </table>
+</div>
+
+<script>
+
+    var haveLoad = false;
+    $(function () {
+        if (haveLoad)
+            return;
+        haveLoad = true;
+        GetDatas();
+    });
+
+    function GetDatas() {
+        CallMethod('@Url.Action("GetTariffs", "Categories")', "{Title:'" + $("#txtTitle").val() + "',ServicCategoryId:'" + $("#drpCategories").val() + "'}", "divAllRequests",
+            function (response) {
+                $("#tbdDatas").html("");
+            $(response).each(function () {
+                $("#tbdDatas").html($("#tbdDatas").html()
+                    + "<tr><td>" + this["Title"] + "</td><td>" + addCommaIntoNumber(this["Price"]) +"</td>"
+                    + "<td><img class='tbListModifyIcon' src='/Images/editIcon.png' onclick=\"window.location = '@Url.Action("ModityTariff", "Categories")/" + this["Id"] + "';\"/></td>"
+                    + "</tr>"
+                );
+            });
+        });
+    }
+</script>
+

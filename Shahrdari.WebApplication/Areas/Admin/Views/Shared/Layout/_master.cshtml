@@ -1,0 +1,174 @@
+﻿<!DOCTYPE html>
+<html>
+
+@{
+    var currentPersonel = (Shahrdari.Models.M_Personels)ViewBag.LayoutPersonel;
+    var currentPersonelRole = (Shahrdari.Models.M_PersonelRoles)ViewBag.LayoutPersonelRole;
+}
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>@ViewBag.Title</title>
+    <link rel="stylesheet" type="text/css" href="~/Areas/Admin/Styles/Main.css" />
+    <link rel="stylesheet" type="text/css" href="~/Areas/Admin/Styles/jquery.mCustomScrollbar.min.css" />
+    <link href="~/Areas/Admin/Styles/persianDatepicker-default.css" rel="stylesheet" />
+    <script type="text/javascript" src="~/Areas/Admin/Scripts/jquery.min.js"></script>
+    <script type="text/javascript" src="~/Areas/Admin/Scripts/jquery.mCustomScrollbar.concat.min.js"></script>
+    <script src="~/Areas/Admin/Scripts/persianDatepicker.min.js"></script>
+    <script type="text/javascript" src="~/Areas/Admin/Scripts/Main.js"></script>
+    <script src='https://api.cedarmaps.com/cedarmaps.js/v1.8.0/cedarmaps.js'></script>
+    <link href='https://api.cedarmaps.com/cedarmaps.js/v1.8.0/cedarmaps.css' rel='stylesheet' />
+    <script>
+        L.cedarmaps.accessToken = "7775fb1e47034c4ae978aae1b3ac3f6f0b4ec6b3";
+    </script>
+    @RenderSection("head", required: false)
+</head>
+<body>
+
+    <Header class="Header">
+
+        <div id="AllRightHeader">
+            <div id="AllRightHeaderTitle">پنل مدیریتی</div>
+            <div id="AllRightHeaderDesc">مدیریت جامع نرم افزار</div>
+            <div id="AllRightHeaderIcons">
+                <a href="@Url.Action("LogOut","Login")"><div class="AllRightHeaderIconsItem"><img src="~/Areas/Admin/Images/LogOutIcon.png" /></div></a>
+                <div class="AllRightHeaderIconsItem"><img src="~/Areas/Admin/Images/NotificationIcon.png" /></div>
+                <div class="AllRightHeaderIconsItem"><img src="~/Areas/Admin/Images/SettingIcon.png" /></div>
+            </div>
+        </div>
+
+        <div id="AllSearchBox">
+            <input type="text" id="txtSearch" placeholder="در این کادر جستجو کنید ..." />
+            <img src="~/Areas/Admin/Images/SearchLineIcon.png" />
+        </div>
+
+        <div id="AllLeftHeader">
+            <img src="~/Areas/Admin/Images/Profile/@currentPersonel.ImageName" width="70" />
+            <span>@(currentPersonel.FirstName + " " + currentPersonel.LastName)</span>
+            <span style="margin-top:-10px;font-size:18px;color:#CCC;margin-right:10px;">@currentPersonelRole.Title</span>
+        </div>
+
+    </Header>
+
+    <section id="AllMain">
+        @RenderBody()
+    </section>
+
+    <section id="AllRightMenu">
+
+        <a href="@Url.Action("Index", "Dashboard")">
+            <div class="RightMenuItem">
+                <img src="~/Areas/Admin/Images/LeftArrow.png" width="25" />
+                <span>داشبورد</span>
+            </div>
+        </a>
+        <a href="@Url.Action("Roles", "Personels")">
+            <div class="RightMenuItem">
+                <img src="~/Areas/Admin/Images/LeftArrow.png" width="25" />
+                <span>مدیریت نقش ها</span>
+            </div>
+        </a>
+        <a href="@Url.Action("Index", "Personels")">
+            <div class="RightMenuItem">
+                <img src="~/Areas/Admin/Images/LeftArrow.png" width="25" />
+                <span>مدیریت پرسنل</span>
+            </div>
+        </a>
+        <a href="@Url.Action("Index", "Users")">
+            <div class="RightMenuItem">
+                <img src="~/Areas/Admin/Images/LeftArrow.png" width="25" />
+                <span>مدیریت کاربران</span>
+            </div>
+        </a>
+        <a href="@Url.Action("Index", "Categories")">
+            <div class="RightMenuItem">
+                <img src="~/Areas/Admin/Images/LeftArrow.png" width="25" />
+                <span>مدیریت دسته بندی ها</span>
+            </div>
+        </a>
+        <a href="@Url.Action("Index", "ServicesRequests")">
+            <div class="RightMenuItem">
+                <img src="~/Areas/Admin/Images/LeftArrow.png" width="25" />
+                <span>مدیریت درخواست ها</span>
+                @{
+                    if (ViewBag.LayoutNewRequestCount > 0)
+                    {
+                        <span class="MenuItemAlert">(@ViewBag.LayoutNewRequestCount)</span>
+                    }
+                }
+            </div>
+        </a>
+        <a href="@Url.Action("Index", "Learn")">
+            <div class="RightMenuItem">
+                <img src="~/Areas/Admin/Images/LeftArrow.png" width="25" />
+                <span>مدیریت آموزش ها</span>
+            </div>
+        </a>
+        <a href="@Url.Action("Index", "Message")">
+            <div class="RightMenuItem">
+                <img src="~/Areas/Admin/Images/LeftArrow.png" width="25" />
+                <span>مدیریت پیامها</span>
+            </div>
+        </a>
+        <a href="@Url.Action("Index", "Peyment")">
+            <div class="RightMenuItem">
+                <img src="~/Areas/Admin/Images/LeftArrow.png" width="25" />
+                <span>درخواست تسویه</span>
+                @{
+                    if (ViewBag.LayoutNewRedrawalCount > 0)
+                    {
+                        <span class="MenuItemAlert">(@ViewBag.LayoutNewRedrawalCount)</span>
+                    }
+                }
+            </div>
+        </a>
+        <a href="@Url.Action("Index", "News")">
+            <div class="RightMenuItem">
+                <img src="~/Areas/Admin/Images/LeftArrow.png" width="25" />
+                <span>مدیریت اخبار</span>
+            </div>
+        </a>
+        <a href="@Url.Action("Index", "Suggestions")">
+            <div class="RightMenuItem">
+                <img src="~/Areas/Admin/Images/LeftArrow.png" width="25" />
+                <span>انتقادات و پیشنهادات</span>
+            </div>
+        </a>
+    </section>
+
+    <div id="AllLightBoxAlert">
+        <div class="AllLightBoxContetn" id="LightBoxAlertContent">
+            <div class="AllLightBoxHeader">
+                <span id="spnAlertLightBoxHeader">عنوان اینجا قرار خواهد گرفت</span>
+                <img src="~/Areas/Admin/Images/LightBoxCloseIcon.png" width="30" id="imgAlertLightBoxCancel" />
+            </div>
+            <div class="AllLightBoxContent">
+                <span id="spnAlertLightBoxContent">متن لایت باکس اینجا قرار خواهد گرفت</span>
+                <span class="AllLightBoxContentTime" id="spnAlertLightBoxContentTime">این پیغام در ساعت 22:35 نمایش داده شده است</span>
+            </div>
+            <div class="AllLightBoxFooter">
+                <input type="button" value="تایید" class="btnForm btnFormBlue" id="btnAlertLightBoxOk" />
+            </div>
+        </div>
+    </div>
+
+    <div id="AllLightBoxConfirm">
+        <div class="AllLightBoxContetn" id="LightBoxConfirmContent">
+            <div class="AllLightBoxHeader">
+                <span id="spnConfirmLightBoxHeader">عنوان اینجا قرار خواهد گرفت</span>
+                <img src="~/Areas/Admin/Images/LightBoxCloseIcon.png" width="30" id="imgConfirmLightBoxCancel" />
+            </div>
+            <div class="AllLightBoxContent">
+                <span id="spnConfirmLightBoxContent">متن لایت باکس اینجا قرار خواهد گرفت</span>
+                <span class="AllLightBoxContentTime" id="spnConfirmLightBoxContentTime">این پیغام در ساعت 22:35 نمایش داده شده است</span>
+            </div>
+            <div class="AllLightBoxFooter">
+                <input type="button" value="بله" class="btnForm btnFormGreen" id="btnBoxConfirmLightBoxYes" />
+                <input type="button" value="خیر" class="btnForm btnFormRed" id="btnConfirmLightBoxCancel" />
+            </div>
+        </div>
+    </div>
+
+    @RenderSection("EndOfPage", false)
+</body>
+</html>

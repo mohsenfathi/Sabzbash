@@ -1,0 +1,130 @@
+﻿
+@{
+    ViewBag.Title = "افزودن آموزش";
+    Layout = "~/Areas/Admin/Views/Shared/Layout/_master.cshtml";
+}
+
+<div class="ContentSection" mf-slice='1' id="divAddRole">
+    <div class="ContentSectionHeader">
+        آموزش<span> افزودن آموزش جدید</span>
+        <input type="button" style="float:left;" value="بازگشت" class="btnForm btnFormOrange" onclick="window.location = '@Url.Action("Index", "Learn")'" />
+    </div>
+    <table class="tbForm">
+        <tr>
+            <td>
+                <input type="text" class="txtForm" id="txtTitle" placeholder="عنوان" mf-required maxlength="100" />
+                <div class="altForm">عنوان را وارد کنید</div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <input type="text" class="txtForm" id="txtShortDesc" placeholder="توضیحات کوتاه" mf-required maxlength="100" />
+                <div class="altForm">توضیحات کوتاه را وارد کنید</div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <br />
+                توضیحات کامل
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <textarea id="txtLongDesc" name="txtComment"></textarea>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <span class="fileUploadTitle">آپلودر کاور : </span>
+                <div class="fileUpload">&nbsp;&nbsp;انتخاب فایل<input mf-upload-role="UserImage2" id="uplFileCover" mf-accept="jpg" type="file" class="upload" onchange="UploadChangeEvent(this,true,'Default.jpg','imgProfilePreview','/Areas/Admin/Images/Learns/');" /></div>
+                <div style="float:right;margin:10px;margin-top:20px;" id="UploadetCoverAddress" mf-upload-role="UserImage2">فایلی انتخاب نشده</div>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="3">
+                <span class="FormInputTitle">پیش نمایش :</span>
+                <img src="~/Areas/Admin/Images/Learns/Default.jpg" style="width="400" height="200" alt="پیش نمایش" id="imgProfilePreview" />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <span class="fileUploadTitle">آپلودر فایل : </span>
+                <div class="fileUpload">&nbsp;&nbsp;انتخاب فایل<input mf-upload-role="UserImage1" id="uplFile" type="file" class="upload" onchange="UploadImage();" /></div>
+                <div style="float:right;margin:10px;margin-top:20px;" id="UploadetFileAddress" mf-upload-role="UserImage1">فایلی انتخاب نشده</div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <span class="fileUploadTitle">آپلود ویدیو : </span>
+                <div class="fileUpload">&nbsp;&nbsp;انتخاب فایل<input mf-upload-role="UserImage" id="uplVideo" type="file" class="upload" mf-accept="*" onchange="UploadChangeEvent(this,false,'','');" /></div>
+                <div class="fileUploadAddress" mf-upload-role="UserImage">فایلی انتخاب نشده</div>
+            </td>
+        </tr>
+    </table>
+
+    <input type="button" value="افزودن" class="btnForm btnFormGreen" onclick="submitForm();" />
+    <input type="button" value="انصراف" class="btnForm btnFormOrange" onclick="window.location = '@Url.Action("Index", "Learn")'" />
+</div>
+
+
+<script src="~/ckeditor/ckeditor.js"></script>
+<script src="~/ckeditor/adapters/jquery.js"></script>
+<script>
+    var haveLoad = false;
+    var coverImage = "Default.jpg";
+
+    $(document).ready(function () {
+        if (haveLoad == true)
+            return;
+        haveLoad = true;
+
+        CKEDITOR.replace('txtLongDesc', {
+            uiColor: '#cccccc',
+            toolbar: CKEditorToolbars
+        });
+    });
+
+    function UploadImage() {
+        var fileUpload = document.getElementById("uplFile");
+        if (fileUpload.files.length > 0)
+            UploadFile('@Url.Action("UploadFile", "Learn")', fileUpload, "divAddRole", function (response) {
+                $("#UploadetFileAddress").html(response.replace(/"/g, ''));
+            });
+    }
+
+    function submitForm()
+    {
+        if (validateForm() == false)
+            return;
+        var fileUpload = document.getElementById("uplFileCover");
+        if (fileUpload.files.length > 0)
+            UploadFile('@Url.Action("UploadCoverFile", "Learn")', fileUpload, "divAddRole", function (response) {
+                $("#UploadetCoverAddress").html(response.replace(/"/g, ''));
+                coverImage = response.replace(/"/g, '');
+                submitFormFinal();
+            });
+        else
+            submitFormFinal();
+    }
+
+    function submitFormFinal() {
+        var param = {};
+        param["Title"] = $("#txtTitle").val();
+        param["CoverImage"] = coverImage;
+        param["ShortDesc"] = $("#txtShortDesc").val();
+        param["LongDesc"] = CKEDITOR.instances['txtLongDesc'].getData();
+        if (document.getElementById("uplVideo").files.length > 0) {
+            UploadFile('@Url.Action("UploadFile", "Learn")', document.getElementById("uplVideo"), "divAddRole", function (response) {
+                param["Video"] = response.replace(/"/g, '');
+                CallMethod('@Url.Action("Add", "Learn")', JSON.stringify(param), "divAddRole", function (response) {
+                    ShowMessage("توجه", "عملیات با موفقیت انجام شد", MessageType.Succes, function () { window.location = '@Url.Action("Index", "Learn")' });
+                });
+            });
+        }
+        else {
+            CallMethod('@Url.Action("Add", "Learn")', JSON.stringify(param), "divAddRole", function (response) {
+                ShowMessage("توجه", "عملیات با موفقیت انجام شد", MessageType.Succes, function () { window.location = '@Url.Action("Index", "Learn")' });
+            });
+        }
+    }
+</script>

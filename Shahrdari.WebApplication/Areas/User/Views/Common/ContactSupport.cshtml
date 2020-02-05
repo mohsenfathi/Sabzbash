@@ -1,0 +1,37 @@
+﻿
+@{
+    ViewBag.Title = "ContactSupport";
+    Layout = "~/Areas/User/Views/Shared/Layout/_master.cshtml";
+}
+
+<a href="@Url.Action("Index", "Home")">
+    <img src="~/Areas/User/Images/BackButton.png" width="50" class="BackButton" />
+</a>
+<div class="AllMainCommon" id="AllMain404">
+    <div id="Content404">
+        <img src="~/Areas/User/Images/404Logo.png" />
+        <span id="BText404">تماس با مرکز پشتیبانی</span>
+        <br />
+        <span class="RegularText" style="color:#72bf44">‌آدرس</span>
+        <span class="RegularText">‌تهران میدان ارژانتین ، خ الوند ، بن بست گل پیچک</span>
+        <span class="RegularText" style="color:#72bf44">تلفن‌</span>
+        <span class="RegularText">021-88651420‌</span>
+    </div>
+</div>
+
+<style>
+    #AllMain404 {
+        height: auto;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+    }
+    #BText404 {
+        font-size: 32px;
+        margin-top: 20px;
+    }
+    .RegularText
+    {
+        text-align:center;
+    }
+</style>

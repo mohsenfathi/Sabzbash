@@ -1,0 +1,113 @@
+﻿
+@{
+    var news = new Shahrdari.Models.M_News();
+    if(ViewBag.News != null)
+    {
+        news = (Shahrdari.Models.M_News)ViewBag.News;
+    }
+    ViewBag.Title = "افزودن و ویرایش خبر";
+    Layout = "~/Areas/Admin/Views/Shared/Layout/_master.cshtml";
+}
+
+
+<div class="ContentSection" mf-slice='1' id="divAddRole">
+    <div class="ContentSectionHeader">
+        اخبار<span> افزودن و ویرایش اخبار</span>
+        <input type="button" style="float:left;" value="بازگشت" class="btnForm btnFormOrange" onclick="window.location = '@Url.Action("Index", "News")'" />
+    </div>
+    <table class="tbForm">
+        <tr>
+            <td>
+                <input type="text" value="@news.Title" class="txtForm" id="txtTitle" placeholder="عنوان" mf-required maxlength="100" />
+                <div class="altForm">عنوان را وارد کنید</div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <input type="text" value="@news.Summery" class="txtForm" id="txtShortDesc" placeholder="توضیحات کوتاه" mf-required maxlength="300" />
+                <div class="altForm">توضیحات کوتاه را وارد کنید</div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <br />
+                توضیحات کامل
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <textarea id="txtLongDesc" name="txtComment">
+                        @Html.Raw(news.Description)
+                </textarea>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <span class="fileUploadTitle">آپلودر کاور : </span>
+                <div class="fileUpload">&nbsp;&nbsp;انتخاب فایل<input mf-upload-role="UserImage2" id="uplFileCover" mf-accept="jpg" type="file" class="upload" onchange="UploadChangeEvent(this,true,'@news.Image','imgProfilePreview','/Areas/Admin/Images/News/');" /></div>
+                <div style="float:right;margin:10px;margin-top:20px;" id="UploadetCoverAddress" mf-upload-role="UserImage2">فایلی انتخاب نشده</div>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="3">
+                <span class="FormInputTitle">پیش نمایش :</span>
+                <img src="~/Areas/Admin/Images/News/@news.Image" style="width=" 400" height="200" alt="پیش نمایش" id="imgProfilePreview" />
+            </td>
+        </tr>
+    </table>
+
+    <input type="button" value="ذخیره" class="btnForm btnFormGreen" onclick="submitForm();" />
+    @if (news.Id != 0) { <input type="button" value="حذف" class="btnForm btnFormRed" onclick="Delete();" /> }
+    <input type="button" value="انصراف" class="btnForm btnFormOrange" onclick="window.location = '@Url.Action("Index", "News")'" />
+</div>
+
+
+<script src="~/ckeditor/ckeditor.js"></script>
+<script src="~/ckeditor/adapters/jquery.js"></script>
+<script>
+    var haveLoad = false;
+
+    $(document).ready(function () {
+        if (haveLoad == true)
+            return;
+        haveLoad = true;
+
+        CKEDITOR.replace('txtLongDesc', {
+            uiColor: '#cccccc',
+            toolbar: CKEditorToolbars
+        });
+    });
+
+    function submitForm() {
+        if (validateForm() == false)
+            return;
+        var param = {};
+        param["Id"] = '@news.Id';
+        param["Title"] = $("#txtTitle").val();
+        param["Image"] = '@news.Image';
+        param["Summery"] = $("#txtShortDesc").val();
+        param["Description"] = CKEDITOR.instances['txtLongDesc'].getData();
+        if (document.getElementById("uplFileCover").files.length > 0) {
+            UploadFile('@Url.Action("UploadFile", "News")', document.getElementById("uplFileCover"), "divAddRole", function (response) {
+                param["Image"] = response.replace(/"/g, '');
+                CallMethod('@Url.Action("Modify", "News")', JSON.stringify(param), "divAddRole", function (response) {
+                    ShowMessage("توجه", "عملیات با موفقیت انجام شد", MessageType.Succes, function () { window.location = '@Url.Action("Index", "News")' });
+                });
+            });
+        }
+        else {
+            CallMethod('@Url.Action("Modify", "News")', JSON.stringify(param), "divAddRole", function (response) {
+                ShowMessage("توجه", "عملیات با موفقیت انجام شد", MessageType.Succes, function () { window.location = '@Url.Action("Index", "News")' });
+            });
+        }
+    }
+
+    function Delete()
+    {
+        ShowConfirm("توجه", "از حذف مورد اطمینان دارید ؟", MessageType.Information, function () {
+            CallMethod('@Url.Action("Delete", "News")', "{ Id : @news.Id }", "divAddRole", function (response) {
+                ShowMessage("توجه", "عملیات با موفقیت انجام شد", MessageType.Succes, function () { window.location = "@Url.Action("Index", "News")" }, function () { window.location = "@Url.Action("Index", "News")" });
+            });
+        });
+    }
+</script>

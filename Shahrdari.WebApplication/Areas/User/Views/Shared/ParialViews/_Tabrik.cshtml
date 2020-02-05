@@ -1,0 +1,79 @@
+﻿<div class="AllLDialogBox" id="TabrikContainer">
+    <div class="TabrikDialogBox" id="TabrikContainerContent">
+        <div class="TabrikCircle">
+            <div class="TabrikCircleContent">
+                <span class="TabrikCircleBigText">تبریک</span>
+                <span id="CongPoint" class="RegularText" style="text-align:center;"></span>
+            </div>
+        </div>
+        <div class="btn btnGreen" style="margin-top:100px;text-align:center;" onclick="CloseTabrikDialog()">بستن</div>
+    </div>
+</div>
+
+<style>
+    .TabrikDialogBox {
+        background: unset !important;
+        border: unset !important;
+        box-shadow: none !important;
+        width: unset !important;
+        z-index: 9991;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction:column;
+    }
+
+    .TabrikCircle {
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        background: #fbb716;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        color: #fff !important;
+        position: relative;
+        z-index: 9992;
+    }
+
+    .TabrikCircleContent {
+        height: 100%;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .TabrikCircleBigText {
+        font-size: 30px;
+    }
+</style>
+
+<script>
+    $(document).ready(function (e) {
+        $("#TabrikContainer").fadeOut(0);
+        $("#TabrikContainer").click(function (e) {
+            if (e.target !== this)
+                return;
+            CloseTabrikDialog();
+        });
+    });
+
+    function OpenTabrikDialog(point) {
+        $("#CongPoint").html(point + " امتیاز برای شما ثبت گردید");
+        $("#AllContent").addClass("AllContentBlur");
+        $("#TabrikContainerContent").addClass("AllLightBoxContetnShow");
+        $("#TabrikContainer").fadeIn(150);
+    }
+
+    function CloseTabrikDialog() {
+        $("#AllContent").removeClass("AllContentBlur");
+        $("#TabrikContainerContent").removeClass("AllLightBoxContetnShow");
+        $("#TabrikContainer").fadeOut(150);
+        OpenSatisfactionDialogBox();
+        BindData();
+    }
+
+</script>
